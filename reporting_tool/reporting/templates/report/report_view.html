@@ -1,0 +1,835 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="content-header">
+  <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>{{ DB_report_query.title }} - {{ DB_report_query.report_id }}</h4>
+            </div>
+
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'customer_view' DB_report_query.customer.id %}">{{ DB_report_query.customer.name }}</a></li>
+                  <li class="breadcrumb-item active">{{ DB_report_query.title }}</a></li>
+              </ol>                
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-md-5">
+              <a href="/report/finding/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Findings</button></a>
+        </div>
+
+    </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+            <i class="far fa-chart-bar"></i>
+            <b>Executive Summary</b>
+            </h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+              </button>
+            </div>
+
+          </div>
+          <!-- Card Header Div -->
+
+            <div class="card-body">
+
+              <div class="row">
+
+                <div class="col-2 text-center">
+
+                    {% if count_findings_critical > 0 %}
+                      <input type="text" value="{{count_findings_critical}}" class="dial" data-min="0" data-max="{{count_findings_critical}}" data-fgColor="#cc0000" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_critical}}" class="dial" data-min="0" data-max="{{count_findings_critical}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>Critical</h3>
+
+                </div>
+
+                <div class="col-2 text-center">
+
+                    {% if count_findings_high > 0 %}
+                      <input type="text" value="{{count_findings_high}}" class="dial" data-min="0" data-max="{{count_findings_high}}" data-fgColor="#f50000" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_high}}" class="dial" data-min="0" data-max="{{count_findings_high}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>High</h3>
+                </div>
+
+
+                <div class="col-2 text-center">
+
+                    {% if count_findings_medium > 0 %}
+                      <input type="text" value="{{count_findings_medium}}" class="dial" data-min="0" data-max="{{count_findings_medium}}" data-fgColor="#fc7f03" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_medium}}" class="dial" data-min="0" data-max="{{count_findings_medium}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>Medium</h3>
+                </div>
+
+                <div class="col-2 text-center">
+
+                    {% if count_findings_low > 0 %}
+                      <input type="text" value="{{count_findings_low}}" class="dial" data-min="0" data-max="{{count_findings_low}}" data-fgColor="#05b04f" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_low}}" class="dial" data-min="0" data-max="{{count_findings_low}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>Low</h3>
+                </div>
+
+
+                <div class="col-2 text-center">
+
+                    {% if count_findings_info > 0 %}
+                      <input type="text" value="{{count_findings_info}}" class="dial" data-min="0" data-max="{{count_findings_info}}" data-fgColor="#45a7f7" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_info}}" class="dial" data-min="0" data-max="{{count_findings_info}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>Info</h3>
+                </div>
+              
+                <div class="col-2 text-center">
+
+                    {% if count_findings_none > 0 %}
+                      <input type="text" value="{{count_findings_none}}" class="dial" data-min="0" data-max="{{count_findings_none}}" data-fgColor="#999999" data-readOnly=true data-width="60%">
+                    {% else %}
+                      <input type="text" value="{{count_findings_none}}" class="dial" data-min="0" data-max="{{count_findings_none}}" data-fgColor="#D3D3D3" data-readOnly=true data-width="60%">
+                    {% endif %}
+
+                <h3>None</h3>
+                </div>
+
+
+              </div>
+              <!-- Close Finding Knob Div -->
+
+              <hr>
+
+              <div class="row m-2">
+                  <div class="col-8 col-sm-4">
+                    <div class="info-box bg-light">
+                      <div class="info-box-content">
+                        <span class="info-box-number text-center text-muted d-block">Creation date</span>
+                        <span class="info-box-text text-center text-muted mb-0 d-block">{{ DB_report_query.creation_date|date:"Y-m-d H:i:s" }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-8 col-sm-4">
+                    <div class="info-box bg-light">
+                      <div class="info-box-content">
+                        <span class="info-box-number text-center text-muted d-block">Report date</span>
+                        <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_date|date:"d-m-Y" }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-8 col-sm-4">
+                    <div class="info-box bg-light">
+                      <div class="info-box-content">
+                        <span class="info-box-number text-center text-muted d-block">Customer</span>
+                        <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.customer.name }}<span>
+                      </span></span></div>
+                    </div>
+                  </div>
+
+              </div>
+
+              <!-- ------------------------------------------------------------------------------------------------------------------------------------------ -->
+
+              <div class="row m-2">
+                <div class="col-8 col-sm-3">
+                  <div class="info-box bg-light">
+                    <div class="info-box-content">
+                      <span class="info-box-number text-center text-muted d-block">Report</span>
+                      <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.title }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-8 col-sm-3">
+                  <div class="info-box bg-light">
+                    <div class="info-box-content">
+                      <span class="info-box-number text-center text-muted d-block">Findings</span>
+                      <span class="info-box-text text-center text-muted d-block mb-0">{{ count_finding_query }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-8 col-sm-3">
+                  <div class="info-box bg-light">
+                    <div class="info-box-content">
+                      <span class="info-box-number text-center text-muted d-block">Audit dates</span>
+                      <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.audit_start|date:"d-m-Y" }} → {{ DB_report_query.audit_end|date:"d-m-Y" }}<span>
+                    </span></span></div>
+                  </div>
+                </div>
+                <div class="col-8 col-sm-3">
+                  <div class="info-box bg-light">
+                    <div class="info-box-content">
+                      <span class="info-box-number text-center text-muted d-block">Report ID</span>
+                      <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_id }}<span>
+                    </span></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ------------------------------------------------------------------------------------------------------------------------------------------ -->
+
+              {% if DB_report_query.executive_summary %}
+              <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-outline">
+                      <div class="card-body">
+                        {{ DB_report_query.executive_summary}}
+                      </div>
+                    </div>
+                </div>
+              </div>
+              {% endif %}
+
+          </div>
+          <!-- Close Exec Sum Card Body Div -->
+        </div>
+        <!-- Close Exec Sum Card Div -->
+      </div>
+      <!-- Close Col Div -->
+    </div>
+    <!-- Close Row Div -->
+       
+    <!-- Start Breakdown by Severity -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <b>Breakdown by Severity</b>
+            </h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+              </button>
+            </div>
+
+          </div>
+          <div class="card-body">
+
+            <center>
+              <div id="SeveritybarChartEcharts" style="width:80%; height:500px;"></div>      
+            </center>
+
+          </div>
+        </div>
+      </div>          
+    </div>
+    <!-- End Breakdown by Severity -->
+
+    <!-- Start Breakdown by CWE Status ROW-->
+    <div class="row">
+      <!-- Start Breakdown by CWE-->
+      <!-- <div class="col-md-8">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar"></i>
+              <b>Breakdown by CWE Categories</b>
+            </h3>
+          </div>
+          <div class="card-body">
+          
+            <center>
+              <div id="CWEPieChartEcharts" style="width:100%; min-width: 100%; height:400px;"></div>
+            </center>
+
+          </div>
+        </div>
+      </div>      -->
+      <!-- End Breakdown by CWE -->  
+
+      <!-- Start Vuln Status-->
+      <div class="col-md-4">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar"></i>
+              <b>Vulnerabilities by status</b>
+            </h3>
+          </div>
+
+          <div class="card-body">
+
+            <center>
+              <div id="StatusPieDoughnutEcharts" style="width:100%; height:400px;"></div>
+            </center>
+          </div>
+        </div>
+      </div>
+      <!-- End Vuln Status -->
+    <!-- </div>  -->
+    <!-- End Breakdown by CWE Status ROW -->
+
+    <!-- Start Breakdown by OWASP Severity ROW-->
+    <!-- <div class="row"> -->
+      <!-- Start OWASP Bdown -->
+      <div class="col-md-8">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar"></i>
+              <b>Breakdown by OWASP Top Ten Application Security Risks</b>
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <center>
+              <div id="OWASPPieChartEcharts" style="width:100%; height:400px;"></div>
+            </center>
+
+          </div>
+        </div>
+      </div>
+      <!-- End OWASP Bdown -->
+
+      <!-- Start Severity Bdown -->
+      <!-- <div class="col-md-4">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar"></i>
+              <b>Vulnerabilities by severity</b>
+            </h3>
+          </div>
+
+          <div class="card-body">
+              <div id="VulnPieDoughnutEcharts" style="width:100%; height:400px;"></div>
+          </div>
+
+        </div>
+      </div> -->
+      <!-- End Severity Bdown -->
+    </div>
+    <!-- End Breakdown by OWASP Severity ROW -->
+
+    <!-- Start Scope -->
+    {% if DB_report_query.scope %}
+    <div class="row">
+      <div class="col-md-12">
+          <div class="card card-outline card-success">
+            <div class="card-header">
+              <h3 class="card-title">
+                <b>Scope</b>
+              </h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+
+              {{ DB_report_query.scope }}
+
+            </div>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End Scope -->
+
+    <!-- Start OutofScope -->
+    {% if DB_report_query.outofscope %}
+    <div class="row">
+      <div class="col-md-12">
+          <div class="card card-outline card-success">
+            <div class="card-header">
+              <h3 class="card-title">
+                <b>Out of Scope</b>
+              </h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+
+              {{ DB_report_query.outofscope }}
+
+            </div>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End OutofScope -->
+
+    <!-- Start Methodology -->
+    {% if DB_report_query.methodology %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-outline card-success">
+            <div class="card-header">
+              <h3 class="card-title">
+                <b>Methodology</b>
+              </h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body">
+
+              {{ DB_report_query.methodology }}
+
+            </div>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End Methodology -->
+
+    <!-- Start Recs -->
+    {% if DB_report_query.recommendation %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-outline card-success">
+          <div class="card-header">
+            <h3 class="card-title">
+              <b>Recommendation</b>
+            </h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body">
+
+            {{ DB_report_query.recommendation }}
+
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End Recs -->
+
+    <!-- Start FINDINGS -->
+    <div class="row">
+      <div class="col-md-12">
+       <div class="card card-outline card-success">
+          <div class="card-header">
+              <h3 class="card-title">
+                <b>Findings List</b>
+              </h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+              </div>
+          </div>
+      
+          <div class="card-body">
+            
+            <a href="/findings/add/{{ DB_report_query.id }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
+
+            <table id="findingList" class="table table-bordered table-hover">     
+              <thead>
+                  <tr>
+                      <th style="width: 30%" class="text-center">Title</th>
+                      <th style="width: 10%" class="text-center">Severity</th>
+                      <th style="width: 10%" class="text-center">Status</th>
+                      <th style="width: 5%" class="text-center">CVSS</th>
+                      <th style="width: 25%" class="text-center">Action</th>
+                  </tr>
+              </thead>
+      
+              <tbody>
+  
+                  {% for finding in DB_finding_query %}
+                  
+                  
+                      <tr>
+                          <td>
+                              {{ finding.title }}
+                          </td>
+  
+                          <td>
+                              {% if finding.severity == "Critical" %}
+                                  <b><font color="#CC0000">{{ finding.severity }}</font></b>
+                              {% elif finding.severity == "High" %}
+                                  <b><font color="#F20000">{{ finding.severity }}</font></b>
+                              {% elif finding.severity == "Medium" %}
+                                  <b><font color="#FC7F03">{{ finding.severity }}</font></b>
+                              {% elif finding.severity == "Low" %}
+                                  <b><font color="#05B04F">{{ finding.severity }}</font></b>
+                              {% elif finding.severity == "Info" %}
+                                  <b><font color="#45A7F7">{{ finding.severity }}</font></b>
+                              {% else %}
+                                  <b>{{ finding.severity }}</b>
+                              {% endif %}
+                          </td>
+  
+                          <td>
+                              {{ finding.status }}
+                          </td>
+  
+                          <td>
+                              {{ finding.cvss_score }}
+                          </td>
+  
+                          <td class="project-actions text-center">
+                            <a href="{% url 'view_finding' finding.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i>View</button></a>                            
+                            <a href="{% url 'edit_finding' finding.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
+                           
+                            <a href="{% url 'finding_delete' finding.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Delete</button></a>
+                        </td>
+  
+                      </tr>
+  
+                  {% endfor %}
+  
+              </tbody>
+            </table>
+          </div>  
+          <!-- End Body -->
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Row -->
+    </div>
+    <!-- End FINDINGS -->
+  </div>
+
+</section>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+
+<script type="text/javascript">
+    var chartSeveritybar = echarts.init(document.getElementById('SeveritybarChartEcharts'));
+
+    var option = {
+        title: {
+        },
+        tooltip: {},
+        legend: {
+            data:['Severity']
+        },
+        toolbox: {
+          show: false,
+          feature: {
+              saveAsImage: {
+                show: true,
+                title: "Save Image",
+                name: "Breakdown_by_Severity"
+              }
+          }
+        },
+        xAxis: {
+            type: 'category',
+            data: [{
+              value: "Critical",
+              textStyle: {
+                fontSize:15
+              }
+             },{
+              value: "High",
+              textStyle: {
+                fontSize:15
+              }
+             }, {
+              value: "Medium",
+              textStyle: {
+                fontSize:15
+              }
+             } , {
+              value: "Low",
+              textStyle: {
+                fontSize:15
+              }
+             }, {
+              value: "Info",
+              textStyle: {
+                fontSize:15
+              }
+             }]
+        },
+        yAxis: {
+          type: 'value',
+          interval: 1,
+          axisLabel:{
+           fontSize: 12
+          }
+        },
+
+        series: [{
+            type: 'bar',
+            stack: 1,
+            animation: false,
+        bars: {
+            show: false,
+            barWidth: 0.2,
+            fill:10
+        },
+
+        data: [
+
+            {
+                value: {{count_findings_critical}},
+                itemStyle: {color: '#cc0000'},
+            },
+            {
+                value: {{count_findings_high}},
+                itemStyle: {color: '#ff403d'},
+            },
+            {
+                value: {{count_findings_medium}},
+                itemStyle: {color: '#fc7f03'},
+            },
+            {
+                value: {{count_findings_low}},
+                itemStyle: {color: '#05b04f'},
+            },
+            {
+                value: {{count_findings_info}},
+                itemStyle: {color: '#45a7f7'},
+            }
+          ]
+        }]
+    };
+
+    chartSeveritybar.setOption(option);
+
+</script>
+
+<!-- <script type="text/javascript">
+    var chart_CWE = echarts.init(document.getElementById('CWEPieChartEcharts'));
+
+    var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} <br>{c}'
+            },
+            toolbox: {
+              show: false,
+              feature: {
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image",
+                    name: "Breakdown_by_Categories"
+                  }
+              }
+            },
+            series: [
+                {
+                    name: 'CWE',
+                    type: 'pie',
+                    radius: '70%',
+                    animation: false,
+
+                    data: {{cwe_categories|safe}},
+                    labelLine: {
+                        show: true
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+    };
+
+    chart_CWE.setOption(option); -->
+
+</script>
+
+
+
+<script type="text/javascript">
+  var chart_OWASP = echarts.init(document.getElementById('OWASPPieChartEcharts'));
+
+  var option_OWASP = {
+          tooltip: {
+              trigger: 'item',
+              formatter: '{b} <br>{c}'
+          },
+          toolbox: {
+            show: false,
+            feature: {
+                saveAsImage: {
+                  show: true,
+                  title: "Save Image",
+                  name: "Breakdown_by_OWASP_Categories"
+                }
+            }
+          },
+          series: [
+              {
+                  name: 'OWASP',
+                  type: 'pie',
+                  radius: '70%',
+                  animation: false,
+
+                  data: {{owasp_categories|safe}},
+                  labelLine: {
+                      show: true
+                  },
+                  emphasis: {
+                      itemStyle: {
+                          shadowBlur: 10,
+                          shadowOffsetX: 0,
+                          shadowColor: 'rgba(0, 0, 0, 0.5)'
+                      }
+                  }
+              }
+          ]
+  };
+
+  chart_OWASP.setOption(option_OWASP);
+
+</script>
+
+<!-- <script type="text/javascript">
+    var chart_Vuln = echarts.init(document.getElementById('VulnPieDoughnutEcharts'));
+
+    var option = {
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '5%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: 'Vulnerabilities',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: false,
+                  fontSize: 40,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: [
+                { value: {{count_findings_critical}}, name: 'Critical', itemStyle: {color: '#cc0000'} },
+                { value: {{count_findings_high}}, name: 'High', itemStyle: {color: '#ff403d'}  },
+                { value: {{count_findings_medium}}, name: 'Medium', itemStyle: {color: '#fc7f03'}  },
+                { value: {{count_findings_low}}, name: 'Low', itemStyle: {color: '#05b04f'}  },
+                { value: {{count_findings_info}}, name: 'Info', itemStyle: {color: '#45a7f7'}  } ]
+            }
+          ]
+        };
+
+    chart_Vuln.setOption(option);
+
+</script> -->
+
+<script type="text/javascript">
+    var chart_status = echarts.init(document.getElementById('StatusPieDoughnutEcharts'));
+
+    var option = {
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            top: '5%',
+            left: 'center'
+          },
+          series: [
+            {
+              name: 'Status',
+              type: 'pie',
+              radius: ['40%', '70%'],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+              },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: false,
+                  fontSize: 40,
+                  fontWeight: 'bold'
+                }
+              },
+              labelLine: {
+                show: false
+              },
+              data: [
+                { value: {{count_open_findings}}, name: 'Open', itemStyle: {color: 'blue'} },
+                { value: {{count_closed_findings}}, name: 'Closed', itemStyle: {color: 'green'} }              ]
+            }
+          ]
+        };
+
+    chart_status.setOption(option);
+
+</script>
+
+<script>
+  $(document).ready(function() {
+  $("#findingList").DataTable({
+      "paging": true,
+      "searching": true,
+      "responsive": true,
+      "lengthChange": false,
+      "autoWidth": false
+  });
+});
+
+</script>
+{% endblock javascripts %}

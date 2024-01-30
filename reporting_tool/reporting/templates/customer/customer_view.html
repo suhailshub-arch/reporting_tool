@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block content %}
+  
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+
+                <div class="col-sm-6">
+                    <h1>Customer {{ Customer_query.name}}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'customer_list' %}">Customer List</a></li>
+                        <li class="breadcrumb-item active">{{ Customer_query.name }}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section class="content">
+
+        <div class="container-fluid">
+            <hr>
+
+            <div class="row">
+
+                <div class="col-lg-3 col-xs-6">
+
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{count_customer_report}}</h3> 
+                            <p>Report{{ count_customer_report|pluralize:"s" }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{customer_findings}}</h3>
+                            <p>Finding{{ customer_findings|pluralize:"s" }}</p>            
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-bug"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                            <h3>{{count_customer_findings_medium}}</h3>
+                            <p>Medium Severity Finding{{ count_customer_findings_medium|pluralize:"es" }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3 col-xs-6">
+
+                    <div class="small-box bg-red">
+                        <div class="inner">
+                            <h3>{{count_customer_findings_critical_high}}</h3>
+                            <p>Critical/High Severity Finding{{ count_customer_findings_critical_high|pluralize:"es" }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-radiation-alt"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            
+
+            {% if Customer_query.description %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <dt>Description</dt>
+                            </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ Customer_query.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+
+            {% if Customer_query.contact %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <dt>Contanct</dt>
+                            </h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ Customer_query.contact }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif%}
+
+            <!-- REPORT -->
+
+            <div class="card card-outline card-primary">
+
+                <div class="card-header">
+
+                    <h3 class="card-title">
+                        <dt>Report List</dt>
+                    </h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+
+                </div>
+            
+                <div class="card-body">
+                    <table id="reportList" class="table table-bordered table-hover">
+            
+                        <thead>
+                            <tr>
+                                <th style="width: 20%">ID</th>
+                                <th style="width: 35%">Report</th>
+                                <th style="width: 10%">Date</th>
+                                <th style="width: 10%">Findings</th>
+                                <th style="width: 25%" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+            
+                        <tbody>
+            
+                            {% for report in Report_query %}
+                            
+                                <tr>
+                                    <td>
+                                        {{ report.report_id }}
+                                    </td>
+            
+                                    <td>
+                                        {{ report.title }}
+                                    </td>
+            
+                                    <td>
+                                        {{ report.creation_date | date:"d-m-Y" }}
+                                    </td>
+            
+                                    <td>
+                                        {{ report.finding_set.count }}
+                                    </td>
+            
+                                    <td class="text-center">
+                                        <a href="{% url 'report_view' report.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>View</button></a>
+                                        <a href="{% url 'report_edit' report.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
+                                        <a href="{% url 'report_delete' report.id %}?next={{ request.path }}">
+                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm">
+                                                <i class="fa fa-edit"></i>Delete
+                                            </button>
+                                        </a>            
+                                    </td>
+            
+                                </tr>
+                            {% endfor %}
+            
+                        </tbody>
+            
+                    </table>
+                </div>
+            </div>
+            <!-- END OF REPORT PART -->
+
+        </div>
+
+        
+    </section>
+
+    {% endblock content %}
+
+    {% block javascripts %}
+      {{ block.super }}
+    
+    <script>
+        $(document).ready(function() {
+        $("#reportList").DataTable({
+            "paging": true,
+            "searching": true,
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false
+        });
+    });
+    
+    </script>
+    
+    {% endblock javascripts %}
