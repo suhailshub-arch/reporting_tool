@@ -420,26 +420,28 @@ def test(request,pk):
     
     
     
-def test_form(request):
-    today = datetime.date.today().strftime('%Y-%m-%d')
-    report_id_format = "PEN-DOC" + str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S'))
+def test_form(request,pk):
+    Report_query = get_object_or_404(Report, pk=pk)
 
     if request.method == 'POST':
-        form = AddReport(request.POST)
-        if form.is_valid():
-            print("FDSHFGSJDFHOISDHFISDHFIUSDHFOISDHFOISDFHOSIDHFOISDFHOISDFHIOSDFH")
-            print("----------------------------------" + form.data['report_id'])         
-            # CHANGE THIS WHEN VIEW IS DONE
-            # return redirect('report/view', pk=report.pk)
-            return redirect('/report/list')
-    else:
-        form = AddReport()
-        form.fields['report_id'].initial = report_id_format
-        form.fields['report_date'].initial = today
-        form.fields['audit'].initial = "%s - %s" % (today,today)
+        form = Add_findings(request.POST)
         
-    return render(request, 'report/report_add.html', {
-        'form': form
-    })
+        if form.is_valid():
+            finding = form.save(commit=False) 
+            finding.report = Report_query       
+            finding.finding_id = uuid.uuid4()
+            finding.save()
+            
+        return redirect('report_finding', pk=pk)
+        
+    else:
+        form = Add_findings()
+        template = 'findings/findings_add.html'
+        context = {
+            'form': form,
+            'Report_query': Report_query
+        }
+
+    return render(request, template, context)
     
 # ---------------------------------------------------------

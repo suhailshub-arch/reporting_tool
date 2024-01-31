@@ -123,3 +123,4 @@ class AddReport(forms.ModelForm):
             'recommendation': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'report_date': TextInput(attrs={'class': 'form-control datetimepicker-input', 'type': "text", 'data-toggle': 'datetimepicker', 'data-target': '#reportdate', 'data-date-format': 'YYYY-MM-DD', 'id': "reportdate", 'required': "required"}),
         }
+        
