@@ -124,3 +124,5 @@ class AddReport(forms.ModelForm):
             'report_date': TextInput(attrs={'class': 'form-control datetimepicker-input', 'type': "text", 'data-toggle': 'datetimepicker', 'data-target': '#reportdate', 'data-date-format': 'YYYY-MM-DD', 'id': "reportdate", 'required': "required"}),
         }
         
+class OWASP_Questions(forms.Form):
+    pass

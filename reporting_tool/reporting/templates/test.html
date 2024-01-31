@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- --------------------------------------------------------------------------------------------------- -->
+
+<section class="content">
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <div class="card card-outline card-danger">
+
+                    <div class="card-header">
+                        <h3 class="card-title">Add Finding</h3>
+                    </div>
+                
+                    
+                    <form role="form" method="post" enctype="multipart/form-data"> 
+
+                        {%csrf_token%}
+
+                        <div class="card-body">
+                            
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Title</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.title }}
+                                </div>
+                            </div>
+                            
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Status</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.status }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">OWASP</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.owasp }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">Severity</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.severity }}
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">CVSS Vector</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.cvss_vector }}
+                                </div>
+                              
+                                
+                            </div>
+                            
+                            
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">CVSS Score</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                  {{ form.cvss_score }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.description }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Location</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.location }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Proof of Concept</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.poc }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Impact</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.impact }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Recommendation</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.recommendation }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">References</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.references }}
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger">Save and finish</button>
+                            </div>
+
+                        </div>
+                    </form> 
+                    
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>  
+
+</section>
+
+
+{% endblock content %}

@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.template import loader
 from django.template.loader import render_to_string
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions
 import datetime
 import pypandoc
 import os
@@ -420,26 +420,23 @@ def test(request,pk):
     
     
     
-def test_form(request,pk):
-    Report_query = get_object_or_404(Report, pk=pk)
+def test_form(request):
 
     if request.method == 'POST':
         form = Add_findings(request.POST)
         
         if form.is_valid():
-            finding = form.save(commit=False) 
-            finding.report = Report_query       
-            finding.finding_id = uuid.uuid4()
-            finding.save()
+            # finding = form.save(commit=False) 
+            # finding.finding_id = uuid.uuid4()
+            print("NICEEEEEEEEEEEE")
             
-        return redirect('report_finding', pk=pk)
+        return redirect('form')
         
     else:
         form = Add_findings()
-        template = 'findings/findings_add.html'
+        template = 'test.html'
         context = {
             'form': form,
-            'Report_query': Report_query
         }
 
     return render(request, template, context)
