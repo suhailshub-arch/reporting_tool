@@ -5,7 +5,7 @@ urlpatterns = [
     #----------------- FINDINGS -------------------------
     path('findings/findings_open_list/', views.findings_open_list, name='findings_open_list'),
     path('findings/findings_closed_list/', views.findings_closed_list, name='findings_closed_list'),
-    path('findings/add/<int:pk>', views.add_finding, name='add_finding'),
+    path('findings/add/<int:pk>/', views.add_finding, name='add_finding'),
     path('findings/view/<int:pk>', views.view_finding, name='view_finding'),
     path('findings/delete/<int:pk>', views.finding_delete, name='finding_delete'),
     path('findings/edit/<int:pk>', views.edit_finding, name='edit_finding'),
@@ -37,6 +37,6 @@ urlpatterns = [
     
     # ----------------TESTINGGG PLS DELETE ---------------------
     path('test/<int:pk>', views.test, name='test'),
-    path('form/', views.test_form, name='test_form'),
+    path('form/<int:pk>', views.test_form, name='test_form'),
     
 ]

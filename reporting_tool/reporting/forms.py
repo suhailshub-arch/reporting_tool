@@ -125,4 +125,19 @@ class AddReport(forms.ModelForm):
         }
         
 class OWASP_Questions(forms.Form):
-    pass
+    
+    severity_choices = (
+        ('', ('(Select severity)')),
+        ('Critical', ('Critical')),
+        ('High', ('High')),
+        ('Medium', ('Medium')),
+        ('Low', ('Low')),
+        ('Info', ('Info')),
+        ('None', ('None')),
+    )
+    
+    owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), label="OWASP", empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP'}))
+    affected_url = SummernoteTextFormField(widget=SummernoteWidget(), label="Affected URL")
+    severity = forms.ChoiceField(choices=severity_choices, label="Severity", required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
+    data_exposed = SummernoteTextFormField(widget=SummernoteWidget(), label="Data Exposed")
+    encryption_issue = SummernoteTextFormField(widget=SummernoteWidget(), label="Encryption Issue")

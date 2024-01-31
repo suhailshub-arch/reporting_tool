@@ -1,15 +1,28 @@
 from collections import Counter
 import textwrap
 import uuid
+from django.urls import reverse
+from dotenv import load_dotenv
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, HttpResponseServerError
 from django.template import loader
 from django.template.loader import render_to_string
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report
 from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions
+from openai import OpenAI
 import datetime
 import pypandoc
 import os
+import json
+
+#---------------------------------------------------
+#                   CHATGPT
+# --------------------------------------------------
+
+load_dotenv()
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+)
 
 def home(request):
     template = loader.get_template('index.html')
@@ -38,6 +51,15 @@ def findings_closed_list(request):
     return HttpResponse(template.render(context, request))
 
 def add_finding(request,pk):
+    report_data_json = request.session.get('report_data', None)
+    # Check if report_data_json is in the session
+    if report_data_json is not None:
+        # Deserialize report_data_json from JSON to a dictionary
+        report_data_dict = json.loads(report_data_json)
+    else:
+        # Handle the case where report_data is not in the session
+        report_data_dict = {}
+    # print(report_data)
     Report_query = get_object_or_404(Report, pk=pk)
 
     if request.method == 'POST':
@@ -53,6 +75,14 @@ def add_finding(request,pk):
         
     else:
         form = Add_findings()
+        form.fields['description'].initial = report_data_dict['description']
+        form.fields['impact'].initial = report_data_dict['impact']
+        form.fields['recommendation'].initial = report_data_dict['recommendation']
+        form.fields['references'].initial = report_data_dict['references']
+        form.fields['owasp'].initial = report_data_dict['owasp']
+        form.fields['cvss_score'].initial = report_data_dict['cvss_score']
+        form.fields['severity'].initial = report_data_dict['criticality']
+        form.fields['status'].initial = "Open"
         template = 'findings/findings_add.html'
         context = {
             'form': form,
@@ -401,12 +431,12 @@ def test(request,pk):
     # for finding in  DB_finding_query:
     #     pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': 'important', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
         # template_findings += ''.join(pdf_finding)
-    pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': DB_finding_query[0], 'icon_finding': 'important', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
-
+    pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.html'), {'finding': DB_finding_query[0], 'icon_finding': 'important', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
+    print(pdf_finding)
     # pdf_finding = textwrap.dedent(pdf_finding)
-    pdf_finding = pdf_finding.encode(encoding="utf-8", errors="ignore").decode()
+    # pdf_finding = pdf_finding.encode(encoding="utf-8", errors="ignore").decode()
 
-    output = pypandoc.convert_text(pdf_finding, to='pdf', outputfile="test.pdf", format='md',extra_args=[
+    output = pypandoc.convert_text(pdf_finding, to='pdf', outputfile="test.pdf", format='html',extra_args=[
                                             '-H', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.tex',
                                             '--from', 'markdown+yaml_metadata_block+raw_html',
                                             '--template', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\report_default.tex',
@@ -418,22 +448,88 @@ def test(request,pk):
         response['Content-Disposition'] = 'inline; filename=file.pdf'  # or 'attachment; filename=file.pdf' for download
         return response
     
+
+def format_chatgpt_output(data):
+    text = data
+    # sections = ["Description:", "Impact:", "Recommendation:", "CVSS Score Number:", "Criticality:", "References:"]
+
+    description = impact = recommendation = cvss_score = criticality = references = ""
+
+    parts = text.split("\n\n")
+    for part in parts:
+        if part.startswith("Description:"):
+            description = part.replace("Description:", "").strip()
+        elif part.startswith("Impact:"):
+            impact = part.replace("Impact:", "").strip()
+        elif part.startswith("Recommendation:"):
+            recommendation = part.replace("Recommendation:", "").strip()
+        elif part.startswith("CVSS Score Number:"):
+            cvss_score = part.replace("CVSS Score Number:", "").strip()
+        elif part.startswith("Criticality:"):
+            criticality = part.replace("Criticality:", "").strip()
+        elif part.startswith("References:"):
+            references = part.replace("References:", "").strip()
+
+    return {
+        'description': description,
+        'impact': impact,
+        'recommendation': recommendation,
+        'cvss_score': cvss_score,
+        'criticality': criticality,
+        'references': references
+    }
     
-    
-def test_form(request):
+def test_form(request, pk):
 
     if request.method == 'POST':
-        form = Add_findings(request.POST)
-        
+        form = OWASP_Questions(request.POST)        
         if form.is_valid():
-            # finding = form.save(commit=False) 
-            # finding.finding_id = uuid.uuid4()
-            print("NICEEEEEEEEEEEE")
+            DB_report_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
+            info = {}
+            prompt = """
+Please provide content for a detailed finding report based on the above information . 
+There are 6 sections to be included. 
+- Description
+- Impact
+- Recommendation (in bullet point form)
+- CVSS Score Number (assign a CVSS score based on your understanding of the vulnerability. Only include the number without any other explanation)
+- Criticality (critical, high, medium, low, info only)
+- References (this should include full links for reference materials). 
+
+Ignore all HTML Tags.
+            """
+            str_info = ""
+            for response in form:
+                if response.field.label == "OWASP":
+                    info[response.field.label] = DB_report_query.owasp_name
+                else:
+                    info[response.field.label] = response.data
+            for label, value in info.items():
+                temp = "{label}: {value}\n"
+                str_info = str_info + temp.format(label = label, value = value)
             
-        return redirect('form')
+            completion = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": str_info}
+                ]
+            )
+            ai_response = completion.choices[0].message.content
+            report_data = format_chatgpt_output(ai_response)
+            report_data['owasp'] = form.data["owasp"]
+            report_data['location'] = form.data["affected_url"]
+            
+            print(report_data['description'])
+            report_data_json = json.dumps(report_data)
+            
+            request.session['report_data'] = report_data_json
+            redirect_url = f'/findings/add/{pk}'
+            
+        return redirect(redirect_url)
         
     else:
-        form = Add_findings()
+        form = OWASP_Questions()
         template = 'test.html'
         context = {
             'form': form,
