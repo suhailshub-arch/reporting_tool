@@ -75,13 +75,14 @@ def add_finding(request,pk):
         
     else:
         form = Add_findings()
-        form.fields['description'].initial = report_data_dict['description']
-        form.fields['impact'].initial = report_data_dict['impact']
-        form.fields['recommendation'].initial = report_data_dict['recommendation']
-        form.fields['references'].initial = report_data_dict['references']
+        form.fields['description'].initial = report_data_dict['Description']
+        form.fields['impact'].initial = report_data_dict['Impact']
+        form.fields['recommendation'].initial = report_data_dict['Recommendation']
+        form.fields['references'].initial = report_data_dict['References']
         form.fields['owasp'].initial = report_data_dict['owasp']
-        form.fields['cvss_score'].initial = report_data_dict['cvss_score']
-        form.fields['severity'].initial = report_data_dict['criticality']
+        form.fields['cvss_score'].initial = report_data_dict['CVSS Score Number']
+        form.fields['severity'].initial = report_data_dict['Criticality']
+        form.fields['location'].initial = report_data_dict['location']
         form.fields['status'].initial = "Open"
         template = 'findings/findings_add.html'
         context = {
@@ -494,14 +495,14 @@ There are 6 sections to be included.
 - Recommendation (in bullet point form)
 - CVSS Score Number (assign a CVSS score based on your understanding of the vulnerability. Only include the number without any other explanation)
 - Criticality (critical, high, medium, low, info only)
-- References (this should include full links for reference materials). 
+- References (this should include full links for reference materials.). 
 
-Ignore all HTML Tags.
+Ignore all HTML Tags. Output in JSON Format with each Section header, eg Description, Impact as keys. Do not include any newline characters in the response.
             """
             str_info = ""
             for response in form:
                 if response.field.label == "OWASP":
-                    info[response.field.label] = DB_report_query.owasp_name
+                    info[response.field.label] = "%s : %s" %(DB_report_query.owasp_full_id , DB_report_query.owasp_name)
                 else:
                     info[response.field.label] = response.data
             for label, value in info.items():
@@ -516,11 +517,29 @@ Ignore all HTML Tags.
                 ]
             )
             ai_response = completion.choices[0].message.content
-            report_data = format_chatgpt_output(ai_response)
+            print("-------------------------------------------------------")
+            print(ai_response)
+            print("-------------------------------------------------------")
+            
+            ai_response = ai_response.replace("'", '"')
+            report_data = json.loads(ai_response)
+            for index, reference in enumerate(report_data['References']):
+                if reference[0] != "-":
+                    report_data['References'][index] = "- " + reference
+                
+
+            for index, recommendation in enumerate(report_data['Recommendation']):
+                if recommendation[0] != "-":
+                    report_data['Recommendation'][index] = "- " + recommendation
+            
+            report_data['References'] = "\n".join(report_data['References'])
+            report_data['Recommendation'] = "\n".join(report_data['Recommendation'])
+            
+
             report_data['owasp'] = form.data["owasp"]
             report_data['location'] = form.data["affected_url"]
             
-            print(report_data['description'])
+            
             report_data_json = json.dumps(report_data)
             
             request.session['report_data'] = report_data_json

@@ -1,4 +1,5 @@
 from django.db import models
+from martor.models import MartorField
 import datetime
 
 #---------------------------- CWE ----------------------------------------
@@ -42,7 +43,7 @@ class DB_OWASP(models.Model):
 class Customer(models.Model):
     name = models.CharField(max_length=255, blank=False)
     contact = models.EmailField(max_length=255, blank=True)
-    description = models.TextField(blank=True)
+    description = MartorField()
     class Meta:
         verbose_name_plural = "Customers"
     def __str__(self):
@@ -83,12 +84,12 @@ class Finding(models.Model):
     severity = models.CharField(max_length=200, blank=True)
     cvss_score = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     cvss_vector = models.CharField(blank=True, max_length=200)
-    description = models.TextField(blank=True)
-    location = models.TextField(blank=True)
-    impact = models.TextField(blank=True)
-    recommendation = models.TextField(blank=True)
-    references = models.TextField(blank=True)
-    poc = models.TextField(blank=True)
+    description = MartorField(blank=True)
+    location = MartorField(blank=True)
+    impact = MartorField(blank=True)
+    recommendation = MartorField(blank=True)
+    references = MartorField(blank=True)
+    poc = MartorField(blank=True)
     creation_date = models.DateTimeField(auto_now_add=True, null=True)
     closed_at = models.DateTimeField(blank=True, null=True)
     owasp =  models.ForeignKey(DB_OWASP, on_delete=models.CASCADE, null=True, blank=True)

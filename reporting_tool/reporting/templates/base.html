@@ -25,6 +25,11 @@
     <!-- ADMINLTE -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
+    <!-- Martor -->
+    <link href="/static/martor/plugins/css/ace.min.css" type="text/css" media="all" rel="stylesheet" />
+    <link href="/static/martor/plugins/css/resizable.min.css" type="text/css" media="all" rel="stylesheet" />
+    <link href="/static/martor/css/martor.bootstrap.min.css" type="text/css" media="all" rel="stylesheet" />
+
     {% block title %}<title>Penetration Testing Tool</title>{% endblock %}
 </head>
 <body>
@@ -107,6 +112,26 @@
     <script src="/static/plugins/datatables.net-buttons/js/buttons.print.min.js"></script>
     <script src="/static/plugins/datatables.net-buttons/js/buttons.colVis.min.js"></script> -->
 
+    
+    <!-- MARTOR -->
+    <script type="text/javascript" src=/static/martor/plugins/js/bootstrap.min.js></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/ace.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/mode-markdown.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/ext-language_tools.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/theme-github.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/typo.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/spellcheck.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/highlight.min.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/resizable.min.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/emojis.min.js"></script>
+    <script type="text/javascript" src="/static/martor/js/martor.bootstrap.js"></script>
+
+    
+    <script>
+        $('.martor-preview pre').each(function(i, block){
+            hljs.highlightBlock(block);
+        });
+    </script>
 
     <!-- ADMIN LTE -->
     <script src="/static/dist/js/adminlte.min.js"></script>

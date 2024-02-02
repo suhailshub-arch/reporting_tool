@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load martortags %}
 {% block content %}
   
     <section class="content-header">
@@ -105,7 +106,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>{{ Customer_query.description }}</p>
+                            <p>{{ Customer_query.description|safe_markdown }}</p>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ from django.forms import Textarea, TextInput, DateInput, ModelChoiceField, Email
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
 from .models import DB_CWE, DB_OWASP, Customer, Report, Finding
+from martor.fields import MartorFormField
+from martor.widgets import MartorWidget
 import datetime
 
 class CustomModelChoiceField(ModelChoiceField):
@@ -91,7 +93,6 @@ class AddCustomer(forms.ModelForm):
 
         widgets = {
             'name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Name")}),
-            'description': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Description")}),
             'contact': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Contact")}),
         }
     
@@ -137,7 +138,7 @@ class OWASP_Questions(forms.Form):
     )
     
     owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), label="OWASP", empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP'}))
-    affected_url = SummernoteTextFormField(widget=SummernoteWidget(), label="Affected URL")
+    affected_url = MartorFormField( label="Affected URL")
     severity = forms.ChoiceField(choices=severity_choices, label="Severity", required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
-    data_exposed = SummernoteTextFormField(widget=SummernoteWidget(), label="Data Exposed")
-    encryption_issue = SummernoteTextFormField(widget=SummernoteWidget(), label="Encryption Issue")
+    data_exposed = MartorFormField( label="Data Exposed")
+    encryption_issue = MartorFormField( label="Encryption Issue")
