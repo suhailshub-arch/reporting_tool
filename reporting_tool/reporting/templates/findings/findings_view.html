@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load martortags %}
 {% block content %}
 
 <section class="content-header">
@@ -175,7 +176,7 @@
   
                   <div class="card-body">
                       
-                    {{ finding.title }}
+                    {{ finding.title | safe_markdown }}
                       
                   </div>
                 </div>
@@ -200,13 +201,13 @@
             
                             <div class="card-body">
                                 
-                              {{ finding.description | safe }}
+                              {{ finding.description | safe_markdown }}
                                 
                             </div>
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="row mb-6">
                     <div class="col-md-12">
             
@@ -226,13 +227,38 @@
             
                             <div class="card-body">
                                 
-                              {{ finding.location | safe }}
+                              {{ finding.location | safe_markdown }}
                                 
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="row mb-6">
+                  <div class="col-md-12">
+          
+                      <div class="card card-outline card-danger">
+                          <div class="card-header">
+                            <h3 class="card-title">
+                              <i class="far fa-chart-bar"></i>
+                              <b>Proof of Concept</b>
+                            </h3>
+                            <div class="card-tools">
+                              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                              </button>
+                            </div>
+          
+                          </div>
+          
+                          <div class="card-body">
+                              
+                            {{ finding.poc | safe_markdown }}
+                              
+                          </div>
+                      </div>
+                  </div>
+                </div>
 
                 <div class="row mb-6">
                     <div class="col-md-12">
@@ -253,7 +279,7 @@
             
                             <div class="card-body">
                                 
-                              {{ finding.impact | safe }}
+                              {{ finding.impact | safe_markdown }}
                                 
                             </div>
                         </div>
@@ -280,7 +306,7 @@
             
                             <div class="card-body">
                                 
-                              {{ finding.recommendation | safe }}
+                              {{ finding.recommendation | safe_markdown }}
                                 
                             </div>
                         </div>
@@ -306,7 +332,7 @@
             
                             <div class="card-body">
                                 
-                              {{ finding.references | safe }}
+                              {{ finding.references | safe_markdown }}
                                 
                             </div>
                         </div>

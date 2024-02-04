@@ -142,3 +142,59 @@ class OWASP_Questions(forms.Form):
     severity = forms.ChoiceField(choices=severity_choices, label="Severity", required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
     data_exposed = MartorFormField( label="Data Exposed")
     encryption_issue = MartorFormField( label="Encryption Issue")
+    
+class TEST_FORM(forms.Form):
+    
+    severity_choices = (
+        ('', ('(Select severity)')),
+        ('Critical', ('Critical')),
+        ('High', ('High')),
+        ('Medium', ('Medium')),
+        ('Low', ('Low')),
+        ('Info', ('Info')),
+        ('None', ('None')),
+    )
+    
+    owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), label="OWASP", empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP', 'id': 'id_owasp'}))
+    affected_url = MartorFormField( label="Affected URL")
+    severity = forms.ChoiceField(choices=severity_choices, label="Severity", required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
+
+    # Broken Access Control Fields
+    unauthorized_actions = MartorFormField( label="Data Exposed", required=False)
+    access_control_flaw = MartorFormField( label="Data Exposed", required=False)
+    
+    # Cryptographic Fields
+    data_exposed = MartorFormField( label="Data Exposed", required=False)
+    encryption_issue = MartorFormField( label="Encryption Issue", required=False)
+    
+    # Injection Fields
+    injection_type = MartorFormField( label="Injection Type", required=False)
+    injection_input = MartorFormField( label="Injection Input", required=False)
+    
+    # Insecure Design
+    design_flaw = MartorFormField( label="Data Exposed", required=False)
+    affected_component = MartorFormField( label="Data Exposed", required=False)
+    
+    # Security Misconfiguration
+    misconfigured_element = MartorFormField( label="Data Exposed", required=False)
+    configuration_flaw = MartorFormField( label="Data Exposed", required=False)
+    
+    # Vulnerable and Outdated Components
+    component_name = MartorFormField( label="Data Exposed", required=False)
+    component_version = MartorFormField( label="Data Exposed", required=False)
+    
+    # Identification and Authentication Failure
+    authentication_issue = MartorFormField( label="Data Exposed", required=False)
+    impact_of_issue = MartorFormField( label="Data Exposed", required=False)
+    
+    # Software and Data Integrity Failure
+    integrity_issue = MartorFormField( label="Data Exposed", required=False)
+    source_of_issue = MartorFormField( label="Data Exposed", required=False)
+    
+    # Security Logging and Monitoring Failures
+    logging_flaw = MartorFormField( label="Data Exposed", required=False)
+    detection_issue = MartorFormField( label="Data Exposed", required=False)
+    
+    # SSRF
+    trigger_point = MartorFormField( label="Data Exposed", required=False)
+    ssrf_impact = MartorFormField( label="Data Exposed", required=False)

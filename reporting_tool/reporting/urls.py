@@ -38,5 +38,7 @@ urlpatterns = [
     # ----------------TESTINGGG PLS DELETE ---------------------
     path('test/<int:pk>', views.test, name='test'),
     path('form/<int:pk>', views.test_form, name='test_form'),
+    # path('testing/add/finding', views.testing, name='testing'),
+    # path('ajax/get_dynamic_fields', views.get_dynamic_fields, name='get_dynamic_fields'),   
     
 ]

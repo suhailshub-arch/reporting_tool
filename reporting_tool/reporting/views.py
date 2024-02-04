@@ -1,14 +1,15 @@
 from collections import Counter
 import textwrap
+from time import sleep
 import uuid
 from django.urls import reverse
 from dotenv import load_dotenv
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.template import loader
 from django.template.loader import render_to_string
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, TEST_FORM
 from openai import OpenAI
 import datetime
 import pypandoc
@@ -23,6 +24,31 @@ load_dotenv()
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
+
+def format_chatgpt_output(ai_response, form):
+    ai_response = ai_response.replace("'", '"')
+    report_data = json.loads(ai_response)
+    if type(report_data['References']) is not str:
+        for index, reference in enumerate(report_data['References']):
+            if reference[0] != "-":
+                report_data['References'][index] = "- " + reference
+        report_data['References'] = "\n".join(report_data['References'])
+        
+    if type(report_data['Recommendation']) is not str:
+        for index, recommendation in enumerate(report_data['Recommendation']):
+            if recommendation[0] != "-":
+                report_data['Recommendation'][index] = "- " + recommendation
+        
+        report_data['Recommendation'] = "\n".join(report_data['Recommendation'])
+    
+
+    report_data['owasp'] = form.data["owasp"]
+    report_data['location'] = form.data["affected_url"]
+    return report_data
+
+#---------------------------------------------------
+#                   HOME
+# --------------------------------------------------
 
 def home(request):
     template = loader.get_template('index.html')
@@ -423,6 +449,8 @@ def report_finding(request,pk):
         'DB_finding_query' : DB_finding_query,
     })
     
+
+    
 # ------------- PLS DELETE TESTING ----------------------
 
 def test(request,pk):
@@ -449,43 +477,13 @@ def test(request,pk):
         response['Content-Disposition'] = 'inline; filename=file.pdf'  # or 'attachment; filename=file.pdf' for download
         return response
     
-
-def format_chatgpt_output(data):
-    text = data
-    # sections = ["Description:", "Impact:", "Recommendation:", "CVSS Score Number:", "Criticality:", "References:"]
-
-    description = impact = recommendation = cvss_score = criticality = references = ""
-
-    parts = text.split("\n\n")
-    for part in parts:
-        if part.startswith("Description:"):
-            description = part.replace("Description:", "").strip()
-        elif part.startswith("Impact:"):
-            impact = part.replace("Impact:", "").strip()
-        elif part.startswith("Recommendation:"):
-            recommendation = part.replace("Recommendation:", "").strip()
-        elif part.startswith("CVSS Score Number:"):
-            cvss_score = part.replace("CVSS Score Number:", "").strip()
-        elif part.startswith("Criticality:"):
-            criticality = part.replace("Criticality:", "").strip()
-        elif part.startswith("References:"):
-            references = part.replace("References:", "").strip()
-
-    return {
-        'description': description,
-        'impact': impact,
-        'recommendation': recommendation,
-        'cvss_score': cvss_score,
-        'criticality': criticality,
-        'references': references
-    }
     
 def test_form(request, pk):
 
     if request.method == 'POST':
         form = OWASP_Questions(request.POST)        
         if form.is_valid():
-            DB_report_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
+            DB_owasp_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
             info = {}
             prompt = """
 Please provide content for a detailed finding report based on the above information . 
@@ -502,42 +500,32 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
             str_info = ""
             for response in form:
                 if response.field.label == "OWASP":
-                    info[response.field.label] = "%s : %s" %(DB_report_query.owasp_full_id , DB_report_query.owasp_name)
+                    info[response.field.label] = "%s : %s" %(DB_owasp_query.owasp_full_id , DB_owasp_query.owasp_name)
                 else:
                     info[response.field.label] = response.data
             for label, value in info.items():
                 temp = "{label}: {value}\n"
                 str_info = str_info + temp.format(label = label, value = value)
             
-            completion = client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": str_info}
-                ]
-            )
-            ai_response = completion.choices[0].message.content
-            print("-------------------------------------------------------")
-            print(ai_response)
-            print("-------------------------------------------------------")
-            
-            ai_response = ai_response.replace("'", '"')
-            report_data = json.loads(ai_response)
-            for index, reference in enumerate(report_data['References']):
-                if reference[0] != "-":
-                    report_data['References'][index] = "- " + reference
-                
-
-            for index, recommendation in enumerate(report_data['Recommendation']):
-                if recommendation[0] != "-":
-                    report_data['Recommendation'][index] = "- " + recommendation
-            
-            report_data['References'] = "\n".join(report_data['References'])
-            report_data['Recommendation'] = "\n".join(report_data['Recommendation'])
-            
-
-            report_data['owasp'] = form.data["owasp"]
-            report_data['location'] = form.data["affected_url"]
+            while True:
+                try:
+                    completion = client.chat.completions.create(
+                        # model="gpt-4",
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {"role": "system", "content": prompt},
+                            {"role": "user", "content": str_info}
+                        ]
+                    )
+                    ai_response = completion.choices[0].message.content
+                    # print("-------------------------------------------------------")
+                    # print(ai_response)
+                    # print("-------------------------------------------------------")
+                    
+                    report_data = format_chatgpt_output(ai_response,form)
+                    break
+                except json.JSONDecodeError:
+                    sleep(0.5)
             
             
             report_data_json = json.dumps(report_data)
@@ -548,12 +536,24 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
         return redirect(redirect_url)
         
     else:
-        form = OWASP_Questions()
-        template = 'test.html'
+        form = TEST_FORM()
+        template = 'testing.html'
         context = {
             'form': form,
         }
 
     return render(request, template, context)
+
+def testing(request):
+    if request.method == 'POST':
+        pass
+    else:
+        template = 'testing.html'
+        form = TEST_FORM()
+        context = {
+            'form': form
+        }
+        return render(request,template,context)
     
+
 # ---------------------------------------------------------
