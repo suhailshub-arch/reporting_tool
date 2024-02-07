@@ -125,25 +125,8 @@ class AddReport(forms.ModelForm):
             'report_date': TextInput(attrs={'class': 'form-control datetimepicker-input', 'type': "text", 'data-toggle': 'datetimepicker', 'data-target': '#reportdate', 'data-date-format': 'YYYY-MM-DD', 'id': "reportdate", 'required': "required"}),
         }
         
+    
 class OWASP_Questions(forms.Form):
-    
-    severity_choices = (
-        ('', ('(Select severity)')),
-        ('Critical', ('Critical')),
-        ('High', ('High')),
-        ('Medium', ('Medium')),
-        ('Low', ('Low')),
-        ('Info', ('Info')),
-        ('None', ('None')),
-    )
-    
-    owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), label="OWASP", empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP'}))
-    affected_url = MartorFormField( label="Affected URL")
-    severity = forms.ChoiceField(choices=severity_choices, label="Severity", required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
-    data_exposed = MartorFormField( label="Data Exposed")
-    encryption_issue = MartorFormField( label="Encryption Issue")
-    
-class TEST_FORM(forms.Form):
     
     severity_choices = (
         ('', ('(Select severity)')),

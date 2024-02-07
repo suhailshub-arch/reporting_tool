@@ -1,20 +1,30 @@
-from collections import Counter
-import textwrap
-from time import sleep
-import uuid
+
 from django.urls import reverse
-from dotenv import load_dotenv
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse, HttpResponseServerError, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse
 from django.template import loader
 from django.template.loader import render_to_string
+from django.core.files.base import ContentFile
+
+
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, TEST_FORM
+
+
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions
+
+
+from dotenv import load_dotenv
+from collections import Counter
+from time import sleep
 from openai import OpenAI
 import datetime
 import pypandoc
 import os
 import json
+import base64
+import pathlib
+import textwrap
+import uuid
 
 #---------------------------------------------------
 #                   CHATGPT
@@ -110,6 +120,7 @@ def add_finding(request,pk):
         form.fields['severity'].initial = report_data_dict['Criticality']
         form.fields['location'].initial = report_data_dict['location']
         form.fields['status'].initial = "Open"
+        form.fields['poc'].initial = "TBC"
         template = 'findings/findings_add.html'
         context = {
             'form': form,
@@ -155,6 +166,72 @@ def finding_delete(request,pk):
     Finding.objects.filter(pk=pk).delete()
     next_url = request.GET.get('next', '/')
     return redirect(next_url)
+
+def initial_add_finding(request, pk):
+
+    if request.method == 'POST':
+        form = OWASP_Questions(request.POST)        
+        if form.is_valid():
+            DB_owasp_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
+            info = {}
+            prompt = """
+Please provide content for a detailed finding report based on the above information . 
+There are 6 sections to be included. 
+- Description
+- Impact
+- Recommendation (in bullet point form)
+- CVSS Score Number (assign a CVSS score based on your understanding of the vulnerability. Only include the number without any other explanation)
+- Criticality (critical, high, medium, low, info only)
+- References (this should include full links for reference materials.). 
+
+Ignore all HTML Tags. Output in JSON Format with each Section header, eg Description, Impact as keys. Do not include any newline characters in the response.
+            """
+            str_info = ""
+            for response in form:
+                if response.field.label == "OWASP":
+                    info[response.field.label] = "%s : %s" %(DB_owasp_query.owasp_full_id , DB_owasp_query.owasp_name)
+                else:
+                    info[response.field.label] = response.data
+            for label, value in info.items():
+                temp = "{label}: {value}\n"
+                str_info = str_info + temp.format(label = label, value = value)
+            
+            while True:
+                try:
+                    completion = client.chat.completions.create(
+                        # model="gpt-4",
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {"role": "system", "content": prompt},
+                            {"role": "user", "content": str_info}
+                        ]
+                    )
+                    ai_response = completion.choices[0].message.content
+                    # print("-------------------------------------------------------")
+                    # print(ai_response)
+                    # print("-------------------------------------------------------")
+                    
+                    report_data = format_chatgpt_output(ai_response,form)
+                    break
+                except json.JSONDecodeError:
+                    sleep(0.5)
+            
+            
+            report_data_json = json.dumps(report_data)
+            
+            request.session['report_data'] = report_data_json
+            redirect_url = f'/findings/add/{pk}'
+            
+        return redirect(redirect_url)
+        
+    else:
+        form = OWASP_Questions()
+        template = 'testing.html'
+        context = {
+            'form': form,
+        }
+
+    return render(request, template, context)
     
 
 #---------------------------------------------------
@@ -450,110 +527,123 @@ def report_finding(request,pk):
     })
     
 
-    
-# ------------- PLS DELETE TESTING ----------------------
+def uploadsummaryfindings(request, pk):
+    DB_report_query = get_object_or_404(Report, pk=pk)
 
-def test(request,pk):
+    if request.method == 'POST':
+
+        # Severitybar
+        summary_finding_file_base64 = request.POST['fileSeveritybar']
+        format, summary_finding_file_str = summary_finding_file_base64.split(';base64,')
+        summary_ext = format.split('/')[-1]
+        dataimgSeveritybar = ContentFile(base64.b64decode(summary_finding_file_str))
+
+         # OWASP Categories
+        owasp_summary_categories_file_base64 = request.POST['file_owasp']
+        formatf, owasp_summary_categories_finding_file_str = owasp_summary_categories_file_base64.split(';base64,')
+        owasp_ext = formatf.split('/')[-1]
+        dataOWASP = ContentFile(base64.b64decode(owasp_summary_categories_finding_file_str))
+
+        DB_report_query.executive_summary_image = summary_finding_file_base64
+        DB_report_query.owasp_categories_summary_image = owasp_summary_categories_file_base64
+        DB_report_query.save()
+
+        return HttpResponse('{"status":"success"}', content_type='application/json')
+    else:
+        return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
+
+
+def reportdownloadpdf(request,pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
-    # print(DB_finding_query[0].title)
-    # for finding in  DB_finding_query:
-    #     pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': 'important', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
-        # template_findings += ''.join(pdf_finding)
-    pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.html'), {'finding': DB_finding_query[0], 'icon_finding': 'important', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
-    print(pdf_finding)
-    # pdf_finding = textwrap.dedent(pdf_finding)
-    # pdf_finding = pdf_finding.encode(encoding="utf-8", errors="ignore").decode()
 
-    output = pypandoc.convert_text(pdf_finding, to='pdf', outputfile="test.pdf", format='html',extra_args=[
-                                            '-H', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.tex',
-                                            '--from', 'markdown+yaml_metadata_block+raw_html',
-                                            '--template', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\report_default.tex',
-                                            '--pdf-engine', 'pdflatex',
-                                            '--filter', 'pandoc-latex-environment'])
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------    
+
+    # Datetime
+    now = datetime.datetime.utcnow()
+    report_date = DB_report_query.report_date.strftime('%d-%m-%Y')
+
+    # PDF filename
+    file_name = 'PEN_PDF' + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.pdf'
+
+    # INIT
+    template_findings = template_appendix = pdf_finding_summary = ''
+    md_author = 'Shub'
+    md_subject = 'PDF REPORT'
+    md_website = 'https//:www.shub_pentest.com'
     
+    # IMAGES
+    report_executive_summary_image = DB_report_query.executive_summary_image
+    report_owasp_categories_image = DB_report_query.owasp_categories_summary_image
+    
+    counter_finding = counter_finding_critical = counter_finding_high = counter_finding_medium = counter_finding_low = counter_finding_info = 0
+
+    for finding in DB_finding_query:
+
+
+        # Only reporting Critical/High/Medium/Low/Info findings
+        if finding.severity == 'None':
+            pass
+        else:
+            counter_finding += 1
+
+            if finding.severity == 'Critical':
+                counter_finding_critical += 1
+                icon_finding = 'important'
+                severity_color = 'criticalcolor'
+                severity_box = 'criticalbox'
+            elif finding.severity == 'High':
+                counter_finding_high += 1
+                icon_finding = 'highnote'
+                severity_color = 'highcolor'
+                severity_box = 'highbox'
+            elif finding.severity == 'Medium':
+                counter_finding_medium += 1
+                icon_finding = 'mediumnote'
+                severity_color = 'mediumcolor'
+                severity_box = 'mediumbox'
+            elif finding.severity == 'Low':
+                counter_finding_low += 1
+                icon_finding = 'lownote'
+                severity_color = 'lowcolor'
+                severity_box = 'lowbox'
+            else:
+                counter_finding_info += 1
+                icon_finding = 'debugnote'
+                severity_color = 'debugcolor'
+                severity_box = 'infobox'
+
+            pdf_finding_summary += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding_summary.md'),{'finding': finding,'counter_finding': counter_finding, 'severity_box': severity_box})
+            severity_color_finding = "\\textcolor{" + f"{severity_color}" +"}{" + f"{finding.severity}" + "}"
+
+            # finding
+            pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding })
+            template_findings += ''.join(pdf_finding)
+
+    pdf_markdown_report = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
+    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary})
+
+    final_markdown = textwrap.dedent(pdf_markdown_report)
+
+    
+    
+    
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------
+   
+    # pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': DB_finding_query[0], 'icon_finding': 'highblock', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
+    # pdf_finding = pdf_finding.encode(encoding="utf-8", errors="ignore").decode()
+    # final_markdown = textwrap.dedent(pdf_markdown_report)
+    header = render_to_string(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.yaml')
+    final_markdown = header + final_markdown 
+    
+    pypandoc.convert_text(final_markdown, to='pdf', outputfile="test.pdf", format='md',extra_args=[
+                                        '-H', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.tex',
+                                        '--filter', 'pandoc-latex-environment',
+                                        '--from', 'markdown+yaml_metadata_block+raw_html',
+                                        '--template', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\report_default.tex',
+                                        '--pdf-engine', 'pdflatex',])
     with open('test.pdf', 'rb') as fh:
         response = HttpResponse(fh.read(), content_type="application/pdf")
-        response['Content-Disposition'] = 'inline; filename=file.pdf'  # or 'attachment; filename=file.pdf' for download
+        response['Content-Disposition'] = 'inline; filename=' + file_name  # or 'attachment/inline; filename=file.pdf' 
         return response
     
-    
-def test_form(request, pk):
-
-    if request.method == 'POST':
-        form = OWASP_Questions(request.POST)        
-        if form.is_valid():
-            DB_owasp_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
-            info = {}
-            prompt = """
-Please provide content for a detailed finding report based on the above information . 
-There are 6 sections to be included. 
-- Description
-- Impact
-- Recommendation (in bullet point form)
-- CVSS Score Number (assign a CVSS score based on your understanding of the vulnerability. Only include the number without any other explanation)
-- Criticality (critical, high, medium, low, info only)
-- References (this should include full links for reference materials.). 
-
-Ignore all HTML Tags. Output in JSON Format with each Section header, eg Description, Impact as keys. Do not include any newline characters in the response.
-            """
-            str_info = ""
-            for response in form:
-                if response.field.label == "OWASP":
-                    info[response.field.label] = "%s : %s" %(DB_owasp_query.owasp_full_id , DB_owasp_query.owasp_name)
-                else:
-                    info[response.field.label] = response.data
-            for label, value in info.items():
-                temp = "{label}: {value}\n"
-                str_info = str_info + temp.format(label = label, value = value)
-            
-            while True:
-                try:
-                    completion = client.chat.completions.create(
-                        # model="gpt-4",
-                        model="gpt-3.5-turbo",
-                        messages=[
-                            {"role": "system", "content": prompt},
-                            {"role": "user", "content": str_info}
-                        ]
-                    )
-                    ai_response = completion.choices[0].message.content
-                    # print("-------------------------------------------------------")
-                    # print(ai_response)
-                    # print("-------------------------------------------------------")
-                    
-                    report_data = format_chatgpt_output(ai_response,form)
-                    break
-                except json.JSONDecodeError:
-                    sleep(0.5)
-            
-            
-            report_data_json = json.dumps(report_data)
-            
-            request.session['report_data'] = report_data_json
-            redirect_url = f'/findings/add/{pk}'
-            
-        return redirect(redirect_url)
-        
-    else:
-        form = TEST_FORM()
-        template = 'testing.html'
-        context = {
-            'form': form,
-        }
-
-    return render(request, template, context)
-
-def testing(request):
-    if request.method == 'POST':
-        pass
-    else:
-        template = 'testing.html'
-        form = TEST_FORM()
-        context = {
-            'form': form
-        }
-        return render(request,template,context)
-    
-
-# ---------------------------------------------------------

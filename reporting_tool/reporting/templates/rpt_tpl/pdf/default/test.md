@@ -1,21 +1,4 @@
 ---
-title: "{{DB_report_query.title}}"
-product: "{{DB_report_query.customer.name}}"
-author: ["{{md_author}}", "{{md_website}}"]
-date: "{{report_date}}"
-subject: "{{md_subject}}"
-subtitle: "{{DB_report_query.report_id}}"
-lang: "{{report_pdf_language}}"
-titlepage: true
-titlepage-color: "{{titlepagecolor}}"
-titlepage-text-color: "{{titlepagetextcolor}}"
-titlepage-rule-color: "{{titlerulecolor}}"
-titlepage-rule-height: "{{titlepageruleheight}}"
-book: false
-toc-own-page: true
-code-block-font-size: \scriptsize
-colorlinks: true
-
 pandoc-latex-environment:
     noteblock: [note]
     tipblock: [tip]
@@ -39,6 +22,7 @@ pandoc-latex-environment:
     recommendationblock: [recommendationnote]
     referencesblock: [referencesnote]
     additional_notesblock: [additional_notesnote]
-
 ---
-
+::: highnote
+This is a test of the highnote environment.
+:::

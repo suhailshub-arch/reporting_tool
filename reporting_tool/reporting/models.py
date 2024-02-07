@@ -58,6 +58,8 @@ class Report(models.Model):
     report_id = models.CharField(max_length=255, blank=False, unique=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, blank=False)
+    executive_summary_image = models.TextField(blank=True, null=True)
+    owasp_categories_summary_image = models.TextField(blank=True)
     executive_summary = models.TextField()
     scope = models.TextField()
     outofscope = models.TextField()

@@ -19,9 +19,12 @@
 
         <br>
 
-        <div class="row">
-            <div class="col-md-5">
+        <div class="btn-group">
               <a href="/report/finding/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Findings</button></a>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
         </div>
 
     </div>
@@ -458,7 +461,7 @@
       
           <div class="card-body">
             
-            <a href="/form/{{ DB_report_query.id }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
+            <a href="{% url 'initial_add_finding' DB_report_query.id %}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
 
             <table id="findingList" class="table table-bordered table-hover">     
               <thead>
@@ -811,12 +814,49 @@
               },
               data: [
                 { value: {{count_open_findings}}, name: 'Open', itemStyle: {color: 'blue'} },
-                { value: {{count_closed_findings}}, name: 'Closed', itemStyle: {color: 'green'} }              ]
+                { value: {{count_closed_findings}}, name: 'Closed', itemStyle: {color: 'green'} }]
             }
           ]
         };
 
     chart_status.setOption(option);
+
+</script>
+
+<script>
+
+  function SaveSummaryImage() {
+        var imgSeveritybar = new Image();
+        imgSeveritybar.src = chartSeveritybar.getDataURL({
+            pixelRatio: 2,
+            backgroundColor: '#fff'
+        });
+
+        var imgOWASP = new Image();
+        imgOWASP.src = chart_OWASP.getDataURL({
+            pixelRatio: 1,
+            backgroundColor: '#fff'
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: "/report/uploadsummaryfindings/" + {{ DB_report_query.pk }}, // prepend a language code or even better: use window.location.href
+            headers:{
+              "X-CSRFToken": '{{ csrf_token }}'
+            },
+            data : { 'fileSeveritybar': imgSeveritybar.src, 'file_owasp': imgOWASP.src },
+
+            success : function(json) {
+                //console.log("requested complete");
+                if (json.status == 'success'){
+                  document.location.href = "/report/download/pdf/{{ DB_report_query.pk }}";
+                  //window.open('/report/download/pdf/{{ DB_report_query.pk }}', '_blank');
+
+                }
+            }
+        })
+
+  }
 
 </script>
 

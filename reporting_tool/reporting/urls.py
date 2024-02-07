@@ -6,6 +6,7 @@ urlpatterns = [
     path('findings/findings_open_list/', views.findings_open_list, name='findings_open_list'),
     path('findings/findings_closed_list/', views.findings_closed_list, name='findings_closed_list'),
     path('findings/add/<int:pk>/', views.add_finding, name='add_finding'),
+    path('findings/add_inital/<int:pk>/', views.initial_add_finding, name='initial_add_finding'),
     path('findings/view/<int:pk>', views.view_finding, name='view_finding'),
     path('findings/delete/<int:pk>', views.finding_delete, name='finding_delete'),
     path('findings/edit/<int:pk>', views.edit_finding, name='edit_finding'),
@@ -30,14 +31,16 @@ urlpatterns = [
     path('report/edit/<int:pk>', views.report_edit, name='report_edit'),
     path('report/view/<int:pk>', views.report_view, name='report_view'),
     path('report/delete/<int:pk>', views.report_delete, name='report_delete'),   
-    path('report/finding/<int:pk>', views.report_finding, name='report_finding'), 
+    path('report/finding/<int:pk>', views.report_finding, name='report_finding'),
+    path('report/uploadsummaryfindings/<int:pk>', views.uploadsummaryfindings, name='uploadsummaryfindings'),
+    path('report/download/pdf/<int:pk>', views.reportdownloadpdf, name='reportdownloadpdf'), 
     
     #----------------------- HOME ------------------------
     path('', views.home, name='index'),
     
     # ----------------TESTINGGG PLS DELETE ---------------------
-    path('test/<int:pk>', views.test, name='test'),
-    path('form/<int:pk>', views.test_form, name='test_form'),
+    
+    # path('form/<int:pk>', views.test_form, name='test_form'),
     # path('testing/add/finding', views.testing, name='testing'),
     # path('ajax/get_dynamic_fields', views.get_dynamic_fields, name='get_dynamic_fields'),   
     
