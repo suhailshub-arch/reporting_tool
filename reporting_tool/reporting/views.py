@@ -175,7 +175,8 @@ def initial_add_finding(request, pk):
             DB_owasp_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
             info = {}
             prompt = """
-Please provide content for a detailed finding report based on the above information . 
+You are a professional penetration tester. You have performed a penetration test on a particular company. You will provided details on a particular vulnerability that was found during the penetration test. 
+Please provide content for a detailed finding report based on the information that will be given. The report will be included as part of the complete penetration testing report.
 There are 6 sections to be included. 
 - Description
 - Impact
@@ -199,17 +200,14 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
             while True:
                 try:
                     completion = client.chat.completions.create(
-                        # model="gpt-4",
-                        model="gpt-3.5-turbo",
+                        model="gpt-4",
+                        # model="gpt-3.5-turbo",
                         messages=[
                             {"role": "system", "content": prompt},
                             {"role": "user", "content": str_info}
                         ]
                     )
                     ai_response = completion.choices[0].message.content
-                    # print("-------------------------------------------------------")
-                    # print(ai_response)
-                    # print("-------------------------------------------------------")
                     
                     report_data = format_chatgpt_output(ai_response,form)
                     break
@@ -226,7 +224,7 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
         
     else:
         form = OWASP_Questions()
-        template = 'testing.html'
+        template = 'findings/findings_initital_add.html'
         context = {
             'form': form,
         }

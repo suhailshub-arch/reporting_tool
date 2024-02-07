@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    
+    {% block stylesheets %}
     <!-- Tempus Dominus JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
 
@@ -26,6 +26,8 @@
     <link href="/static/martor/plugins/css/ace.min.css" type="text/css" media="all" rel="stylesheet" />
     <link href="/static/martor/plugins/css/resizable.min.css" type="text/css" media="all" rel="stylesheet" />
     <link href="/static/martor/css/martor.bootstrap.min.css" type="text/css" media="all" rel="stylesheet" />
+
+    {% endblock stylesheets %}
 
     {% block title %}<title>Penetration Testing Tool</title>{% endblock %}
 </head>
