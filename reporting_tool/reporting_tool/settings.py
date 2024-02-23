@@ -245,3 +245,9 @@ ALLOWED_HTML_ATTRIBUTES = [
     "height", "href", "id", "name", "reversed", "rowspan",
     "scope", "src", "style", "title", "type", "width"
 ]
+
+DATE_INPUT_FORMATS = [
+    
+    "%d-%m-%Y"
+    
+]

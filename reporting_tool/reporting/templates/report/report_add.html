@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+  {{ block.super }}
+  
+<link rel="stylesheet" href="/static/daterangepicker/daterangepicker.css" />
+
+{% endblock stylesheets %}
+
 {% block content %}
 
 <section class="content-header">
@@ -59,7 +66,12 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Report Date</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.report_date }}
+                                    <div class="input-group log-event" id="report_date">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                      </span>
+                                      {{ form.report_date }}
+                                    </div>
                                   </div>
                             </div>
 
@@ -99,10 +111,17 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Audit</label>
-                                  <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.audit }}
+                              <label class="col-sm-2 col-form-label">Audit dates</label>
+                              <div class="col-md-10 col-sm-10 col-xs-12">
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                      <i class="far fa-calendar-alt"></i>
+                                    </span>
                                   </div>
+                                  {{ form.audit }}
+                                </div>
+                              </div>
                             </div>
 
                             <div class="card-footer">
@@ -120,3 +139,39 @@
 
 
 {% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <!-- Popperjs -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha256-BRqBN7dYgABqtY9Hd4ynE+1slnEw+roEPFzQ7TRRfcg=" crossorigin="anonymous"></script>
+
+
+<script src="/static/moment/moment.min.js"></script>
+<script src="/static/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/static/daterangepicker/daterangepicker.js"></script>
+
+
+<script>
+  $(function () {
+    //Date range picker
+    $('#audit').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD'
+      }
+    });
+
+    //Date picker
+    $('#reportdate').daterangepicker({
+      singleDatePicker: true,
+      locale: {
+        format: 'YYYY-MM-DD',
+      }
+    });
+
+  })
+</script>
+
+>
+
+{% endblock javascripts %}

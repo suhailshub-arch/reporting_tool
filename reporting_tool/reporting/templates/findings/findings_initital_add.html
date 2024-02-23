@@ -42,7 +42,7 @@
 
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Affected URL</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                <div class="col-md-10 col-sm-10 col-xs-12"  id="test">
                                     {{ form.affected_url }}
                                 </div>
                             </div>
@@ -329,5 +329,22 @@
     });
 
     </script>
+
+    <!-- <script>
+
+        const owaspSelect = document.querySelector('.select2OWASP');
+
+        owaspSelect.addEventListener('change', function() {
+        test();
+        });
+
+        function test(){
+            var element = document.getElementById('id_affected_url');
+            var text = element.value;
+            console.log(text);
+        }
+        
+
+    </script> -->
 
 {% endblock content %}

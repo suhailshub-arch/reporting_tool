@@ -20,7 +20,7 @@ class DB_OWASP(models.Model):
     owasp_id = models.IntegerField(blank=False, unique=True)
     owasp_year = models.IntegerField(blank=False, unique=False)
     owasp_name = models.CharField(max_length=255, blank=True)
-    owasp_description = models.TextField(blank=True)
+    owasp_description =  MartorField(blank=True)
     owasp_url = models.CharField(max_length=255, blank=True)
     owasp_full_id = models.CharField(max_length=20, blank=True)
  
@@ -43,7 +43,7 @@ class DB_OWASP(models.Model):
 class Customer(models.Model):
     name = models.CharField(max_length=255, blank=False)
     contact = models.EmailField(max_length=255, blank=True)
-    description = MartorField()
+    description =  MartorField(blank=True)
     class Meta:
         verbose_name_plural = "Customers"
     def __str__(self):
@@ -60,11 +60,11 @@ class Report(models.Model):
     title = models.CharField(max_length=255, blank=False)
     executive_summary_image = models.TextField(blank=True, null=True)
     owasp_categories_summary_image = models.TextField(blank=True)
-    executive_summary = models.TextField()
-    scope = models.TextField()
-    outofscope = models.TextField()
-    methodology = models.TextField()
-    recommendation = models.TextField()
+    executive_summary = MartorField(blank=True)
+    scope = MartorField(blank=True)
+    outofscope = MartorField(blank=True)
+    methodology = MartorField(blank=True)
+    recommendation = MartorField(blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     report_date = models.DateTimeField(blank=False)
     audit_start = models.DateField(blank=True, null=True)

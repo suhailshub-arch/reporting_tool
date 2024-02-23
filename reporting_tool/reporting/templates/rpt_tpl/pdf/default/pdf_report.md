@@ -7,7 +7,7 @@
 # Executive Summary
 {{DB_report_query.executive_summary | safe}}
 
-## {% translate "Summary of Findings Identified" %}
+## Summary of Findings Identified
 
 ![Executive Summary]({{report_executive_summary_image}})
 

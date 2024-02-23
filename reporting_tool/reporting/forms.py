@@ -43,14 +43,7 @@ class Add_findings(forms.ModelForm):
 
     severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
     status = forms.ChoiceField(choices=status_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Open/Close")}))
-    # cwe = CWEModelChoiceField(queryset=DB_CWE.objects.all(), empty_label=("(Select a CWE)"), widget=forms.Select(attrs={'class': 'form-control select2CWE'}))
     owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP'}))
-    description = SummernoteTextField()
-    location = SummernoteTextField()
-    poc = SummernoteTextField()
-    impact = SummernoteTextField()
-    recommendation = SummernoteTextField()
-    references = SummernoteTextField()
 
     class Meta:
         model = Finding
@@ -60,12 +53,12 @@ class Add_findings(forms.ModelForm):
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Finding title")}),
             'cvss_vector': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("CVSS Vector")}),
             'cvss_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("CVSS Score"),}),
-            'description': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'location': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'poc': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'impact': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'recommendation': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'references': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'description': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'location': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'poc': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'impact': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'recommendation': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'references': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
            }
     
     
@@ -102,11 +95,6 @@ class AddReport(forms.ModelForm):
     customer_placeholder = ('(Select a customer)')
     customer = CustomModelChoiceField(queryset=Customer.objects.all(), empty_label=customer_placeholder, widget=forms.Select(attrs={'class': 'form-control'}))
     audit = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control float-right', 'data-toggle': 'datetimepicker', 'data-target': '#audit', 'data-date-format': 'YYYY-MM-DD', 'id': "audit"}))
-    executive_summary = SummernoteTextField()
-    scope = SummernoteTextField()
-    methodology = SummernoteTextField()
-    outofscope = SummernoteTextField()
-    recommendation = SummernoteTextField()
     
     class Meta:
         today = datetime.date.today().strftime('%Y-%m-%d')
@@ -117,11 +105,11 @@ class AddReport(forms.ModelForm):
         widgets = {
             'report_id': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ('Report Name')}),
-            'executive_summary': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'scope': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'outofscope': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'methodology': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'recommendation': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'executive_summary': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'scope': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'outofscope': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'methodology': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            'recommendation': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'report_date': TextInput(attrs={'class': 'form-control datetimepicker-input', 'type': "text", 'data-toggle': 'datetimepicker', 'data-target': '#reportdate', 'data-date-format': 'YYYY-MM-DD', 'id': "reportdate", 'required': "required"}),
         }
         

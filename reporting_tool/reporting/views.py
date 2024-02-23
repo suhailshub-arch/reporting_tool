@@ -396,8 +396,8 @@ def report_add(request):
             report.audit_end = split_audit_dates[1]
             report.save()           
             # CHANGE THIS WHEN VIEW IS DONE
-            # return redirect('report/view', pk=report.pk)
-            return redirect('/report/list')
+            return redirect('report/view', pk=report.pk)
+            # return redirect('/report/list')
     else:
         form = AddReport()
         form.fields['report_id'].initial = report_id_format
