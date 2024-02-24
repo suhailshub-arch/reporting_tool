@@ -19,14 +19,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Report: {{Report_query.title}}</h1>
+                <h1>New Template</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'customer_view' Report_query.customer.id %}">{{ Report_query.customer.name}}</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'report_view' Report_query.id %}">{{ Report_query.title}}</a></li>
-                    <li class="breadcrumb-item active">Finding</a></li>
+                    <li class="breadcrumb-item active">Template</a></li>
                 </ol>
             </div>
         </div>
@@ -46,7 +44,7 @@
                 <div class="card card-outline card-danger">
 
                     <div class="card-header">
-                        <h3 class="card-title">Add Finding</h3>
+                        <h3 class="card-title">Add Template</h3>
                     </div>
                 
                     
@@ -55,7 +53,7 @@
                         {%csrf_token%}
 
                         <div class="card-body">
-                            <div id="appCVSS">
+                            
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Title</label>
                                 <div class="col-md-10 col-sm-10 col-xs-12">
@@ -63,12 +61,6 @@
                                 </div>
                             </div>
                             
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Status</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.status }}
-                                </div>
-                            </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">OWASP</label>
@@ -105,7 +97,7 @@
 
 
                         {% verbatim %}
-                          
+                        <div id="appCVSS">  
 
                         <div class="form-group row">
                             {% endverbatim %}
@@ -142,7 +134,7 @@
                         
                         <div class="form-group row">
                             {% endverbatim %}
-                            <label class="col-sm-2 col-form-label">CVSS v4.0 Calculator</label>
+                            <label class="col-sm-2 col-form-label">CVSS v4.0 alculator</label>
                             {% verbatim %}
                             
                             <div class="col-md-10 col-sm-10 col-xs-12" :style="{'margin-top': header_height + 10 + 'px'}">

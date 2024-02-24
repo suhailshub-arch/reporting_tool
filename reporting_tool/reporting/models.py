@@ -1,6 +1,9 @@
 from django.db import models
 from martor.models import MartorField
 import datetime
+import re
+
+cvss_regex = re.compile('.+ \((CVSS:.+)\)$')
 
 #---------------------------- CWE ----------------------------------------
 
@@ -108,7 +111,35 @@ class Finding(models.Model):
             self.closed_at = datetime.datetime.now()
         super().save(*args, **kwargs)
         
+    def get_cvss_score_anchor(self):
+        m = cvss_regex.search(self.cvss_vector)
+        if m:
+            return m.group(1)
         
+        
+# ---------- Finding templates ------------
+
+class Finding_Template(models.Model):
+    finding_id = models.CharField(blank=False, max_length=200)
+    title = models.CharField(blank=False, max_length=200)
+    severity = models.CharField(blank=True, max_length=200)
+    cvss_vector = models.CharField(blank=True, max_length=200)
+    cvss_score = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+    description = MartorField(blank=True)
+    location = MartorField(blank=True)
+    impact = MartorField(blank=True)
+    recommendation = MartorField(blank=True)
+    references = MartorField(blank=True)
+    poc = MartorField(blank=True)
+    owasp = models.ForeignKey(DB_OWASP, on_delete=models.CASCADE, null=True, blank=True)
+
+    def get_label (self):
+        return self.title
+
+    def get_cvss_score_anchor(self):
+        m = cvss_regex.search(self.cvss_vector)
+        if m:
+            return m.group(1)
 
 
 

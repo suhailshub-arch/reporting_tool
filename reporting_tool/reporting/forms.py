@@ -2,7 +2,7 @@ from django import forms
 from django.forms import Textarea, TextInput, DateInput, ModelChoiceField, EmailField, BooleanField, FileInput
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
-from .models import DB_CWE, DB_OWASP, Customer, Report, Finding
+from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template
 from martor.fields import MartorFormField
 from martor.widgets import MartorWidget
 import datetime
@@ -61,7 +61,32 @@ class Add_findings(forms.ModelForm):
             'references': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
            }
     
+class NewFindingTemplateForm(forms.ModelForm):
+
+    severity_choices = (
+        ('', ('(Select severity)')),
+        ('Critical', ('Critical')),
+        ('High', ('High')),
+        ('Medium', ('Medium')),
+        ('Low', ('Low')),
+        ('Info', ('Info')),
+        ('None', ('None')),
+    )
+
+    severity = forms.ChoiceField(choices=severity_choices, required=True, widget=forms.Select(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Critical/High/Medium/Low/Info/None")}))
     
+    owasp = OWASPModelChoiceField(queryset=DB_OWASP.objects.all(), empty_label=("(Select an OWASP ID)"), widget=forms.Select(attrs={'class': 'form-control select2OWASP'}))
+
+    class Meta:
+        model = Finding_Template
+        fields = ('title', 'severity', 'cvss_score', 'cvss_vector', 'description', 'location', 'impact', 'recommendation', 'references', 'owasp')
+
+        widgets = {
+            'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Finding title")}),
+            'cvss_vector': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("CVSS Vector")}),
+            'cvss_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("CVSS Score"),}),
+           }
+        
 class AddOWASP(forms.ModelForm):
     
     owasp_description = SummernoteTextField()

@@ -7,10 +7,10 @@ from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
 
 
-from .models import Finding, DB_CWE, DB_OWASP, Customer, Report
+from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template
 
 
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm
 
 
 from dotenv import load_dotenv
@@ -231,6 +231,89 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
 
     return render(request, template, context)
     
+#---------------------------------------------------
+#                   TEMPLATES
+# --------------------------------------------------
+
+def template_add(request):
+    if request.method == 'POST':
+        form = NewFindingTemplateForm(request.POST)
+        if form.is_valid():
+            template = form.save(commit=False)
+            template.finding_id = uuid.uuid4()
+            template.save()
+
+            return redirect('template_list')
+        
+    else:
+        form = NewFindingTemplateForm()
+        form.fields['description'].initial = "TBC"
+        form.fields['location'].initial = "TBC"
+        form.fields['impact'].initial = "TBC"
+        form.fields['recommendation'].initial = "TBC"
+        form.fields['references'].initial = "TBC"
+        form.fields['owasp'].initial = '1'
+
+    return render(request, 'findings/template_add.html', {
+        'form': form
+    })
+
+
+def template_edit(request, pk):
+    
+    template = get_object_or_404(Finding_Template, pk=pk)
+    
+    if request.method == 'POST':
+        form = NewFindingTemplateForm(request.POST, instance=template)
+        if form.is_valid():
+            template = form.save(commit=False)
+            template.save()
+
+            return redirect('template_list')
+        
+    else:
+        form = NewFindingTemplateForm(instance=template)
+
+    return render(request, 'findings/template_add.html', {
+        'form': form
+    })
+
+def template_delete(request, pk):
+    pass
+
+def template_list(request):
+    Templates = Finding_Template.objects.order_by('title')
+    
+    return render(request, 'findings/template_list.html', {
+        'Templates': Templates
+    })
+
+def template_view(request, pk):
+    pass
+
+def templateaddfinding(request,pk):
+
+    DB_report_query = get_object_or_404(Report, pk=pk)
+    DB_findings_query = Finding_Template.objects.order_by('title')
+
+    return render(request, 'findings/templateaddfinding.html', {'DB_findings_query': DB_findings_query, 'DB_report_query': DB_report_query})
+
+
+
+def templateaddreport(request,pk,reportpk):
+
+    DB_report_query = get_object_or_404(Report, pk=reportpk)
+    DB_finding_template_query = get_object_or_404(Finding_Template, pk=pk)
+
+    # save template in DB
+    finding_uuid = uuid.uuid4()
+    finding_status = "Open"
+    finding_to_DB = Finding(report=DB_report_query, finding_id=finding_uuid, title=DB_finding_template_query.title, severity=DB_finding_template_query.severity, cvss_vector=DB_finding_template_query.cvss_vector, cvss_score=DB_finding_template_query.cvss_score, description=DB_finding_template_query.description, status=finding_status, location=DB_finding_template_query.location, impact=DB_finding_template_query.impact, recommendation=DB_finding_template_query.recommendation, references=DB_finding_template_query.references, owasp=DB_finding_template_query.owasp)
+
+    finding_to_DB.save()
+
+    return redirect('report_view', pk=reportpk)
+
 
 #---------------------------------------------------
 #                   OWASPS
@@ -395,9 +478,7 @@ def report_add(request):
             report.audit_start = split_audit_dates[0]
             report.audit_end = split_audit_dates[1]
             report.save()           
-            # CHANGE THIS WHEN VIEW IS DONE
             return redirect('report/view', pk=report.pk)
-            # return redirect('/report/list')
     else:
         form = AddReport()
         form.fields['report_id'].initial = report_id_format
@@ -644,4 +725,5 @@ def reportdownloadpdf(request,pk):
         response = HttpResponse(fh.read(), content_type="application/pdf")
         response['Content-Disposition'] = 'inline; filename=' + file_name  # or 'attachment/inline; filename=file.pdf' 
         return response
+    
     

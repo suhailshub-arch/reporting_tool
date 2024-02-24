@@ -11,6 +11,14 @@ urlpatterns = [
     path('findings/delete/<int:pk>', views.finding_delete, name='finding_delete'),
     path('findings/edit/<int:pk>', views.edit_finding, name='edit_finding'),
 
+    #----------------- TEMPLATES -------------------------
+    path('template/list/', views.template_list, name='template_list'),
+    path('template/add/', views.template_add, name='template_add'),
+    path('template/edit/<int:pk>', views.template_edit, name='template_edit'),
+    path('template/delete/<int:pk>', views.template_delete, name='template_delete'),
+    path('template/view/<int:pk>', views.template_view, name='template_view'),
+    path('template/add/finding/<int:pk>', views.templateaddfinding, name='templateaddfinding'),
+    path('template/add/report/<int:pk>/<int:reportpk>', views.templateaddreport, name='templateaddreport'),
     
     #--------------------------- OWASP -------------------------    
     path('owasp/list/', views.owasp_list, name='owasp_list'),

@@ -1,6 +1,18 @@
 // Copyright FIRST, Red Hat, and contributors
 // SPDX-License-Identifier: BSD-2-Clause
 
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func.apply(this, args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
 const app = Vue.createApp({
     data() {
         return {
@@ -14,6 +26,7 @@ const app = Vue.createApp({
             cvssSelected: null,
             header_height: 0,
             lookup: cvssLookup_global,
+            debouncedInputHandler: null,
         }
     },
     methods: {
@@ -71,9 +84,10 @@ const app = Vue.createApp({
         },
         setButtonsToVector(vector) {
             this.resetSelected()
+            
             metrics = vector.split("/")
             // Remove hash + CVSS v4.0 prefix
-            prefix = metrics[0].slice(1);
+            prefix = metrics[0];
             if (prefix != "CVSS:4.0") {
                 console.log("Error invalid vector, missing CVSS v4.0 prefix")
                 return
@@ -586,17 +600,24 @@ const app = Vue.createApp({
         this.resetSelected()
     },
     mounted() {
+        // console.log(initialCvssVector)
+        this.setButtonsToVector(initialCvssVector);
         //this.setButtonsToVector(window.location.hash)
-        window.addEventListener("hashchange", () => {
-            this.setButtonsToVector(window.location.hash)
-        })
+        this.cvssVectorInput = document.getElementById('id_cvss_vector');
+        this.debouncedInputHandler = debounce((value) => {
+            this.setButtonsToVector(value);
+          }, 1000);
+        this.cvssVectorInput.addEventListener('input', (event) => {
+            this.debouncedInputHandler(event.target.value);
+        });
 
         const resizeObserver = new ResizeObserver(() => {
             this.header_height = document.getElementById('header').clientHeight
         })
 
         //resizeObserver.observe(document.getElementById('header'))
-    }
+    },
 })
 
 app.mount("#appCVSS")
+
