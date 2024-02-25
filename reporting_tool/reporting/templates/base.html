@@ -31,58 +31,70 @@
 
     {% block title %}<title>Penetration Testing Tool</title>{% endblock %}
 </head>
-<body>
-    {% block navbar %}
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-            </li>
+<div id='content'>
+    <body>
+        {% block navbar %}
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Report</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/report/list/">All Reports</a></li>
+                        <li><a class="dropdown-item" href="/report/add/">Add Report</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Findings</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/findings/findings_open_list">Open Findings</a></li>
+                        <li><a class="dropdown-item" href="/findings/findings_closed_list">Closed Findings</a></li>
+                        <li><a class="dropdown-item" href="/template/list/">Findings Templates</a></li>
+                        <li><a class="dropdown-item" href="/template/add/">Add Findings Template</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">OWASP</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/owasp/list">OWASP List</a></li>
+                        <li><a class="dropdown-item" href="/owasp/add">Add OWASP</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Customer</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/customer/list">All Customers</a></li>
+                        <li><a class="dropdown-item" href="/customer/add">Add Customer</a></li>
+                    </ul>
+                </li>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Report</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/report/list/">All Reports</a></li>
-                  <li><a class="dropdown-item" href="/report/add/">Add Report</a></li>
-                </ul>
-            </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Account</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_view' %}">View Profile</a></li>
+                        <li><a class="dropdown-item" href="/accounts/password_change/">Change Password</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+        </nav>
+    
+        {% endblock %}
+    
+        <div>
+            {% block content %}
+              <!-- {{ content }} -->
+            {% endblock content %}
+        </div>
+</div>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Findings</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/findings/findings_open_list">Open Findings</a></li>
-                  <li><a class="dropdown-item" href="/findings/findings_closed_list">Closed Findings</a></li>
-                  <li><a class="dropdown-item" href="/template/list/">Findings Templates</a></li>
-                  <li><a class="dropdown-item" href="/template/add/">Add Findings Template</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">OWASP</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/owasp/list">OWASP List</a></li>
-                  <li><a class="dropdown-item" href="/owasp/add">Add OWASP</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Customer</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/customer/list">All Customers</a></li>
-                  <li><a class="dropdown-item" href="/customer/add">Add Customer</a></li>
-                </ul>
-            </li>
-            
-        </ul>
-    </nav>
-
-    {% endblock %}
-
-    <div>
-        {% block content %}
-          <!-- {{ content }} -->
-        {% endblock content %}
-    </div>
 
     {% block javascripts %}
 

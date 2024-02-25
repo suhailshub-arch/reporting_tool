@@ -1,16 +1,19 @@
 
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse
 from django.template import loader
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
-
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeDoneView
+from django.contrib import messages
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template
 
 
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm
 
 
 from dotenv import load_dotenv
@@ -55,19 +58,67 @@ def format_chatgpt_output(ai_response, form):
     report_data['owasp'] = form.data["owasp"]
     report_data['location'] = form.data["affected_url"]
     return report_data
+#---------------------------------------------------
+#                   AUTH
+# --------------------------------------------------
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'registration/password_change_form.html'  # Your custom template
+    success_url = reverse_lazy('custom_password_change_done')  # URL to redirect after a successful password change
+    
+class CustomPasswordChangeDoneView(PasswordChangeDoneView):
+    # Specify your custom template (optional)
+    template_name = 'registration/password_change_done.html'
+    
+    def dispatch(self, *args, **kwargs):
+        # Example: Add a success message using Django's messages framework
+        messages.success(self.request, 'ANJING ANJING ANJINGS')
+        return redirect(home)
+    
 
 #---------------------------------------------------
 #                   HOME
 # --------------------------------------------------
-
+@login_required
 def home(request):
     template = loader.get_template('index.html')
     return HttpResponse(template.render())
+
+#---------------------------------------------------
+#                   USER
+# --------------------------------------------------
+@login_required
+def user_view(request):
+    return render(request, 'user/user_view.html', {
+        'user_profile': request.user
+    })
+
+@login_required
+def user_edit(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        
+        if user_form.is_valid() :
+            user_form.save()
+            return redirect('user_view')  # Redirect to a success page or the profile page
+    else:
+        user_form = UserForm(instance=request.user)
     
+    context = {
+        'user_form': user_form,
+    }
+    return render(request, 'user/user_edit.html', context)
+
+#---------------------------------------------------
+#                   SETTINGS
+# --------------------------------------------------
+@login_required
+def settings(request):
+    return render(request, 'settings.html')
+
 #---------------------------------------------------
 #                   FINDINGS
 # --------------------------------------------------
-
+@login_required
 def findings_open_list(request):
     findings = Finding.objects.filter(status="Open")
     template = loader.get_template('findings/findings_display.html')
@@ -77,6 +128,7 @@ def findings_open_list(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def findings_closed_list(request):
     findings = Finding.objects.filter(status="Closed")
     template = loader.get_template('findings/findings_display.html')
@@ -86,6 +138,8 @@ def findings_closed_list(request):
     }
     return HttpResponse(template.render(context, request))
 
+
+@login_required
 def add_finding(request,pk):
     report_data_json = request.session.get('report_data', None)
     # Check if report_data_json is in the session
@@ -129,6 +183,7 @@ def add_finding(request,pk):
 
     return render(request, template, context)
 
+@login_required
 def edit_finding(request, pk):
     
     finding = get_object_or_404(Finding, pk=pk)
@@ -154,6 +209,7 @@ def edit_finding(request, pk):
 
     return render(request, 'findings/findings_add.html', context)
 
+@login_required
 def view_finding(request, pk):
     finding = get_object_or_404(Finding, pk=pk)
     template = loader.get_template('findings/findings_view.html')
@@ -162,11 +218,13 @@ def view_finding(request, pk):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def finding_delete(request,pk):
     Finding.objects.filter(pk=pk).delete()
     next_url = request.GET.get('next', '/')
     return redirect(next_url)
 
+@login_required
 def initial_add_finding(request, pk):
 
     if request.method == 'POST':
@@ -235,6 +293,7 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
 #                   TEMPLATES
 # --------------------------------------------------
 
+@login_required
 def template_add(request):
     if request.method == 'POST':
         form = NewFindingTemplateForm(request.POST)
@@ -259,6 +318,7 @@ def template_add(request):
     })
 
 
+@login_required
 def template_edit(request, pk):
     
     template = get_object_or_404(Finding_Template, pk=pk)
@@ -278,9 +338,11 @@ def template_edit(request, pk):
         'form': form
     })
 
+@login_required
 def template_delete(request, pk):
     pass
 
+@login_required
 def template_list(request):
     Templates = Finding_Template.objects.order_by('title')
     
@@ -288,9 +350,11 @@ def template_list(request):
         'Templates': Templates
     })
 
+@login_required
 def template_view(request, pk):
     pass
 
+@login_required
 def templateaddfinding(request,pk):
 
     DB_report_query = get_object_or_404(Report, pk=pk)
@@ -300,6 +364,7 @@ def templateaddfinding(request,pk):
 
 
 
+@login_required
 def templateaddreport(request,pk,reportpk):
 
     DB_report_query = get_object_or_404(Report, pk=reportpk)
@@ -319,6 +384,7 @@ def templateaddreport(request,pk,reportpk):
 #                   OWASPS
 # --------------------------------------------------
 
+@login_required
 def owasp_list(request):
     owasps = DB_OWASP.objects.all().values()
     template = loader.get_template('owasp/owasp_list.html')
@@ -327,6 +393,7 @@ def owasp_list(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def owasp_add(request):
     if request.method == 'POST':
         form = AddOWASP(request.POST)
@@ -346,6 +413,7 @@ def owasp_add(request):
 
     return render(request, template , context)
 
+@login_required
 def owasp_edit(request,pk):
     
     owasp = get_object_or_404(DB_OWASP, pk=pk)
@@ -368,6 +436,7 @@ def owasp_edit(request,pk):
 
     return render(request, template, context)
 
+@login_required
 def owasp_delete(request,pk):
     DB_OWASP.objects.filter(pk=pk).delete()
     return redirect('/owasp/list/')
@@ -376,6 +445,7 @@ def owasp_delete(request,pk):
 #                   CUSTOMERS
 # --------------------------------------------------
 
+@login_required
 def customer_list(request):
     customers = Customer.objects.all()
     template = loader.get_template('customer/customer_list.html')
@@ -384,6 +454,7 @@ def customer_list(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def customer_add(request):
     if request.method == 'POST':
         form = AddCustomer(request.POST)
@@ -403,6 +474,7 @@ def customer_add(request):
 
     return render(request, template, context)
 
+@login_required
 def customer_edit(request,pk):
     
     customer = get_object_or_404(Customer, pk=pk)
@@ -425,11 +497,13 @@ def customer_edit(request,pk):
 
     return render(request, template, context)
 
+@login_required
 def customer_delete(request,pk):
     Customer.objects.filter(pk=pk).delete()
     next_url = request.GET.get('next', '/')
     return redirect(next_url)
 
+@login_required
 def customer_view(request,pk):
 
     Customer_query = get_object_or_404(Customer, pk=pk)
@@ -456,7 +530,7 @@ def customer_view(request,pk):
 #---------------------------------------------------
 #                   REPORT
 # --------------------------------------------------
-
+@login_required
 def report_list(request):
     reports = Report.objects.all()
     template = loader.get_template('report/report_list.html')
@@ -465,6 +539,7 @@ def report_list(request):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def report_add(request):
     today = datetime.date.today().strftime('%Y-%m-%d')
     report_id_format = "PEN-DOC" + str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S'))
@@ -489,6 +564,7 @@ def report_add(request):
         'form': form
     })
 
+@login_required
 def report_edit(request,pk):
 
     report = get_object_or_404(Report, pk=pk)
@@ -512,6 +588,7 @@ def report_edit(request,pk):
         'form': form
     })
 
+@login_required
 def report_view(request,pk):
     
     DB_report_query = get_object_or_404(Report, pk=pk)
@@ -590,12 +667,13 @@ def report_view(request,pk):
     return render(request, 'report/report_view.html', {'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'owasp_categories': owasp_categories, 'count_open_findings': count_open_findings, 'count_closed_findings': count_closed_findings})
 
 
-
+@login_required
 def report_delete(request,pk):
     Report.objects.filter(pk=pk).delete()
     next_url = request.GET.get('next', '/')
     return redirect(next_url)
 
+@login_required
 def report_finding(request,pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('-cvss_score')
@@ -605,7 +683,7 @@ def report_finding(request,pk):
         'DB_finding_query' : DB_finding_query,
     })
     
-
+@login_required
 def uploadsummaryfindings(request, pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
 
@@ -632,6 +710,7 @@ def uploadsummaryfindings(request, pk):
         return HttpResponseServerError('{"status":"fail"}', content_type='application/json')
 
 
+@login_required
 def reportdownloadpdf(request,pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
@@ -727,3 +806,4 @@ def reportdownloadpdf(request,pk):
         return response
     
     
+# 

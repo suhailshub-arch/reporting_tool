@@ -2,6 +2,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # ----------------- AUTH -----------------------------
+    path('accounts/password_change/', views.CustomPasswordChangeView.as_view(), name='custom_password_change'),
+    path('accounts/password_change/done/', views.CustomPasswordChangeDoneView.as_view(), name='custom_password_change_done'),  
+    
+    # ----------------- USER ---------------------------------
+    path('view_profile/', views.user_view, name='user_view'),
+    path('edit_profile/', views.user_edit, name='user_edit'),
+    
     #----------------- FINDINGS -------------------------
     path('findings/findings_open_list/', views.findings_open_list, name='findings_open_list'),
     path('findings/findings_closed_list/', views.findings_closed_list, name='findings_closed_list'),
@@ -43,8 +51,11 @@ urlpatterns = [
     path('report/uploadsummaryfindings/<int:pk>', views.uploadsummaryfindings, name='uploadsummaryfindings'),
     path('report/download/pdf/<int:pk>', views.reportdownloadpdf, name='reportdownloadpdf'), 
     
+    # ----------------------- SETTINGS -------------------------------------------
+    path('settings', views.settings, name='settings'),
+    
     #----------------------- HOME ------------------------
-    path('', views.home, name='index'),
+    path('', views.home, name='home'),
     
     # ----------------TESTINGGG PLS DELETE ---------------------
     

@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    <button id="smallFont">Small</button>
+    <button id="mediumFont">Medium</button>
+    <button id="largeFont">Large</button>
+    <button id="defaultFont">Default</button>
+  </div>
+
+  <p>HELLO</p>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Function to change font size
+    const changeFontSize = (size) => {
+    const content = document.getElementById('content');
+    if (size === '') {
+        // Remove the inline font size style to revert to Bootstrap's default
+        content.style.fontSize = '';
+    } else {
+        // Apply the chosen font size
+        content.style.fontSize = size;
+    }
+    };
+
+    // Event listeners for buttons
+    document.getElementById('smallFont').addEventListener('click', () => changeFontSize('12px'));
+    document.getElementById('mediumFont').addEventListener('click', () => changeFontSize('16px')); // Often considered the browser default
+    document.getElementById('largeFont').addEventListener('click', () => changeFontSize('20px'));
+    document.getElementById('defaultFont').addEventListener('click', () => changeFontSize(''));
+    });
+
+  </script>
+
+
+{% endblock javascripts%}

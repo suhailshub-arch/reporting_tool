@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import Textarea, TextInput, DateInput, ModelChoiceField, EmailField, BooleanField, FileInput
+from django.contrib.auth.models import User
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
-from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template
+from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template, UserProfile
 from martor.fields import MartorFormField
 from martor.widgets import MartorWidget
 import datetime
@@ -22,6 +23,13 @@ class CWEModelChoiceField(ModelChoiceField):
 class ReportModelChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s" % (obj.title)
+    
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+        
+        
 
 class Add_findings(forms.ModelForm):
     
