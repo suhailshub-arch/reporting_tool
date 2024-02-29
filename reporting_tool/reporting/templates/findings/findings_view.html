@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 {% load martortags %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  
+  <!-- <style>
+    .info-box{
+      filter: brightness(80%);
+    }
+  </style> -->
+
+{% endblock stylesheets %}
+
 {% block content %}
 
 <section class="content-header">
@@ -39,7 +51,7 @@
       
                     <div class="row mb-3">
                         <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">Finding ID</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.finding_id }}</span>
@@ -47,7 +59,7 @@
                           </div>
                         </div>
                         <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block"> Status</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.status }}</span>
@@ -56,7 +68,7 @@
                         </div>
   
                         <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block"> Date</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.creation_date | date:"d-m-Y H:m:s" }}</span>
@@ -67,7 +79,7 @@
                       
                       <div class="row mb-3">
                         <div class="col-12 col-sm-6">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">Customer</span>
                               <span class="info-box-text text-center text-muted d-block">
@@ -78,7 +90,7 @@
                         </div>
   
                         <div class="col-12 col-sm-6">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">Report</span>
                               <span class="info-box-text text-center text-muted d-block">
@@ -91,7 +103,7 @@
 
                       <div class="row mb-3">
                         <div class="col-12 col-sm-6">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CWE</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.cwe.cwe_id }} - {{finding.cwe.cwe_name }}</span>
@@ -100,7 +112,7 @@
                         </div>
   
                         <div class="col-12 col-sm-6">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">OWASP</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.owasp.owasp_id }} - {{finding.owasp.owasp_name }}</span>
@@ -111,7 +123,7 @@
                     
                     <div class="row mb-3">
                         <div class="col-12 col-sm-6">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CVSS Vector</span>
                               <span class="info-box-text text-center text-muted d-block">PlaceHolder</span>
@@ -119,7 +131,7 @@
                           </div>
                         </div>
                         <div class="col-12 col-sm-3">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CVSS Score</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.cvss_score }}</span>
@@ -128,7 +140,7 @@
                         </div>
   
                         <div class="col-12 col-sm-3">
-                          <div class="info-box bg-light">
+                          <div class="info-box">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">Severity</span>
                               <span class="info-box-text text-center text-muted d-block">

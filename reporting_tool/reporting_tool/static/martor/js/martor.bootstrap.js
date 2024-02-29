@@ -47,6 +47,7 @@
             editor.renderer.setScrollMargin(10, 10); // set padding
             editor.setAutoScrollEditorIntoView(true);
             editor.setShowPrintMargin(false);
+            editor.setHighlightActiveLine(false); // SETS LINE HIGHLIGHTING
             editor.setOptions({
                 enableBasicAutocompletion: true,
                 enableSnippets: true,

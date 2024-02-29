@@ -10,7 +10,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeDoneView
 from django.contrib import messages
-from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template
+from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile
 
 
 from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm
@@ -28,6 +28,10 @@ import base64
 import pathlib
 import textwrap
 import uuid
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 #---------------------------------------------------
 #                   CHATGPT
@@ -114,6 +118,94 @@ def user_edit(request):
 @login_required
 def settings(request):
     return render(request, 'settings.html')
+
+# @login_required
+# def update_font_size(request):
+#     if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         try:
+#             new_font_size = request.POST.get('fontSize', '')
+#             profile = request.user.userprofile
+#             profile.font_size = new_font_size
+#             profile.save()
+#             return JsonResponse({'success': True})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'success': False}, status=400)
+
+# @login_required
+# def update_background_colour(request):
+#     if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         try:
+#             new_background_colour = request.POST.get('backgroundColour', '')
+#             profile = request.user.userprofile
+#             profile.background_color = new_background_colour
+#             profile.save()
+#             return JsonResponse({'success': True})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'success': False}, status=400)
+
+# @login_required
+# def update_font_colour(request):
+#     if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         try:
+#             new_font_colour = request.POST.get('fontColour', '')
+#             profile = request.user.userprofile
+#             profile.font_color = new_font_colour
+#             profile.save()
+#             return JsonResponse({'success': True})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'success': False}, status=400)
+
+# @login_required
+# def update_font_type(request):
+#     if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         try:
+#             new_font_type = request.POST.get('fontType', '')
+#             profile = request.user.userprofile
+#             profile.font_type = new_font_type
+#             profile.save()
+#             return JsonResponse({'success': True})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'success': False}, status=400)
+
+# @login_required
+# def update_character_spacing(request):
+#     if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#         try:
+#             new_character_spacing = request.POST.get('characterSpacing', '')
+#             profile = request.user.userprofile
+#             profile.character_spacing = new_character_spacing
+#             profile.save()
+#             return JsonResponse({'success': True})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'success': False}, status=400)
+
+@login_required
+def update_preference(request):
+    if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:            
+            new_font_size = request.POST.get('fontSize', '')
+            new_background_colour = request.POST.get('backgroundColour', '')
+            new_font_colour = request.POST.get('fontColour', '')
+            new_font_type = request.POST.get('fontType', '')
+            new_character_spacing = request.POST.get('characterSpacing', 0)
+            new_line_height = request.POST.get('lineHeight', 1.5)
+            profile = request.user.userprofile
+            profile.font_color = new_font_colour
+            profile.background_color = new_background_colour
+            profile.font_size = new_font_size
+            profile.font_type = new_font_type
+            profile.character_spacing = new_character_spacing
+            profile.line_height = new_line_height
+            profile.save()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'success': False}, status=400)
 
 #---------------------------------------------------
 #                   FINDINGS
@@ -352,7 +444,12 @@ def template_list(request):
 
 @login_required
 def template_view(request, pk):
-    pass
+    finding = get_object_or_404(Finding_Template, pk=pk)
+    template = 'findings/template_view.html'
+    context = {
+        'finding':finding
+    }
+    return render(request, template, context)
 
 @login_required
 def templateaddfinding(request,pk):

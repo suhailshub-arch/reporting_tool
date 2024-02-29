@@ -27,12 +27,98 @@
     <link href="/static/martor/plugins/css/resizable.min.css" type="text/css" media="all" rel="stylesheet" />
     <link href="/static/martor/css/martor.bootstrap.min.css" type="text/css" media="all" rel="stylesheet" />
 
+    <!-- BOOTSTRAP 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
+    {% if user_font_size or user_background_color %}
+    <style>
+        body{
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .martor-field { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .form-control { 
+            {% if user_font_size %}
+                font-size: {{ user_font_size }}px;
+                height: auto;
+            {% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .col-form-label{
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .card-header { /* #martor-description */
+            {% if user_background_color %}
+            background-color: {{ user_background_color }};
+            filter: brightness(80%);
+            {% endif %}
+        }
+
+        .card-title { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+        }
+
+        .card-body { /* #martor-description */
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+        }
+
+        .info-box{ /* #martor-description */
+            {% if user_background_color %}
+            background-color: {{ user_background_color }};
+            filter: brightness(95%);
+            {% endif %}
+        }
+
+        .info-box-number{
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+        }   
+        
+        .info-box-text{
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+        }
+
+        .btn { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+        }
+    </style>
+    {% endif %}
+
+
     {% endblock stylesheets %}
 
     {% block title %}<title>Penetration Testing Tool</title>{% endblock %}
 </head>
 <div id='content'>
     <body>
+
         {% block navbar %}
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <ul class="navbar-nav">
@@ -84,6 +170,11 @@
                 </li>
                 
             </ul>
+
+            <form class="form-inline">
+                <button class="btn btn-outline-success" type="button" id="magnifier">Toggle Magnifier <i class="fas fa-search-plus"></i></button>
+            </form>
+
         </nav>
     
         {% endblock %}
@@ -110,12 +201,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js" integrity="sha512-NhRZzPdzMOMf005Xmd4JonwPftz4Pe99mRVcFeRDcdCtfjv46zPIi/7ZKScbpHD/V0HB1Eb+ZWigMqw94VUVaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
     <!-- DataTables  & Plugins -->
-    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.css" rel="stylesheet">
- 
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.js"></script>
     
     <!-- MARTOR -->
@@ -129,7 +217,7 @@
     <script type="text/javascript" src="/static/martor/plugins/js/highlight.min.js"></script>
     <script type="text/javascript" src="/static/martor/plugins/js/resizable.min.js"></script>
     <script type="text/javascript" src="/static/martor/plugins/js/emojis.min.js"></script>
-    <script type="text/javascript" src="/static/martor/js/martor.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/martor/js/martor.bootstrap.js"></script>
 
     
     <script>
@@ -144,6 +232,37 @@
     <script>
         $(function(){
             $(".dial").knob();
+        });
+    </script>
+
+    <!-- MAGNIFIER -->
+    <script type="text/javascript" src="/static/html-magnifier/html-magnifier.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const magnifier = new HTMLMagnifier({
+                zoom: 2,
+                shape: 'circle',
+                width: 200,
+                height: 200
+            });
+            magnifier.hide();
+            let toggleMagnifier = false;
+
+            const toggleMagnifierButton = document.getElementById('magnifier');
+
+            toggleMagnifierButton.addEventListener('click', () => {
+                if(toggleMagnifier == false)
+                {
+                    magnifier.show();
+                    toggleMagnifier = true;
+                }
+                else if(toggleMagnifier == true)
+                {
+                    magnifier.hide();
+                    toggleMagnifier = false;
+                }
+            });
         });
     </script>
 

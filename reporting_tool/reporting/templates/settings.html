@@ -1,14 +1,40 @@
 
 {% extends "base.html" %}
 
+{% block stylesheets %}
+  {{ block.super }}
+
+  <link rel="stylesheet" type="text/css" href="/static/Coloris-0.22.0/dist/coloris.min.css"/>
+
+{% endblock stylesheets %}
+
 {% block content %}
 
-<div>
-    <button id="smallFont">Small</button>
-    <button id="mediumFont">Medium</button>
-    <button id="largeFont">Large</button>
-    <button id="defaultFont">Default</button>
-  </div>
+<!-- Inside your template -->
+<div class="example">
+  <p>Default color thumbnail</p>
+  {% if user_background_color %}
+    <input type="text" value="{{ user_background_color }}" class="coloris" id="backgroundColorPicker">
+  {% else %}
+    <input type="text" value="#ffffff" class="coloris" id="backgroundColorPicker">
+  {% endif %}
+  
+</div>
+
+
+<div class="text-center my-3">
+  <button id="decreaseFont" class="btn btn-secondary">-</button>
+  {% if user_font_size %}
+    <span id="fontSizeDisplay">{{ user_font_size }}</span>px
+
+  {% else %}
+    <span id="fontSizeDisplay">16</span>px
+  {% endif %}
+
+  <button id="increaseFont" class="btn btn-secondary">+</button>
+</div>
+<button id="savePreference" class="btn btn-primary">Save Preference</button>
+<button id="setDefault" class="btn btn-info">Default</button> 
 
   <p>HELLO</p>
 
@@ -17,27 +43,160 @@
 {% block javascripts %}
   {{ block.super }}
 
+  <script type="text/javascript" src="/static/Coloris-0.22.0/dist/coloris.min.js"></script>
+
+  <script>
+    Coloris({
+      el: '.coloris',
+      theme: 'pill',
+      closeButton: true,
+      clearButton: true,
+      swatches: [
+        '#067bc2',
+        '#84bcda',
+        '#80e377',
+        '#ecc30b',
+        '#f37748',
+        '#d56062'
+      ]
+  });
+  </script>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+  </script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-    // Function to change font size
-    const changeFontSize = (size) => {
-    const content = document.getElementById('content');
-    if (size === '') {
-        // Remove the inline font size style to revert to Bootstrap's default
-        content.style.fontSize = '';
-    } else {
-        // Apply the chosen font size
-        content.style.fontSize = size;
-    }
-    };
+      const decreaseFontButton = document.getElementById('decreaseFont');
+      const increaseFontButton = document.getElementById('increaseFont');
+      const savePreferenceButton = document.getElementById('savePreference');
+      const setDefaultButton = document.getElementById('setDefault');
+      const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+      const backgroundColorPicker = document.getElementById('backgroundColorPicker');
+      
+      let fontSize; 
+      let backgroundColour;
 
-    // Event listeners for buttons
-    document.getElementById('smallFont').addEventListener('click', () => changeFontSize('12px'));
-    document.getElementById('mediumFont').addEventListener('click', () => changeFontSize('16px')); // Often considered the browser default
-    document.getElementById('largeFont').addEventListener('click', () => changeFontSize('20px'));
-    document.getElementById('defaultFont').addEventListener('click', () => changeFontSize(''));
+      backgroundColour = backgroundColorPicker.value;
+      
+      if (fontSizeDisplay.textContent == ''){
+        fontSize = 16;
+      } else {
+        fontSize = parseInt(fontSizeDisplay.textContent, 10);
+      }
+
+      const updateDisplayFontSize = (newSize) => {
+        document.body.style.fontSize = `${newSize}px`;
+        document.getElementById('fontSizeDisplay').textContent = newSize;
+      };
+
+      const updateFontSizeOnServer = (fontSize) => {
+        const csrftoken = getCookie('csrftoken'); // Ensure getCookie function is defined (see below)
+        fetch('/update_font_size/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+            },
+            body: `fontSize=${fontSize}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Font size preference saved.');
+            } else {
+                console.error('Failed to save font size preference.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+      };
+
+      decreaseFontButton.addEventListener('click', () => {
+          if (fontSize > 10) {
+              fontSize--;
+              updateDisplayFontSize(fontSize);
+          }
+      });
+
+      increaseFontButton.addEventListener('click', () => {
+          if (fontSize < 30) {
+              fontSize++;
+              updateDisplayFontSize(fontSize);
+          }
+      });
+
+      const revertToDefaultFontSize = () => {
+        document.body.style.fontSize = ''; // Remove inline style
+        fontSizeDisplay.textContent = '16'; // Indicate default value
+        fontSize = 16
+        updateFontSizeOnServer(''); // Send an empty string or a specific "reset" flag
+      };
+
+      // BACKGROUND COLOUR
+      backgroundColorPicker.addEventListener('input', function() {
+        if (this.value == ""){
+          this.value = "#ffffff"
+        }
+        backgroundColour = this.value
+        document.body.style.backgroundColor = this.value;
+      });
+
+      const updateBackgroundColourOnServer = (backgroundColour) => {
+        const csrftoken = getCookie('csrftoken'); 
+        fetch('/update_background_color/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+            },
+            body: `backgroundColour=${backgroundColour}`,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Background colour preference saved.');
+            } else {
+                console.error('Failed to save background colour preference.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+      };
+
+      const revertToDefaultBackgroundColour = () => {
+        document.body.style.backgroundColor = ''; // Remove inline style
+        backgroundColour = "#ffffff";
+        updateBackgroundColourOnServer(''); // Send an empty string or a specific "reset" flag
+      };
+
+      // BUTTONS
+      savePreferenceButton.addEventListener('click', () => {
+        updateFontSizeOnServer(fontSize);
+        updateBackgroundColourOnServer(backgroundColour);
+      });
+
+      setDefaultButton.addEventListener('click', () => {
+          revertToDefaultFontSize();
+          revertToDefaultBackgroundColour;
+      });
+
     });
-
   </script>
 
 

@@ -134,7 +134,7 @@
 
               <div class="row m-2">
                   <div class="col-8 col-sm-4">
-                    <div class="info-box bg-light">
+                    <div class="info-box">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Creation date</span>
                         <span class="info-box-text text-center text-muted mb-0 d-block">{{ DB_report_query.creation_date|date:"Y-m-d H:i:s" }}</span>
@@ -142,7 +142,7 @@
                     </div>
                   </div>
                   <div class="col-8 col-sm-4">
-                    <div class="info-box bg-light">
+                    <div class="info-box">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Report date</span>
                         <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_date|date:"d-m-Y" }}</span>
@@ -150,7 +150,7 @@
                     </div>
                   </div>
                   <div class="col-8 col-sm-4">
-                    <div class="info-box bg-light">
+                    <div class="info-box">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Customer</span>
                         <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.customer.name }}<span>
@@ -164,7 +164,7 @@
 
               <div class="row m-2">
                 <div class="col-8 col-sm-3">
-                  <div class="info-box bg-light">
+                  <div class="info-box">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Report</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.title }}</span>
@@ -172,7 +172,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box bg-light">
+                  <div class="info-box">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Findings</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ count_finding_query }}</span>
@@ -180,7 +180,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box bg-light">
+                  <div class="info-box">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Audit dates</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.audit_start|date:"d-m-Y" }} → {{ DB_report_query.audit_end|date:"d-m-Y" }}<span>
@@ -188,7 +188,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box bg-light">
+                  <div class="info-box">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Report ID</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_id }}<span>
