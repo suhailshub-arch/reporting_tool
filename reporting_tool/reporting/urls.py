@@ -52,12 +52,6 @@ urlpatterns = [
     path('report/download/pdf/<int:pk>', views.reportdownloadpdf, name='reportdownloadpdf'), 
     
     # ----------------------- SETTINGS -------------------------------------------
-    path('settings', views.settings, name='settings'),
-    # path('update_font_size/', views.update_font_size, name='update_font_size'),
-    # path('update_background_color/', views.update_background_colour, name='update_background_colour'),
-    # path('update_font_color/', views.update_font_colour, name='update_font_colour'),
-    # path('update_font_type/', views.update_font_type, name='update_font_type'),
-    # path('update_character_spacing/', views.update_character_spacing, name='update_character_spacing'),
     path('update_preference/', views.update_preference, name='update_preference'),
 
     
