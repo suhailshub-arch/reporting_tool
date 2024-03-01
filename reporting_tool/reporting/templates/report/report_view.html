@@ -7,11 +7,11 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <h4>{{ DB_report_query.title }} - {{ DB_report_query.report_id }}</h4>
+                <h4 class="speakable">{{ DB_report_query.title }} - {{ DB_report_query.report_id }}</h4>
             </div>
 
             <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
+              <ol class="breadcrumb float-sm-right speakable">
                   <li class="breadcrumb-item"><a href="/">Home</a></li>
                   <li class="breadcrumb-item"><a href="{% url 'customer_view' DB_report_query.customer.id %}">{{ DB_report_query.customer.name }}</a></li>
                   <li class="breadcrumb-item active">{{ DB_report_query.title }}</a></li>
@@ -38,7 +38,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
             <i class="far fa-chart-bar"></i>
             <b>Executive Summary</b>
@@ -57,7 +57,7 @@
 
               <div class="row">
 
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable speakable">
 
                     {% if count_findings_critical > 0 %}
                       <input type="text" value="{{count_findings_critical}}" class="dial" data-min="0" data-max="{{count_findings_critical}}" data-fgColor="#cc0000" data-readOnly=true data-width="60%">
@@ -69,7 +69,7 @@
 
                 </div>
 
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable">
 
                     {% if count_findings_high > 0 %}
                       <input type="text" value="{{count_findings_high}}" class="dial" data-min="0" data-max="{{count_findings_high}}" data-fgColor="#f50000" data-readOnly=true data-width="60%">
@@ -81,7 +81,7 @@
                 </div>
 
 
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable">
 
                     {% if count_findings_medium > 0 %}
                       <input type="text" value="{{count_findings_medium}}" class="dial" data-min="0" data-max="{{count_findings_medium}}" data-fgColor="#fc7f03" data-readOnly=true data-width="60%">
@@ -92,7 +92,7 @@
                 <h3>Medium</h3>
                 </div>
 
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable">
 
                     {% if count_findings_low > 0 %}
                       <input type="text" value="{{count_findings_low}}" class="dial" data-min="0" data-max="{{count_findings_low}}" data-fgColor="#05b04f" data-readOnly=true data-width="60%">
@@ -104,7 +104,7 @@
                 </div>
 
 
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable">
 
                     {% if count_findings_info > 0 %}
                       <input type="text" value="{{count_findings_info}}" class="dial" data-min="0" data-max="{{count_findings_info}}" data-fgColor="#45a7f7" data-readOnly=true data-width="60%">
@@ -115,7 +115,7 @@
                 <h3>Info</h3>
                 </div>
               
-                <div class="col-2 text-center">
+                <div class="col-2 text-center speakable">
 
                     {% if count_findings_none > 0 %}
                       <input type="text" value="{{count_findings_none}}" class="dial" data-min="0" data-max="{{count_findings_none}}" data-fgColor="#999999" data-readOnly=true data-width="60%">
@@ -134,7 +134,7 @@
 
               <div class="row m-2">
                   <div class="col-8 col-sm-4">
-                    <div class="info-box">
+                    <div class="info-box speakable">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Creation date</span>
                         <span class="info-box-text text-center text-muted mb-0 d-block">{{ DB_report_query.creation_date|date:"Y-m-d H:i:s" }}</span>
@@ -142,7 +142,7 @@
                     </div>
                   </div>
                   <div class="col-8 col-sm-4">
-                    <div class="info-box">
+                    <div class="info-box speakable">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Report date</span>
                         <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_date|date:"d-m-Y" }}</span>
@@ -150,7 +150,7 @@
                     </div>
                   </div>
                   <div class="col-8 col-sm-4">
-                    <div class="info-box">
+                    <div class="info-box speakable">
                       <div class="info-box-content">
                         <span class="info-box-number text-center text-muted d-block">Customer</span>
                         <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.customer.name }}<span>
@@ -164,7 +164,7 @@
 
               <div class="row m-2">
                 <div class="col-8 col-sm-3">
-                  <div class="info-box">
+                  <div class="info-box speakable">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Report</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.title }}</span>
@@ -172,7 +172,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box">
+                  <div class="info-box speakable">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Findings</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ count_finding_query }}</span>
@@ -180,7 +180,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box">
+                  <div class="info-box speakable">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Audit dates</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.audit_start|date:"d-m-Y" }} → {{ DB_report_query.audit_end|date:"d-m-Y" }}<span>
@@ -188,7 +188,7 @@
                   </div>
                 </div>
                 <div class="col-8 col-sm-3">
-                  <div class="info-box">
+                  <div class="info-box speakable">
                     <div class="info-box-content">
                       <span class="info-box-number text-center text-muted d-block">Report ID</span>
                       <span class="info-box-text text-center text-muted d-block mb-0">{{ DB_report_query.report_id }}<span>
@@ -203,7 +203,7 @@
               <div class="row">
                 <div class="col-md-12">
                     <div class="card card-outline">
-                      <div class="card-body">
+                      <div class="card-body speakable">
                         {{ DB_report_query.executive_summary}}
                       </div>
                     </div>
@@ -224,7 +224,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <b>Breakdown by Severity</b>
             </h3>
@@ -253,7 +253,7 @@
       <!-- Start Breakdown by CWE-->
       <!-- <div class="col-md-8">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <i class="fas fa-chart-bar"></i>
               <b>Breakdown by CWE Categories</b>
@@ -273,7 +273,7 @@
       <!-- Start Vuln Status-->
       <div class="col-md-4">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <i class="fas fa-chart-bar"></i>
               <b>Vulnerabilities by status</b>
@@ -297,7 +297,7 @@
       <!-- Start OWASP Bdown -->
       <div class="col-md-8">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <i class="fas fa-chart-bar"></i>
               <b>Breakdown by OWASP Top Ten Application Security Risks</b>
@@ -317,7 +317,7 @@
       <!-- Start Severity Bdown -->
       <!-- <div class="col-md-4">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <i class="fas fa-chart-bar"></i>
               <b>Vulnerabilities by severity</b>
@@ -339,7 +339,7 @@
     <div class="row">
       <div class="col-md-12">
           <div class="card card-outline card-success">
-            <div class="card-header">
+            <div class="card-header speakable">
               <h3 class="card-title">
                 <b>Scope</b>
               </h3>
@@ -350,7 +350,7 @@
                 </button>
               </div>
             </div>
-            <div class="card-body">
+            <div class="card-body speakable">
 
               {{ DB_report_query.scope }}
 
@@ -366,7 +366,7 @@
     <div class="row">
       <div class="col-md-12">
           <div class="card card-outline card-success">
-            <div class="card-header">
+            <div class="card-header speakable">
               <h3 class="card-title">
                 <b>Out of Scope</b>
               </h3>
@@ -378,7 +378,7 @@
               </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body speakable">
 
               {{ DB_report_query.outofscope }}
 
@@ -394,7 +394,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-outline card-success">
-            <div class="card-header">
+            <div class="card-header speakable">
               <h3 class="card-title">
                 <b>Methodology</b>
               </h3>
@@ -406,7 +406,7 @@
               </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body speakable">
 
               {{ DB_report_query.methodology }}
 
@@ -422,7 +422,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
             <h3 class="card-title">
               <b>Recommendation</b>
             </h3>
@@ -434,7 +434,7 @@
             </div>
           </div>
 
-          <div class="card-body">
+          <div class="card-body speakable">
 
             {{ DB_report_query.recommendation }}
 
@@ -449,7 +449,7 @@
     <div class="row">
       <div class="col-md-12">
        <div class="card card-outline card-success">
-          <div class="card-header">
+          <div class="card-header speakable">
               <h3 class="card-title">
                 <b>Findings List</b>
               </h3>
@@ -468,11 +468,11 @@
             <table id="findingList" class="table table-bordered table-hover">     
               <thead>
                   <tr>
-                      <th style="width: 30%" class="text-center">Title</th>
-                      <th style="width: 10%" class="text-center">Severity</th>
-                      <th style="width: 10%" class="text-center">Status</th>
-                      <th style="width: 5%" class="text-center">CVSS</th>
-                      <th style="width: 25%" class="text-center">Action</th>
+                      <th style="width: 30%" class="text-center speakable">Title</th>
+                      <th style="width: 10%" class="text-center speakable">Severity</th>
+                      <th style="width: 10%" class="text-center speakable">Status</th>
+                      <th style="width: 5%" class="text-center speakable">CVSS</th>
+                      <th style="width: 25%" class="text-center speakable">Action</th>
                   </tr>
               </thead>
       
@@ -482,11 +482,11 @@
                   
                   
                       <tr>
-                          <td>
+                          <td class="speakable">
                               {{ finding.title }}
                           </td>
   
-                          <td>
+                          <td class="speakable">
                               {% if finding.severity == "Critical" %}
                                   <b><font color="#CC0000">{{ finding.severity }}</font></b>
                               {% elif finding.severity == "High" %}
@@ -502,15 +502,15 @@
                               {% endif %}
                           </td>
   
-                          <td>
+                          <td class="speakable">
                               {{ finding.status }}
                           </td>
   
-                          <td>
+                          <td class="speakable">
                               {{ finding.cvss_score }}
                           </td>
   
-                          <td class="project-actions text-center">
+                          <td class="project-actions text-center speakable">
                             <a href="{% url 'view_finding' finding.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i>View</button></a>                            
                             <a href="{% url 'edit_finding' finding.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
                            

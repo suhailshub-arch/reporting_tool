@@ -18,7 +18,7 @@
 <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
+        <div class="col-sm-6 speakable">
           <h1>Template Finding Details</h1>
         </div>
       </div>
@@ -30,7 +30,7 @@
       <div class="row">
         <div class="col-md-12">
             <div class="card card-outline card-danger">
-                <div class="card-header">
+                <div class="card-header speakable">
                   <h3 class="card-title">
                     <i class="far fa-chart-bar"></i>
                     <b>Summary</b>
@@ -47,7 +47,7 @@
 
                       <div class="row mb-3">
                         <div class="col-12 col-sm-6">
-                          <div class="info-box">
+                          <div class="info-box speakable">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CWE</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.cwe.cwe_id }} - {{finding.cwe.cwe_name }}</span>
@@ -56,7 +56,7 @@
                         </div>
   
                         <div class="col-12 col-sm-6">
-                          <div class="info-box">
+                          <div class="info-box speakable">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">OWASP</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.owasp.owasp_id }} - {{finding.owasp.owasp_name }}</span>
@@ -67,7 +67,7 @@
                     
                     <div class="row mb-3">
                         <div class="col-12 col-sm-6">
-                          <div class="info-box">
+                          <div class="info-box speakable">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CVSS Vector</span>
                               <span class="info-box-text text-center text-muted d-block">PlaceHolder</span>
@@ -75,7 +75,7 @@
                           </div>
                         </div>
                         <div class="col-12 col-sm-3">
-                          <div class="info-box">
+                          <div class="info-box speakable">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">CVSS Score</span>
                               <span class="info-box-text text-center text-muted d-block">{{ finding.cvss_score }}</span>
@@ -84,7 +84,7 @@
                         </div>
   
                         <div class="col-12 col-sm-3">
-                          <div class="info-box">
+                          <div class="info-box speakable">
                             <div class="info-box-content">
                               <span class="info-box-number text-center text-muted mb-2 d-block">Severity</span>
                               <span class="info-box-text text-center text-muted d-block">
@@ -117,7 +117,7 @@
           <div class="col-md-12">
   
               <div class="card card-outline card-danger">
-                  <div class="card-header">
+                  <div class="card-header speakable">
                     <h3 class="card-title">
                       <i class="far fa-chart-bar"></i>
                       <b>Title</b>
@@ -130,7 +130,7 @@
   
                   </div>
   
-                  <div class="card-body">
+                  <div class="card-body speakable">
                       
                     {{ finding.title | safe_markdown }}
                       
@@ -142,7 +142,7 @@
                     <div class="col-md-12">
             
                         <div class="card card-outline card-danger">
-                            <div class="card-header">
+                            <div class="card-header speakable">
                               <h3 class="card-title">
                                 <i class="far fa-chart-bar"></i>
                                 <b>Description</b>
@@ -155,7 +155,7 @@
             
                             </div>
             
-                            <div class="card-body">
+                            <div class="card-body speakable">
                                 
                               {{ finding.description | safe_markdown }}
                                 
@@ -169,7 +169,7 @@
                     <div class="col-md-12">
             
                         <div class="card card-outline card-danger">
-                            <div class="card-header">
+                            <div class="card-header speakable">
                               <h3 class="card-title">
                                 <i class="far fa-chart-bar"></i>
                                 <b>Impact</b>
@@ -182,7 +182,7 @@
             
                             </div>
             
-                            <div class="card-body">
+                            <div class="card-body speakable">
                                 
                               {{ finding.impact | safe_markdown }}
                                 
@@ -196,7 +196,7 @@
                     <div class="col-md-12">
             
                         <div class="card card-outline card-danger">
-                            <div class="card-header">
+                            <div class="card-header speakable">
                               <h3 class="card-title">
                                 <i class="far fa-chart-bar"></i>
                                 <b>Recommendation</b>
@@ -209,7 +209,7 @@
             
                             </div>
             
-                            <div class="card-body">
+                            <div class="card-body speakable">
                                 
                               {{ finding.recommendation | safe_markdown }}
                                 
@@ -222,7 +222,7 @@
                     <div class="col-md-12">
             
                         <div class="card card-outline card-danger">
-                            <div class="card-header">
+                            <div class="card-header speakable">
                               <h3 class="card-title">
                                 <i class="far fa-chart-bar"></i>
                                 <b>References</b>
@@ -235,7 +235,7 @@
             
                             </div>
             
-                            <div class="card-body">
+                            <div class="card-body speakable">
                                 
                               {{ finding.references | safe_markdown }}
                                 

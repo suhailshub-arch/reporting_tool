@@ -8,10 +8,10 @@
   <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Customer</h1>
+          <h1 class="speakable">Customer</h1>
         </div>
         <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
+          <ol class="breadcrumb float-sm-right speakable">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item active">Edit Profile</li>
           </ol>
@@ -26,7 +26,7 @@
         <div class="col-md-12">
 
             <div class="card card-outline card-primary">
-              <div class="card-header">
+              <div class="card-header speakable">
                 <h3 class="card-title">User Details</h3>
               </div>
               
@@ -34,21 +34,21 @@
                 {% csrf_token %}
                 <div class="card-body">
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">First Name</label>
+                    <label class="col-sm-2 col-form-label speakable">First Name</label>
                       <div class="col-md-10 col-sm-10 col-xs-12">
                         {{ user_form.first_name }}
                       </div>
                   </div>
 
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Last Name</label>
+                    <label class="col-sm-2 col-form-label speakable">Last Name</label>
                       <div class="col-md-10 col-sm-10 col-xs-12">
                         {{ user_form.last_name }}
                       </div>
                   </div>
                   
                   <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Email</label>
+                    <label class="col-sm-2 col-form-label speakable">Email</label>
                     <div class="col-md-10 col-sm-10 col-xs-12">
                       {{ user_form.email }}
                     </div>

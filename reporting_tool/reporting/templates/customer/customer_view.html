@@ -8,10 +8,10 @@
             <div class="row mb-2">
 
                 <div class="col-sm-6">
-                    <h1>Customer {{ Customer_query.name}}</h1>
+                    <h1 class="speakable">Customer {{ Customer_query.name}}</h1>
                 </div>
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-right speakable">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="{% url 'customer_list' %}">Customer List</a></li>
                         <li class="breadcrumb-item active">{{ Customer_query.name }}</li>
@@ -33,7 +33,7 @@
 
                 <div class="col-lg-3 col-xs-6">
 
-                    <div class="small-box bg-info">
+                    <div class="small-box bg-info speakable">
                         <div class="inner">
                             <h3>{{count_customer_report}}</h3> 
                             <p>Report{{ count_customer_report|pluralize:"s" }}</p>
@@ -47,7 +47,7 @@
 
                 <div class="col-lg-3 col-xs-6">
 
-                    <div class="small-box bg-green">
+                    <div class="small-box bg-green speakable">
                         <div class="inner">
                             <h3>{{customer_findings}}</h3>
                             <p>Finding{{ customer_findings|pluralize:"s" }}</p>            
@@ -61,7 +61,7 @@
 
                 <div class="col-lg-3 col-xs-6">
 
-                    <div class="small-box bg-yellow">
+                    <div class="small-box bg-yellow speakable">
                         <div class="inner">
                             <h3>{{count_customer_findings_medium}}</h3>
                             <p>Medium Severity Finding{{ count_customer_findings_medium|pluralize:"es" }}</p>
@@ -75,7 +75,7 @@
 
                 <div class="col-lg-3 col-xs-6">
 
-                    <div class="small-box bg-red">
+                    <div class="small-box bg-red speakable">
                         <div class="inner">
                             <h3>{{count_customer_findings_critical_high}}</h3>
                             <p>Critical/High Severity Finding{{ count_customer_findings_critical_high|pluralize:"es" }}</p>
@@ -97,7 +97,7 @@
                     <div class="card card-outline card-primary">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <dt>Description</dt>
+                                <dt class="speakable">Description</dt>
                             </h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -105,7 +105,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body speakable">
                             <p>{{ Customer_query.description|safe_markdown }}</p>
                         </div>
                     </div>
@@ -117,9 +117,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-outline card-primary">
-                        <div class="card-header">
+                        <div class="card-header speakable">
                             <h3 class="card-title">
-                                <dt>Contanct</dt>
+                                <dt>Contact</dt>
                             </h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -127,7 +127,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body speakable">
                             <p>{{ Customer_query.contact }}</p>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
 
             <div class="card card-outline card-primary">
 
-                <div class="card-header">
+                <div class="card-header speakable">
 
                     <h3 class="card-title">
                         <dt>Report List</dt>
@@ -158,11 +158,11 @@
             
                         <thead>
                             <tr>
-                                <th style="width: 20%">ID</th>
-                                <th style="width: 35%">Report</th>
-                                <th style="width: 10%">Date</th>
-                                <th style="width: 10%">Findings</th>
-                                <th style="width: 25%" class="text-center">Actions</th>
+                                <th style="width: 20%" class="speakable">ID</th>
+                                <th style="width: 35%" class="speakable">Report</th>
+                                <th style="width: 10%" class="speakable">Date</th>
+                                <th style="width: 10%" class="speakable">Findings</th>
+                                <th style="width: 25%" class="text-center speakable">Actions</th>
                             </tr>
                         </thead>
             
@@ -171,23 +171,23 @@
                             {% for report in Report_query %}
                             
                                 <tr>
-                                    <td>
+                                    <td class="speakable">
                                         {{ report.report_id }}
                                     </td>
             
-                                    <td>
+                                    <td class="speakable">
                                         {{ report.title }}
                                     </td>
             
-                                    <td>
+                                    <td class="speakable">
                                         {{ report.creation_date | date:"d-m-Y" }}
                                     </td>
             
-                                    <td>
+                                    <td class="speakable">
                                         {{ report.finding_set.count }}
                                     </td>
             
-                                    <td class="text-center">
+                                    <td class="text-center speakable">
                                         <a href="{% url 'report_view' report.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>View</button></a>
                                         <a href="{% url 'report_edit' report.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
                                         <a href="{% url 'report_delete' report.id %}?next={{ request.path }}">

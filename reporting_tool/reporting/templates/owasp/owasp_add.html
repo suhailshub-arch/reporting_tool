@@ -5,11 +5,11 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
+          <div class="col-sm-6 speakable">
             <h1>OWASP</h1>
           </div>
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right speakable">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item"><a href="{% url 'owasp_list' %}">OWASPs</a></li>
               <li class="breadcrumb-item active">Add or Edit OWASP</li>
@@ -26,7 +26,7 @@
 
                 <div class="card card-outline card-primary">
 
-                    <div class="card-header">
+                    <div class="card-header speakable">
                         <h3 class="card-title">Add OWASP</h3>
                     </div>
                 
@@ -36,35 +36,35 @@
                         <div class="card-body">
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Owasp ID</label>
+                                <label class="col-sm-2 col-form-label speakable">Owasp ID</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.owasp_id }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Owasp Year</label>
+                                <label class="col-sm-2 col-form-label speakable">Owasp Year</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.owasp_year }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Owasp Name</label>
+                                <label class="col-sm-2 col-form-label speakable">Owasp Name</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.owasp_name }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Owasp Description</label>
+                                <label class="col-sm-2 col-form-label speakable">Owasp Description</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.owasp_description }}
                                   </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Owasp URL</label>
+                            <div class="form-group row"> 
+                                <label class="col-sm-2 col-form-label speakable">Owasp URL</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.owasp_url }}
                                   </div>

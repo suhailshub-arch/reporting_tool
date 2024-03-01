@@ -13,10 +13,10 @@
     <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Report</h1>
+            <h1 class="speakable">Report</h1>
           </div>
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right speakable">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Report List</a></li>
               <li class="breadcrumb-item active">Add or Edit Report</li>
@@ -33,7 +33,7 @@
             <div class="col-md-12">
                 <div class="card card-outline card-primary">
 
-                    <div class="card-header">
+                    <div class="card-header speakable">
                         <h3 class="card-title">Add Report</h3>
                     </div>
                 
@@ -43,28 +43,28 @@
                         <div class="card-body">
                             
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Customer</label>
+                                <label class="col-sm-2 col-form-label speakable">Customer</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.customer }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report ID</label>
+                                <label class="col-sm-2 col-form-label speakable speakable">Report ID</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.report_id }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report Title</label>
+                                <label class="col-sm-2 col-form-label speakable">Report Title</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.title }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report Date</label>
+                                <label class="col-sm-2 col-form-label speakable">Report Date</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     <div class="input-group log-event" id="report_date">
                                       <span class="input-group-text">
@@ -76,42 +76,42 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Executive summary</label>
+                                <label class="col-sm-2 col-form-label speakable">Executive summary</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.executive_summary }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Scope</label>
+                                <label class="col-sm-2 col-form-label speakable">Scope</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.scope }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Outofscope</label>
+                                <label class="col-sm-2 col-form-label speakable">Outofscope</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.outofscope }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Methodology</label>
+                                <label class="col-sm-2 col-form-label speakable">Methodology</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.methodology }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Recommendation</label>
+                                <label class="col-sm-2 col-form-label speakable">Recommendation</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.recommendation }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                              <label class="col-sm-2 col-form-label">Audit dates</label>
+                              <label class="col-sm-2 col-form-label speakable">Audit dates</label>
                               <div class="col-md-10 col-sm-10 col-xs-12">
                                 <div class="input-group">
                                   <div class="input-group-prepend">

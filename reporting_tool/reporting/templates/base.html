@@ -180,6 +180,15 @@
         {% endblock %}
     
         <div>
+            <!-- Button to toggle text-to-speech mode -->
+            <button id="toggle-tts">Activate Text-to-Speech Mode</button>
+
+            <!-- Speech synthesis control buttons -->
+            <div id="tts-controls" style="display:none;">
+            <button onclick="pauseSpeech()">Pause</button>
+            <button onclick="resumeSpeech()">Resume</button>
+            <button onclick="stopSpeech()">Stop</button>
+            </div>
             {% block content %}
               <!-- {{ content }} -->
             {% endblock content %}
@@ -265,9 +274,10 @@
             });
         });
 
-        // const magnifier = new HTMLMagnifier({ width: 400 });
-        // magnifier.show();
+        
     </script>
+
+    <script type="text/javascript" src="/static/plugins/js/text-to-speech.js"></script>
 
 {% endblock javascripts %}
 
