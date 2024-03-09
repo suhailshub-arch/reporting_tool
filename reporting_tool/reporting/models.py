@@ -161,4 +161,15 @@ class Finding_Template(models.Model):
             return m.group(1)
 
 
+# ---------- Appendix ------------
 
+class Appendix(models.Model):
+    finding = models.ManyToManyField(Finding, related_name='appendix_finding', blank=True)
+    title = models.CharField(blank=False, max_length=200)
+    description = MartorField()
+ 
+    def get_label (self):
+        return self.title
+
+    def __str__(self):
+        return self.title

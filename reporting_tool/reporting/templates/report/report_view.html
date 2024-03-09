@@ -4,48 +4,47 @@
 {% block content %}
 <section class="content-header">
   <div class="container-fluid">
-
-        <div class="row">
-            <div class="col-sm-6">
-                <h4 class="speakable">{{ DB_report_query.title }} - {{ DB_report_query.report_id }}</h4>
-            </div>
-
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right speakable">
-                  <li class="breadcrumb-item"><a href="/">Home</a></li>
-                  <li class="breadcrumb-item"><a href="{% url 'customer_view' DB_report_query.customer.id %}">{{ DB_report_query.customer.name }}</a></li>
-                  <li class="breadcrumb-item active">{{ DB_report_query.title }}</a></li>
-              </ol>                
-          </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <h4 class="speakable">{{ DB_report_query.title }} - {{ DB_report_query.report_id }}</h4>
         </div>
 
-        <br>
-
-        <div class="row">
-          <div class="col-md-7">
-            <div class="btn-group">
-              <a href="/report/finding/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Findings</button></a>
-            </div>
-  
-            <div class="btn-group">
-              <a href="{% url 'upload_and_parse_nmap' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fas fa-network-wired"></i>Import Nmap Scan</button></a>
-              
-            </div>
-  
-            <div class="btn-group">
-              <a href="{% url 'upload_and_parse_openvas' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fas fa-network-wired"></i>Import OpenVAS Scan</button></a>
-            </div>
-          
-          </div>
-          <div class="col-md-5 text-right">
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
-            </div>
-          </div>
-          
-        </div>
-
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right speakable">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'customer_view' DB_report_query.customer.id %}">{{ DB_report_query.customer.name }}</a></li>
+              <li class="breadcrumb-item active">{{ DB_report_query.title }}</a></li>
+          </ol>                
+      </div>
     </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-7">
+
+        <div class="btn-group">
+          <a href="/report/finding/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Findings</button></a>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-network-wired"></i>Import</button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'upload_and_parse_nmap' DB_report_query.id %}">Nmap Scan</a></li>
+            <li><a class="dropdown-item" href="{% url 'upload_and_parse_openvas' DB_report_query.id %}">OpenVAS Scan</a></li>
+          </ul>
+          
+        </div>
+      
+      </div>
+      <div class="col-md-5 text-right">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 </section>
 
 <section class="content">

@@ -1,28 +1,30 @@
----
-pandoc-latex-environment:
-    noteblock: [note]
-    tipblock: [tip]
-    warningblock: [warning]
-    cautionblock: [caution]
-    importantblock: [important]
-    tcolorbox: [box]
-    info-box: [infobox]
-    low-box: [lowbox]
-    warning-box: [mediumbox]
-    error-box: [highbox]
-    critical-box: [criticalbox]
-    highblock: [highnote]
-    mediumblock: [mediumnote]
-    lowblock: [lownote]
-    infoblock: [infonote]
-    debugblock: [debugnote]
-    descriptionblock: [descriptionnote]
-    locationblock: [locationnote]
-    impactblock: [impactnote]
-    recommendationblock: [recommendationnote]
-    referencesblock: [referencesnote]
-    additional_notesblock: [additional_notesnote]
----
-::: highnote
-This is a test of the highnote environment.
-:::
+<table>
+<tr>
+<th>Port</th>
+<th>State</th>
+<th>Service</th>
+<th>Product</th>
+<th>Additional Information</th>
+</tr>
+<tr>
+<td>22</td>
+<td>closed</td>
+<td>ssh</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>80</td>
+<td>open</td>
+<td>http</td>
+<td>Apache httpd</td>
+<td>Title: Site doesn't have a title (text/html).<br>Server: Apache</td>
+</tr>
+<tr>
+<td>443</td>
+<td>open</td>
+<td>http</td>
+<td>Apache httpd</td>
+<td>SSL Cert: Subject commonName=www.example.com.<br>Not valid before: 2015-09-16T10:45:03.<br>Not valid after: 2025-09-13T10:45:03.<br>Server: Apache</td>
+</tr>
+</table>

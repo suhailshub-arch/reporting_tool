@@ -34,5 +34,6 @@
 # Findings and Risk Analysis
 {{template_findings}}
 
-
 \pagebreak
+# NMap Scan Data
+{{nmap_data}}

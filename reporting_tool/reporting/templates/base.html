@@ -171,28 +171,28 @@
                 
             </ul>
 
-            <form class="form-inline">
-                <button class="btn btn-outline-success" type="button" id="magnifier">Toggle Magnifier <i class="fas fa-search-plus"></i></button>
-            </form>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="magnifier">Toggle Magnifier <i class="fas fa-search-plus"></i></button>
+            </div>
+            
 
-            <form class="form-inline">
-                <button class="btn btn-outline-success" type="button" id="toggle-tts">Activate Text-to-Speech Mode <i class="fas fa-search-plus"></i></button>
-            </form>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="toggle-tts">Activate Text-to-Speech Mode <i class="fas fa-search-plus"></i></button>
+            </div>
+            
 
         </nav>
     
         {% endblock %}
     
         <div>
-            <!-- Button to toggle text-to-speech mode -->
-            <!-- <button id="toggle-tts">Activate Text-to-Speech Mode</button> -->
-
             <!-- Speech synthesis control buttons -->
-            <div id="tts-controls" style="display:none;">
-            <button onclick="pauseSpeech()">Pause</button>
-            <button onclick="resumeSpeech()">Resume</button>
-            <button onclick="stopSpeech()">Stop</button>
+            <div id="tts-controls" style="display:none;" class="content-header container text-center">
+                <button type="button" onclick="pauseSpeech()" class="btn btn-warning btn-lg">Pause</button>
+                <button type="button" onclick="resumeSpeech()" class="btn btn-success btn-lg">Resume</button>
+                <button type="button" onclick="stopSpeech()" class="btn btn-danger btn-lg">Stop</button>
             </div>
+
             {% block content %}
               <!-- {{ content }} -->
             {% endblock content %}

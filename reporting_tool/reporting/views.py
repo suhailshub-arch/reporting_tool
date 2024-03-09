@@ -1,4 +1,3 @@
-
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse
@@ -29,7 +28,6 @@ import base64
 import pathlib
 import textwrap
 import uuid
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -63,6 +61,7 @@ def format_chatgpt_output(ai_response, form):
     report_data['owasp'] = form.data["owasp"]
     report_data['location'] = form.data["affected_url"]
     return report_data
+
 #---------------------------------------------------
 #                   AUTH
 # --------------------------------------------------
@@ -397,7 +396,9 @@ def template_edit(request, pk):
 
 @login_required
 def template_delete(request, pk):
-    pass
+    template = get_object_or_404(Finding_Template, pk=pk)
+    template.delete()
+    return redirect('template_list')
 
 @login_required
 def template_list(request):
@@ -878,8 +879,9 @@ def reportdownloadpdf(request,pk):
             pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding })
             template_findings += ''.join(pdf_finding)
 
+    nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
     pdf_markdown_report = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
-    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary})
+    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data})
 
     final_markdown = textwrap.dedent(pdf_markdown_report)
 
@@ -982,6 +984,12 @@ def parse_openvas_xml(xml_string):
         tags_text = result.find('.//tags').text if result.find('.//tags') is not None else ""
         tags_dict = dict(tag.split('=', 1) for tag in tags_text.split('|') if '=' in tag)
         result_id = result.attrib.get('id', "N/A")
+        severity_text = result.find('severity').text if result.find('severity') is not None else "N/A"
+        try:
+            severity = float(severity_text)
+        except ValueError:
+            print(f"Could not convert severity '{severity_text}' to float.")
+            severity = None
 
         finding = {
             'id': result_id,
@@ -992,6 +1000,8 @@ def parse_openvas_xml(xml_string):
             'host': result.find('.//host').text if result.find('.//host') is not None else "N/A",
             'references': [ref.attrib['id'] for ref in result.findall('.//refs/ref')] if result.findall('.//refs/ref') is not None else [],
             'poc' : result.find('.//description').text if result.find('.//description') is not None else "N/A",
+            'severity' : result.find('.//threat').text if result.find('.//threat') is not None else "N/A",
+            'cvss_score' : severity
         }
         findings.append(finding)
 
@@ -1029,6 +1039,8 @@ def upload_and_parse_openvas(request,pk):
                         formatted_urls = ["- " + url + "\n" for url in vulnerability['references']]
                         new_finding_references = "".join(formatted_urls)
                         new_finding_poc = vulnerability['poc']
+                        new_finding_severity = vulnerability['severity']
+                        new_finding_cvss_score = float(vulnerability['cvss_score'])
                         new_finding_report = report_query
                         new_finding_finding_id = uuid.uuid4()
                         
@@ -1042,6 +1054,8 @@ def upload_and_parse_openvas(request,pk):
                             references = new_finding_references,
                             poc = new_finding_poc,
                             report = new_finding_report,
+                            cvss_score = new_finding_cvss_score,
+                            severity = new_finding_severity
                         )
                         
                         new_finding.save()

@@ -68,7 +68,7 @@
                                     {{ finding.title|safe }}
                                 </td>
 
-                                <td>
+                                <td class="speakable">
                                     {% if finding.severity == "Critical" %}
                                         <b><font color="#CC0000">{{ finding.severity }}</font></b>
                                     {% elif finding.severity == "High" %}
