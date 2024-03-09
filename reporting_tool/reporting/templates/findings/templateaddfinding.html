@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6 speakable">
+                <h1>Template List</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right speakable">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">{{ status }} Templates</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-outline card-danger">
+
+            <div class="card-header speakable">
+                <h3 class="card-title">{{ status }} Template List</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+        
+            <div class="card-body">
+                <table id="templateList" class="table table-bordered table-hover">
+        
+                    <thead>
+                        <tr>
+                            <th style="width: 40%" class="text-center speakable">Title</th>
+                            <th style="width: 5%" class="text-center speakable">Severity</th>
+                            <th style="width: 5%" class="text-center speakable">CVSS</th>
+                            <th style="width: 25%" class="text-center speakable">Action</th>
+                        </tr>
+                    </thead>
+        
+                    <tbody>
+        
+                        {% for template in DB_findings_query %}
+                        
+                            <tr>
+                                <td class="speakable">
+                                    {{ template.title }}
+                                </td>
+        
+                                <td class="speakable">
+                                    {% if template.severity == "Critical" %}
+                                        <b><font color="#CC0000">{{ template.severity }}</font></b>
+                                    {% elif template.severity == "High" %}
+                                        <b><font color="#F20000">{{ template.severity }}</font></b>
+                                    {% elif template.severity == "Medium" %}
+                                        <b><font color="#FC7F03">{{ template.severity }}</font></b>
+                                    {% elif template.severity == "Low" %}
+                                        <b><font color="#05B04F">{{ template.severity }}</font></b>
+                                    {% elif template.severity == "Info" %}
+                                        <b><font color="#45A7F7">{{ template.severity }}</font></b>
+                                    {% else %}
+                                        <b>{{ template.severity }}</b>
+                                    {% endif %}
+                                </td>
+
+                                <td class="speakable">
+                                    {{ template.cvss_score }}
+                                </td>
+        
+                                <td class="project-actions text-center speakable">
+                                    <a href="{% url 'templateaddreport' template.pk DB_report_query.pk %}"><button type="button" class="btn btn-danger btn-sm"><i class="fa fa-folder"></i>Add Finding to Report</button></a>
+                                </td>
+        
+                            </tr>
+        
+                        {% endfor %}
+        
+                    </tbody>
+        
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+<script>
+    $(document).ready(function() {
+    $("#templateList").DataTable({
+        "paging": true,
+        "searching": true,
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false
+    });
+});
+
+</script>
+
+{% endblock javascripts %}
+
+
+  
+
+

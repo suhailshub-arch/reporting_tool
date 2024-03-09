@@ -87,7 +87,7 @@ class NewFindingTemplateForm(forms.ModelForm):
 
     class Meta:
         model = Finding_Template
-        fields = ('title', 'severity', 'cvss_score', 'cvss_vector', 'description', 'location', 'impact', 'recommendation', 'references', 'owasp')
+        fields = ('title', 'severity', 'cvss_score', 'cvss_vector', 'description', 'impact', 'recommendation', 'references', 'owasp')
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Finding title")}),
@@ -202,3 +202,10 @@ class OWASP_Questions(forms.Form):
     # SSRF
     trigger_point = MartorFormField( label="Data Exposed", required=False)
     ssrf_impact = MartorFormField( label="Data Exposed", required=False)
+    
+    
+class UploadNmapForm(forms.Form):
+    nmap_file = forms.FileField()
+    
+class UploadOpenVASForm(forms.Form):
+    openvas_file = forms.FileField(required=True)

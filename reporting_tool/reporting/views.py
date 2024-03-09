@@ -1,5 +1,5 @@
 
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse
 from django.template import loader
@@ -13,13 +13,14 @@ from django.contrib import messages
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile
 
 
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm, UploadNmapForm, UploadOpenVASForm
 
 
 from dotenv import load_dotenv
 from collections import Counter
 from time import sleep
 from openai import OpenAI
+import xml.etree.ElementTree as ET
 import datetime
 import pypandoc
 import os
@@ -248,6 +249,39 @@ def finding_delete(request,pk):
     return redirect(next_url)
 
 @login_required
+def findingtotemplate(request,pk,reportpk):
+    finding = get_object_or_404(Finding, pk=pk)
+    template_title = finding.title
+    template_severity = finding.severity
+    template_cvss_vector = finding.cvss_vector
+    template_cvss_score = finding.cvss_score
+    template_description = finding.description
+    template_impact = finding.impact
+    template_recommendation = finding.recommendation
+    template_references = finding.references
+    template_owasp = finding.owasp
+    
+    template_to_DB = Finding_Template(
+        title = template_title,
+        severity = template_severity,
+        cvss_vector = template_cvss_vector,
+        cvss_score = template_cvss_score,
+        description = template_description,
+        impact = template_impact,
+        recommendation = template_recommendation,
+        references = template_references,
+        owasp = template_owasp,
+    )
+    
+    template_to_DB.save()
+    
+    # In your view
+    request.session['success'] = True
+    
+    return redirect(reverse('report_finding', kwargs={'pk': reportpk}))
+    
+
+@login_required
 def initial_add_finding(request, pk):
 
     if request.method == 'POST':
@@ -256,7 +290,7 @@ def initial_add_finding(request, pk):
             DB_owasp_query = get_object_or_404(DB_OWASP, pk=int(form.data["owasp"]))
             info = {}
             prompt = """
-You are a professional penetration tester. You have performed a penetration test on a particular company. You will provided details on a particular vulnerability that was found during the penetration test. 
+You are a professional penetration tester. You have performed a penetration test on a particular company. You will be provided details on a particular vulnerability that was found during the penetration test. 
 Please provide content for a detailed finding report based on the information that will be given. The report will be included as part of the complete penetration testing report.
 There are 6 sections to be included. 
 - Description
@@ -616,6 +650,38 @@ def report_edit(request,pk):
         'form': form
     })
 
+def generate_nmap_markdown(nmap_data):
+    markdown_parts = []
+
+    for host in nmap_data.get('hosts', []):
+        ip_address = host.get('ip_address', 'Unknown IP Address')
+        markdown_parts.append(f"## Host: {ip_address}\n\n")
+        
+        ports = host.get('ports', [])
+        if not ports:
+            markdown_parts.append("No open ports found.\n\n")
+            continue
+        
+        for port in ports:
+            port_id = port.get('port_id', 'unknown')
+            state = port.get('state', 'unknown')
+            service_name = port.get('service', {}).get('name', 'unknown')
+            product = port.get('service', {}).get('product', 'unknown')
+            
+            markdown_parts.append(f"- **Port {port_id}** ({state}): {service_name} {product}\n")
+            
+            scripts = port.get('scripts', [])
+            if scripts:
+                for script in scripts:
+                    script_id = script.get('id', 'unknown')
+                    output = script.get('output', 'No output.')
+                    markdown_parts.append(f"    - **{script_id}**: {output}\n")
+            else:
+                markdown_parts.append("    - No scripts found.\n")
+        markdown_parts.append("\n")  # Add a newline for better separation
+
+    return ''.join(markdown_parts)
+
 @login_required
 def report_view(request,pk):
     
@@ -623,6 +689,10 @@ def report_view(request,pk):
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('-cvss_score')
     count_finding_query = DB_finding_query.count()
 
+    if DB_report_query.nmap_scan != "":
+        nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
+    else:
+        nmap_data = ""
 
     count_findings_critical = 0
     count_findings_high = 0
@@ -692,7 +762,7 @@ def report_view(request,pk):
         owasp_categories.append(dict_owasp)
 
 
-    return render(request, 'report/report_view.html', {'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'owasp_categories': owasp_categories, 'count_open_findings': count_open_findings, 'count_closed_findings': count_closed_findings})
+    return render(request, 'report/report_view.html', {'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'owasp_categories': owasp_categories, 'count_open_findings': count_open_findings, 'count_closed_findings': count_closed_findings, 'nmap_data': nmap_data})
 
 
 @login_required
@@ -705,10 +775,12 @@ def report_delete(request,pk):
 def report_finding(request,pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('-cvss_score')
+    success = request.session.pop('success', False)
     
     return render(request, 'report/report_finding.html', {
         'DB_report_query' : DB_report_query,
         'DB_finding_query' : DB_finding_query,
+        'success' : success,
     })
     
 @login_required
@@ -811,9 +883,6 @@ def reportdownloadpdf(request,pk):
 
     final_markdown = textwrap.dedent(pdf_markdown_report)
 
-    
-    
-    
     # ------------------------------------------------------------------------------------------------------------------------------------------------------
    
     # pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': DB_finding_query[0], 'icon_finding': 'highblock', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
@@ -832,6 +901,182 @@ def reportdownloadpdf(request,pk):
         response = HttpResponse(fh.read(), content_type="application/pdf")
         response['Content-Disposition'] = 'inline; filename=' + file_name  # or 'attachment/inline; filename=file.pdf' 
         return response
+
+#---------------------------------------------------
+#                   NMAP
+# --------------------------------------------------
+
+def xml_to_dict_nmap(xml_string):
+    # Load and parse the XML file
+    root = ET.fromstring(xml_string)
+    scan_results = {"hosts": []}
+
+    for host in root.findall('host'):
+        host_dict = {
+            "ip_address": host.find('address').get('addr'),
+            "ports": []
+        }
+
+        for port in host.find('ports').findall('port'):
+            port_dict = {
+                "port_id": port.get('portid'),
+                "state": port.find('state').get('state'),
+                "service": {
+                    "name": port.find('service').get('name', 'unknown') if port.find('service') is not None else 'unknown',
+                    "product": port.find('service').get('product', 'unknown') if port.find('service') is not None else 'unknown'
+                },
+                "scripts": []
+            }
+
+            for script in port.findall('script'):
+                script_dict = {
+                    "id": script.get('id'),
+                    "output": script.get('output')
+                }
+                port_dict["scripts"].append(script_dict)
+
+            host_dict["ports"].append(port_dict)
+
+        scan_results["hosts"].append(host_dict)
+
+    return scan_results
+
+
+@login_required
+def upload_and_parse_nmap(request,pk):
+    report_query = get_object_or_404(Report, pk=pk)
+    if request.method == 'POST':
+        form = UploadNmapForm(request.POST, request.FILES)
+        if form.is_valid():
+            xml_file = request.FILES['nmap_file']
+            xml_data = xml_file.read()
+            parsed_xml = xml_to_dict_nmap(xml_data)
+            json_data = json.dumps(parsed_xml)
+            report_query.nmap_scan = json_data
+            report_query.save()
+            
+            return redirect(reverse('report_view', kwargs={'pk' : pk}))  
+    else:
+        form = UploadNmapForm()
+    return render(request, 'report/report_import_nmap.html', {'form': form, 'DB_report_query' : report_query})
+
+@login_required
+def remove_nmap_scan(request,pk):
+    report_query = get_object_or_404(Report, pk=pk)
+    report_query.nmap_scan = ""
+    report_query.save()
     
+    return redirect(reverse('report_view', kwargs={'pk' : pk}))
+
+
+#---------------------------------------------------
+#                   OPENVAS
+# --------------------------------------------------
+
+def parse_openvas_xml(xml_string):
+    root = ET.fromstring(xml_string)
+
+    findings = []
+
+    for result in root.findall('.//result'):
+        tags_text = result.find('.//tags').text if result.find('.//tags') is not None else ""
+        tags_dict = dict(tag.split('=', 1) for tag in tags_text.split('|') if '=' in tag)
+        result_id = result.attrib.get('id', "N/A")
+
+        finding = {
+            'id': result_id,
+            'name': result.find('.//name').text if result.find('.//name') is not None else "N/A",
+            'description': tags_dict.get('summary', "N/A").strip(),
+            'impact': tags_dict.get('impact', "N/A").strip(),
+            'solution': result.find('.//solution').text if result.find('.//solution') is not None else "N/A",
+            'host': result.find('.//host').text if result.find('.//host') is not None else "N/A",
+            'references': [ref.attrib['id'] for ref in result.findall('.//refs/ref')] if result.findall('.//refs/ref') is not None else [],
+            'poc' : result.find('.//description').text if result.find('.//description') is not None else "N/A",
+        }
+        findings.append(finding)
+
+    return findings
+
+@login_required
+def upload_and_parse_openvas(request,pk):
+    report_query = get_object_or_404(Report, pk=pk)
+    if request.method == 'POST':
+        openvas_form = UploadOpenVASForm(request.POST, request.FILES)
+        if openvas_form.is_valid():
+            openvas_file = request.FILES['openvas_file']
+            openvas_data = openvas_file.read()
+            parsed_openvas = parse_openvas_xml(openvas_data)
+            json_data = json.dumps(parsed_openvas, indent=4)
+            report_query.openvas_scan = json_data
+            report_query.save()
+            
+            return redirect(reverse('upload_and_parse_openvas', kwargs={'pk' : pk}))
+        else:
+            selected_ids = request.POST.getlist('vulnerability_ids')
+            vulnerabilities = json.loads(report_query.openvas_scan)
+            report_finding_query = Finding.objects.filter(report=report_query)
+            queryset_names = report_finding_query.values_list('title', flat=True)
+            for vulnerability in vulnerabilities:  # vulnerabilities list of dicts
+                if str(vulnerability['id']) in selected_ids:
+                    if vulnerability['name'] in queryset_names:
+                        continue
+                    else:
+                        new_finding_title = vulnerability['name']
+                        new_finding_description = vulnerability['description'].replace("\n", "")
+                        new_finding_location = vulnerability['host']
+                        new_finding_impact = vulnerability['impact']
+                        new_finding_recommendation = vulnerability['solution']
+                        formatted_urls = ["- " + url + "\n" for url in vulnerability['references']]
+                        new_finding_references = "".join(formatted_urls)
+                        new_finding_poc = vulnerability['poc']
+                        new_finding_report = report_query
+                        new_finding_finding_id = uuid.uuid4()
+                        
+                        new_finding = Finding(
+                            finding_id = new_finding_finding_id,
+                            title = new_finding_title,
+                            description = new_finding_description,
+                            location = new_finding_location,
+                            impact = new_finding_impact,
+                            recommendation = new_finding_recommendation,
+                            references = new_finding_references,
+                            poc = new_finding_poc,
+                            report = new_finding_report,
+                        )
+                        
+                        new_finding.save()
+                else:
+                    if vulnerability['name'] in queryset_names:
+                        finding_to_delete = Finding.objects.filter(title=vulnerability['name'])
+                        finding_to_delete.delete()
+                    
+            return redirect(reverse('report_view', kwargs={'pk' : pk}))
+        
+    else:
+        openvas_form = UploadOpenVASForm()
+        matching_vulnerabilities = []
+        if report_query.openvas_scan != "":
+            vulnerabilities = json.loads(report_query.openvas_scan)
+            report_finding_query = Finding.objects.filter(report=report_query)
+            queryset_names = report_finding_query.values_list('title', flat=True)
+            for vulnerability in vulnerabilities:
+                if vulnerability['name'] in queryset_names:
+                    matching_vulnerabilities.append(vulnerability['name'])
+        else:
+            vulnerabilities = ""
+
+    return render(request, 'report/report_import_openvas.html', 
+                  {
+                      'openvas_form': openvas_form,
+                      'vulnerabilities' : vulnerabilities,
+                      'DB_report_query' : report_query,
+                      'matching_vulnerabilities' : matching_vulnerabilities
+                      })
     
-# 
+@login_required
+def remove_openvas_scan(request,pk):
+    report_query = get_object_or_404(Report, pk=pk)
+    report_query.openvas_scan = ""
+    report_query.save()
+    
+    return redirect(reverse('report_view', kwargs={'pk' : pk}))

@@ -21,12 +21,28 @@
 
         <br>
 
-        <div class="btn-group">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="btn-group">
               <a href="/report/finding/{{ DB_report_query.pk }}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Findings</button></a>
-        </div>
-
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
+            </div>
+  
+            <div class="btn-group">
+              <a href="{% url 'upload_and_parse_nmap' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fas fa-network-wired"></i>Import Nmap Scan</button></a>
+              
+            </div>
+  
+            <div class="btn-group">
+              <a href="{% url 'upload_and_parse_openvas' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fas fa-network-wired"></i>Import OpenVAS Scan</button></a>
+            </div>
+          
+          </div>
+          <div class="col-md-5 text-right">
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
+            </div>
+          </div>
+          
         </div>
 
     </div>
@@ -352,7 +368,7 @@
             </div>
             <div class="card-body speakable">
 
-              {{ DB_report_query.scope }}
+              {{ DB_report_query.scope | safe_markdown }}
 
             </div>
           </div>
@@ -380,7 +396,7 @@
 
             <div class="card-body speakable">
 
-              {{ DB_report_query.outofscope }}
+              {{ DB_report_query.outofscope | safe_markdown }}
 
             </div>
           </div>
@@ -408,7 +424,7 @@
 
             <div class="card-body speakable">
 
-              {{ DB_report_query.methodology }}
+              {{ DB_report_query.methodology | safe_markdown }}
 
             </div>
           </div>
@@ -436,7 +452,35 @@
 
           <div class="card-body speakable">
 
-            {{ DB_report_query.recommendation }}
+            {{ DB_report_query.recommendation | safe_markdown }}
+
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End Recs -->
+
+    <!-- Start Recs -->
+    {% if nmap_data != "" %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-outline card-success">
+          <div class="card-header speakable">
+            <h3 class="card-title">
+              <b>Nmap Scan</b>
+            </h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body speakable">
+
+            {{ nmap_data | safe_markdown }}
 
           </div>
         </div>
@@ -462,9 +506,6 @@
           </div>
       
           <div class="card-body">
-            
-            <a href="{% url 'initial_add_finding' DB_report_query.id %}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
-
             <table id="findingList" class="table table-bordered table-hover">     
               <thead>
                   <tr>

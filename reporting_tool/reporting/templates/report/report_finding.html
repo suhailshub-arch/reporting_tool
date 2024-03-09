@@ -24,6 +24,7 @@
         <div class="row">
             <div class="col-md-5">
               <a href="{% url 'initial_add_finding' DB_report_query.id %}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
+              <a href="{% url 'templateaddfinding' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i>Add Findings From Template</button></a>
             </div>
         </div>
 
@@ -94,7 +95,23 @@
                                 <td class="project-actions text-center speakable">
                                     <a href="{% url 'view_finding' finding.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i>View</button></a>                            
                                     <a href="{% url 'edit_finding' finding.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
-                                   
+                                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="modalLabel">Success</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              Your data has been successfully saved!
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    <a href="{% url 'findingtotemplate' finding.id DB_report_query.id %}"><button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fas fa-save"></i>Save as Template</button></a>                               
                                     <a href="{% url 'finding_delete' finding.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Delete</button></a>
                                 </td>
 
@@ -127,6 +144,15 @@
 });
 
 </script>
+
+{% if success %}
+<script>
+  $(document).ready(function(){
+    $('#successModal').modal('show');
+  });
+</script>
+{% endif %}
+
 
 {% endblock javascripts %}
 

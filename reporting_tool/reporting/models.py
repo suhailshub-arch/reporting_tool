@@ -89,6 +89,8 @@ class Report(models.Model):
     report_date = models.DateTimeField(blank=False)
     audit_start = models.DateField(blank=True, null=True)
     audit_end = models.DateField(blank=True, null=True)
+    nmap_scan = models.TextField(help_text="Nmap scan results in JSON format", default="", blank=True)
+    openvas_scan = models.TextField(help_text="OpenVAS scan results in JSON format", default="", blank=True)
     
     def __str__(self):
         return self.title
@@ -137,18 +139,18 @@ class Finding(models.Model):
 # ---------- Finding templates ------------
 
 class Finding_Template(models.Model):
-    finding_id = models.CharField(blank=False, max_length=200)
     title = models.CharField(blank=False, max_length=200)
     severity = models.CharField(blank=True, max_length=200)
     cvss_vector = models.CharField(blank=True, max_length=200)
     cvss_score = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     description = MartorField(blank=True)
-    location = MartorField(blank=True)
     impact = MartorField(blank=True)
     recommendation = MartorField(blank=True)
     references = MartorField(blank=True)
-    poc = MartorField(blank=True)
     owasp = models.ForeignKey(DB_OWASP, on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.title
 
     def get_label (self):
         return self.title

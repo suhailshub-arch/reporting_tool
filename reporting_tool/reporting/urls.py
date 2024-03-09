@@ -18,6 +18,7 @@ urlpatterns = [
     path('findings/view/<int:pk>', views.view_finding, name='view_finding'),
     path('findings/delete/<int:pk>', views.finding_delete, name='finding_delete'),
     path('findings/edit/<int:pk>', views.edit_finding, name='edit_finding'),
+    path('findings/findingtotemplate/<int:pk>/<int:reportpk>', views.findingtotemplate, name='findingtotemplate'),
 
     #----------------- TEMPLATES -------------------------
     path('template/list/', views.template_list, name='template_list'),
@@ -50,6 +51,10 @@ urlpatterns = [
     path('report/finding/<int:pk>', views.report_finding, name='report_finding'),
     path('report/uploadsummaryfindings/<int:pk>', views.uploadsummaryfindings, name='uploadsummaryfindings'),
     path('report/download/pdf/<int:pk>', views.reportdownloadpdf, name='reportdownloadpdf'), 
+    path('report/import_nmap_scan/<int:pk>', views.upload_and_parse_nmap, name='upload_and_parse_nmap'),
+    path('report/import_openvas_scan/<int:pk>', views.upload_and_parse_openvas, name='upload_and_parse_openvas'),
+    path('report/remove_nmap_scan/<int:pk>', views.remove_nmap_scan, name='remove_nmap_scan'),
+    path('report/remove_openvas_scan/<int:pk>', views.remove_openvas_scan, name='remove_openvas_scan'),
     
     # ----------------------- SETTINGS -------------------------------------------
     path('update_preference/', views.update_preference, name='update_preference'),
