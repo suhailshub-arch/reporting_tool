@@ -9,10 +9,10 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeDoneView
 from django.contrib import messages
-from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile
+from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix
 
 
-from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm, UploadNmapForm, UploadOpenVASForm
+from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm, UploadNmapForm, UploadOpenVASForm, AppendixForm
 
 
 from dotenv import load_dotenv
@@ -161,9 +161,41 @@ def findings_closed_list(request):
     }
     return HttpResponse(template.render(context, request))
 
-
 @login_required
 def add_finding(request,pk):
+    Report_query = get_object_or_404(Report, pk=pk)
+
+    if request.method == 'POST':
+        form = Add_findings(request.POST)
+        
+        if form.is_valid():
+            finding = form.save(commit=False) 
+            finding.report = Report_query       
+            finding.finding_id = uuid.uuid4()
+            finding.save()
+            
+        return redirect('report_finding', pk=pk)
+        
+    else:
+        form = Add_findings()
+        form.fields['description'].initial = "TBC"
+        form.fields['impact'].initial = "TBC"
+        form.fields['recommendation'].initial = "TBC"
+        form.fields['references'].initial = "TBC"
+        form.fields['location'].initial = "TBC"
+        form.fields['status'].initial = "Open"
+        form.fields['poc'].initial = "TBC"
+        template = 'findings/findings_add.html'
+        context = {
+            'form': form,
+            'Report_query': Report_query
+        }
+
+    return render(request, template, context)
+
+
+@login_required
+def add_finding_from_gpt(request,pk):
     report_data_json = request.session.get('report_data', None)
     # Check if report_data_json is in the session
     if report_data_json is not None:
@@ -355,15 +387,16 @@ def template_add(request):
         form = NewFindingTemplateForm(request.POST)
         if form.is_valid():
             template = form.save(commit=False)
-            template.finding_id = uuid.uuid4()
             template.save()
 
-            return redirect('template_list')
+            if '_finish' in request.POST:
+                return redirect('template_list')
+            elif '_next' in request.POST:
+                return redirect('template_add')
         
     else:
         form = NewFindingTemplateForm()
         form.fields['description'].initial = "TBC"
-        form.fields['location'].initial = "TBC"
         form.fields['impact'].initial = "TBC"
         form.fields['recommendation'].initial = "TBC"
         form.fields['references'].initial = "TBC"
@@ -385,7 +418,10 @@ def template_edit(request, pk):
             template = form.save(commit=False)
             template.save()
 
-            return redirect('template_list')
+            if '_finish' in request.POST:
+                return redirect('template_list')
+            elif '_next' in request.POST:
+                return redirect('template_add')
         
     else:
         form = NewFindingTemplateForm(instance=template)
@@ -393,6 +429,39 @@ def template_edit(request, pk):
     return render(request, 'findings/template_add.html', {
         'form': form
     })
+    
+
+@login_required
+def template_duplicate(request,pk):
+    template_query = get_object_or_404(Finding_Template, pk=pk)
+    
+    if request.method == 'POST':
+        form = NewFindingTemplateForm(request.POST)
+        if form.is_valid():
+            template = form.save(commit=False)
+            template.save()
+
+            if '_finish' in request.POST:
+                return redirect('template_list')
+            elif '_next' in request.POST:
+                return redirect('template_add')
+        
+    else:
+        form = NewFindingTemplateForm()
+        form.fields['title'].initial = template_query.title
+        form.fields['severity'].initial = template_query.severity
+        form.fields['cvss_score'].initial = template_query.cvss_score
+        form.fields['cvss_vector'].initial = template_query.cvss_vector
+        form.fields['description'].initial = template_query.description
+        form.fields['impact'].initial = template_query.impact
+        form.fields['recommendation'].initial = template_query.recommendation
+        form.fields['references'].initial = template_query.references
+        form.fields['owasp'].initial = template_query.owasp
+
+    return render(request, 'findings/template_add.html', {
+        'form': form
+    })
+    
 
 @login_required
 def template_delete(request, pk):
@@ -436,11 +505,32 @@ def templateaddreport(request,pk,reportpk):
     # save template in DB
     finding_uuid = uuid.uuid4()
     finding_status = "Open"
-    finding_to_DB = Finding(report=DB_report_query, finding_id=finding_uuid, title=DB_finding_template_query.title, severity=DB_finding_template_query.severity, cvss_vector=DB_finding_template_query.cvss_vector, cvss_score=DB_finding_template_query.cvss_score, description=DB_finding_template_query.description, status=finding_status, location=DB_finding_template_query.location, impact=DB_finding_template_query.impact, recommendation=DB_finding_template_query.recommendation, references=DB_finding_template_query.references, owasp=DB_finding_template_query.owasp)
+    finding_to_DB = Finding(report=DB_report_query, finding_id=finding_uuid, title=DB_finding_template_query.title, severity=DB_finding_template_query.severity, cvss_vector=DB_finding_template_query.cvss_vector, cvss_score=DB_finding_template_query.cvss_score, description=DB_finding_template_query.description, status=finding_status, impact=DB_finding_template_query.impact, recommendation=DB_finding_template_query.recommendation, references=DB_finding_template_query.references, owasp=DB_finding_template_query.owasp)
 
     finding_to_DB.save()
 
     return redirect('report_view', pk=reportpk)
+
+
+@login_required
+def template_findings_autocomplete(request):
+    if 'term' in request.GET:
+        qs = Finding_Template.objects.filter(title__icontains=request.GET.get('term'))
+        findings = [{
+            'label': finding.title,  
+            'value': finding.title,  
+            'severity': finding.severity,  
+            'cvss_vector': finding.cvss_vector,
+            'cvss_score': finding.cvss_score,
+            'description': finding.description,
+            'impact': finding.impact,
+            'recommendation': finding.recommendation,
+            'references': finding.references,
+            'owasp': finding.owasp.owasp_id,
+            
+        } for finding in qs]
+        return JsonResponse(findings, safe=False)
+    return JsonResponse([], safe=False)
 
 
 #---------------------------------------------------
@@ -813,6 +903,7 @@ def uploadsummaryfindings(request, pk):
 
 @login_required
 def reportdownloadpdf(request,pk):
+    template_pdf_dir=r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default'
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
 
@@ -831,6 +922,11 @@ def reportdownloadpdf(request,pk):
     md_subject = 'PDF REPORT'
     md_website = 'https//:www.shub_pentest.com'
     
+    # Appendix
+    for finding in DB_finding_query:
+        if finding.appendix_finding.all():
+            template_appendix = ('# Additional Notes') + "\n\n"
+    
     # IMAGES
     report_executive_summary_image = DB_report_query.executive_summary_image
     report_owasp_categories_image = DB_report_query.owasp_categories_summary_image
@@ -839,12 +935,12 @@ def reportdownloadpdf(request,pk):
 
     for finding in DB_finding_query:
 
-
         # Only reporting Critical/High/Medium/Low/Info findings
         if finding.severity == 'None':
             pass
         else:
             counter_finding += 1
+            template_appendix_in_finding = ''
 
             if finding.severity == 'Critical':
                 counter_finding_critical += 1
@@ -875,13 +971,34 @@ def reportdownloadpdf(request,pk):
             pdf_finding_summary += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding_summary.md'),{'finding': finding,'counter_finding': counter_finding, 'severity_box': severity_box})
             severity_color_finding = "\\textcolor{" + f"{severity_color}" +"}{" + f"{finding.severity}" + "}"
 
+            # appendix
+            if finding.appendix_finding.all():
+                
+                template_appendix_in_finding = ('**Additional notes**') + "\n\n"
+
+                for appendix_in_finding in finding.appendix_finding.all():
+
+                    pdf_appendix = render_to_string(os.path.join(template_pdf_dir, 'pdf_appendix.md'),{'appendix_in_finding': appendix_in_finding})
+
+                    template_appendix += ''.join(pdf_appendix + "  \n\n")
+                    template_appendix_in_finding += ''.join((appendix_in_finding.title) + "\n")
+                    
+
+                template_appendix_in_finding += ''.join("\\pagebreak")
+
+            else:
+                template_appendix_in_finding += ''.join("\\pagebreak")
+            
             # finding
-            pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding })
+            pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding, 'template_appendix_in_finding': template_appendix_in_finding })
             template_findings += ''.join(pdf_finding)
 
-    nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
+    if DB_report_query.nmap_scan != "":    
+        nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
+    else:
+        nmap_data = ""
     pdf_markdown_report = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
-    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data})
+    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data, 'template_appendix': template_appendix})
 
     final_markdown = textwrap.dedent(pdf_markdown_report)
 
@@ -901,7 +1018,7 @@ def reportdownloadpdf(request,pk):
                                         '--pdf-engine', 'pdflatex',])
     with open('test.pdf', 'rb') as fh:
         response = HttpResponse(fh.read(), content_type="application/pdf")
-        response['Content-Disposition'] = 'inline; filename=' + file_name  # or 'attachment/inline; filename=file.pdf' 
+        response['Content-Disposition'] = 'attachment; filename=' + file_name  # or 'attachment; filename=' 'inline; filename='
         return response
 
 #---------------------------------------------------
@@ -1094,3 +1211,127 @@ def remove_openvas_scan(request,pk):
     report_query.save()
     
     return redirect(reverse('report_view', kwargs={'pk' : pk}))
+
+#---------------------------------------------------
+#                   APPENDIX
+# --------------------------------------------------
+
+@login_required
+def reportappendix_list(request,pk):
+    report_query = get_object_or_404(Report, pk=pk)
+    finding_query = Finding.objects.filter(report=report_query).order_by('cvss_score').reverse()
+    appendix_query = Appendix.objects.filter(finding__in=finding_query)
+
+    count_appendix_query = appendix_query.count()
+
+    return render(request, 'appendix/reportappendix_list.html', {'report_query': report_query, 'finding_query': finding_query, 'appendix_query': appendix_query, 'count_appendix_query': count_appendix_query})
+
+
+@login_required
+def appendix_add(request,pk):
+
+    report_query = get_object_or_404(Report, pk=pk)
+
+    if request.method == 'POST':
+        form = AppendixForm(request.POST, reportpk=pk)
+        if form.is_valid():
+            appendix = form.save(commit=False)            
+            finding_pk = form['finding'].value()
+            appendix.save()
+            appendix.finding.add(finding_pk)
+
+            if '_finish' in request.POST:
+                return redirect('reportappendix_list', pk=pk)
+            elif '_next' in request.POST:
+                return redirect('appendix_add', pk=pk)
+    else:
+        form = AppendixForm(reportpk=pk)
+        form.fields['description'].initial = 'TBD'
+
+
+    return render(request, 'appendix/appendix_add.html', {
+        'form': form, 'report_query': report_query
+    })
+    
+    
+@login_required
+def appendix_edit(request,pk):
+
+    appendix = get_object_or_404(Appendix, pk=pk)
+    finding_pk = appendix.finding.first().pk
+    finding_query = get_object_or_404(Finding, pk=finding_pk)
+
+    report = finding_query.report
+    report_query = get_object_or_404(Report, pk=report.pk)
+
+    if request.method == 'POST':
+        form = AppendixForm(request.POST, instance=appendix, reportpk=report.pk)
+        if form.is_valid():
+            appendix = form.save(commit=False)
+            new_finding_pk = form['finding'].value()
+            New_finding = Finding.objects.filter(pk=new_finding_pk)
+            appendix.save()
+            appendix.finding.set(New_finding, clear=True)
+
+            if '_finish' in request.POST:
+                return redirect('reportappendix_list', pk=report.pk)
+            elif '_next' in request.POST:
+                return redirect('appendix_add', pk=report.pk)
+    else:
+        form = AppendixForm(reportpk=report.pk, instance=appendix, initial={'finding': finding_pk})
+
+    return render(request, 'appendix/appendix_add.html', {
+        'form': form, 'report_query': report_query
+    })
+    
+    
+@login_required
+def appendix_duplicate(request,pk,appendixpk):
+
+    report_query = get_object_or_404(Report, pk=pk)
+    appendix_query = get_object_or_404(Appendix, pk=appendixpk)
+
+    if request.method == 'POST':
+        form = AppendixForm(request.POST, reportpk=pk)
+        if form.is_valid():
+            appendix = form.save(commit=False)            
+            finding_pk = form['finding'].value()
+            appendix.save()
+            appendix.finding.add(finding_pk)
+
+            if '_finish' in request.POST:
+                return redirect('reportappendix_list', pk=pk)
+            elif '_next' in request.POST:
+                return redirect('appendix_add', pk=pk)
+    else:
+        form = AppendixForm(reportpk=pk)
+        form.fields['description'].initial = appendix_query.description
+        form.fields['title'].initial = appendix_query.title
+
+
+    return render(request, 'appendix/appendix_add.html', {
+        'form': form, 'report_query': report_query
+    })
+
+    
+@login_required
+def appendix_delete(request,pk):
+
+    Appendix.objects.filter(pk=pk).delete()
+    next_url = request.GET.get('next', '/')
+    return redirect(next_url)
+
+
+@login_required
+def appendix_view(request,pk):
+    appendix = get_object_or_404(Appendix, pk=pk)
+    finding_pk = appendix.finding.first().pk
+    finding_query = get_object_or_404(Finding, pk=finding_pk)
+
+    return render(request, 'appendix/appendix_view.html', {'finding_query': finding_query, 'appendix_query': appendix})
+
+
+# ------------------------------------------------
+#                     TEST
+# ------------------------------------------------
+

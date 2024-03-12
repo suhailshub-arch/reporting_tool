@@ -249,20 +249,6 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Location</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.location }}
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Proof of Concept</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.poc }}
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Impact</label>
                                 <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.impact }}
@@ -284,7 +270,8 @@
                             </div>
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-danger">Save and finish</button>
+                                <button type="submit" class="btn btn-danger" value="Save" name="_finish">Save and finish</button>
+                                <button type="submit" class="btn btn-primary" value="Next" name="_next">Save and add a new template</button>
                             </div>
 
                         </div>

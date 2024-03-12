@@ -23,8 +23,17 @@
 
         <div class="row">
             <div class="col-md-5">
-              <a href="{% url 'initial_add_finding' DB_report_query.id %}"><button type="button" class="btn btn-danger"><i class="fa fa-bug"></i>Add Findings</button></a>
-              <a href="{% url 'templateaddfinding' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i>Add Findings From Template</button></a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-bug"></i>Add Findings</button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'initial_add_finding' DB_report_query.id %}">Automate</a></li>
+                      <li><a class="dropdown-item" href="{% url 'add_finding' DB_report_query.id %}">Manually Add</a></li>
+                    </ul>
+                    
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'templateaddfinding' DB_report_query.id %}"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i>Add Findings From Template</button></a>
+                </div>
             </div>
         </div>
 

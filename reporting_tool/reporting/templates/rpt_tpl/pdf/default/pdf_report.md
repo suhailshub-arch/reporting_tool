@@ -37,3 +37,8 @@
 \pagebreak
 # NMap Scan Data
 {{nmap_data}}
+
+\pagebreak
+{{template_appendix}}
+
+\pagebreak

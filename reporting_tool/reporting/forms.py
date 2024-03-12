@@ -3,7 +3,7 @@ from django.forms import Textarea, TextInput, DateInput, ModelChoiceField, Email
 from django.contrib.auth.models import User
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
-from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template, UserProfile
+from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template, UserProfile, Appendix
 from martor.fields import MartorFormField
 from martor.widgets import MartorWidget
 import datetime
@@ -206,6 +206,31 @@ class OWASP_Questions(forms.Form):
     
 class UploadNmapForm(forms.Form):
     nmap_file = forms.FileField()
+
     
 class UploadOpenVASForm(forms.Form):
     openvas_file = forms.FileField(required=True)
+
+
+class FindingModelChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return f"({obj.report.title}) - {obj.title}"
+
+
+class AppendixForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        reportpk = kwargs.pop('reportpk')
+        super(AppendixForm, self).__init__(*args, **kwargs)
+
+        finding_query = Finding.objects.filter(report=reportpk)
+
+        self.fields["finding"] = FindingModelChoiceField(queryset=finding_query, empty_label=("(Select a finding)"), widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Appendix
+        fields = ('finding', 'title', 'description' )
+
+        widgets = {
+            'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Title")}),
+        }

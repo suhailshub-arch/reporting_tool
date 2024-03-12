@@ -5,6 +5,7 @@
 
 <link rel="stylesheet" href="/static/cvss-v4-calculator-test/styles.css?v=6">
 <link rel="stylesheet" href="/static/cvss-v4-calculator-test/spectre.css">
+<link rel="stylesheet" href="/static/jquery-ui/jquery-ui.min.css">
 
 {% endblock stylesheets %}
 
@@ -324,5 +325,38 @@
 <script src="/static/cvss-v4-calculator-test/max_severity.js?v=1"></script>
 <script src="/static/cvss-v4-calculator-test/metrics.js?v=1"></script>
 <script src="/static/cvss-v4-calculator-test/app.js?v=7"></script>
+
+<script src="/static/jquery-ui/jquery-ui.min.js"></script>
+
+<script>
+    $( function() {
+        var editor_description = ace.edit('martor-description');
+        var editor_impact = ace.edit('martor-impact');
+        var editor_recommendation = ace.edit('martor-recommendation');
+        var editor_references = ace.edit('martor-references');
+    $( "#id_title" ).autocomplete({
+        source: '/template-findings-autocomplete/',  // URL to the view that returns JSON
+        select: function(event, ui) {
+            $("#id_owasp").val(ui.item.owasp);
+            $("#id_severity").val(ui.item.severity);
+            $("#id_cvss_vector").val(ui.item.cvss_vector);
+            $("#id_cvss_score").val(ui.item.cvss_score);
+
+            $("#id_description").val(ui.item.description);
+            editor_description.setValue($("#id_description").val(), -1)
+
+            $("#id_impact").val(ui.item.impact);
+            editor_impact.setValue($("#id_impact").val(), -1)
+
+            $("#id_recommendation").val(ui.item.recommendation);
+            editor_recommendation.setValue($("#id_recommendation").val(), -1)
+
+            $("#id_references").val(ui.item.references);
+            editor_references.setValue($("#id_references").val(), -1)
+
+        }
+    });
+});
+</script>
 
 {% endblock javascripts %}

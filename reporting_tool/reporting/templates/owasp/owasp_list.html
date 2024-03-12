@@ -59,7 +59,7 @@
         
                                 <td class="project-actions text-center speakable">
                                     <a href="{% url 'owasp_edit' owasp.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
-                                    <a href="{% url 'owasp_delete' owasp.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Delete</button></a>
+                                    <a href="{% url 'owasp_delete' owasp.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa-solid fa-trash"></i>Delete</button></a>
                                 </td>
         
                             </tr>

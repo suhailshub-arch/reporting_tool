@@ -56,4 +56,7 @@
 {{finding.references|safe}}
 {% endif %}
 
-\pagebreak
+{% if template_appendix_in_finding %}
+{{template_appendix_in_finding|safe}}
+{% endif %}
+

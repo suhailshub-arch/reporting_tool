@@ -76,8 +76,8 @@
                                 <td class="project-actions text-center speakable">
                                     <a href="{% url 'template_view' template.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i>View</button></a>                            
                                     <a href="{% url 'template_edit' template.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
-                                   
-                                    <a href="{% url 'template_delete' template.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Delete</button></a>
+                                    <a href="{% url 'template_duplicate' template.id  %}"><button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa-solid fa-copy"></i>Duplicate</button></a>                                   
+                                    <a href="{% url 'template_delete' template.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa-solid fa-trash"></i>Delete</button></a>
                                 </td>
         
                             </tr>

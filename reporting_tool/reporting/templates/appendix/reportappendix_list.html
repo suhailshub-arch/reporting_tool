@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="content-header">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h4 class="speakable">{{ report_query.title }} Appendix</h4>
+            </div>
+
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right speakable">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'customer_view' report_query.customer.id %}">{{ report_query.customer.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'report_view' report_query.id %}">{{ report_query.title }}</a></li>
+                    <li class="breadcrumb-item active">Appendix</li>
+                </ol>                
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-md-5">
+              <a href="{% url 'appendix_add' report_query.id %}"><button type="button" class="btn btn-success"><i class="fas fa-folder"></i>Add Appendix</button></a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card card-outline card-danger">
+
+            <div class="card-header speakable">
+                <h3 class="card-title">{{ count_appendix_query }} Appendix</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table id="findingReportList" class="table table-bordered table-hover">
+
+                    <thead class="text-center">
+                        <tr>
+                            <th style="width: 25%" class="text-center speakable">Appendix</th>
+                            <th style="width: 50%" class="text-center speakable">Finding</th>
+                            <th style="width: 25%" class="text-center speakable">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for appendix in appendix_query %}
+                        
+                        
+                            <tr>
+                                <td class="speakable">
+                                    {{ appendix.title|safe }}
+                                </td>
+
+                                <td class="speakable">
+                                    {% for finding in appendix.finding.all %}
+                                        {{finding.title}}
+                                    {% endfor %}
+                                </td>
+
+                                <td class="project-actions text-center speakable">
+                                    <a href="{% url 'appendix_view' appendix.id %}"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-folder"></i>View</button></a>                            
+                                    <a href="{% url 'appendix_edit' appendix.id %}"><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-edit"></i>Edit</button></a>
+                                    <a href="{% url 'appendix_duplicate' report_query.id appendix.id %}"><button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa-solid fa-copy"></i>Duplicate</button></a>
+                                    <a href="{% url 'appendix_delete' appendix.id %}?next={{ request.path }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa-solid fa-trash"></i>Delete</button></a>
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+<script>
+    $(document).ready(function() {
+    $("#findingReportList").DataTable({
+        "paging": true,
+        "searching": true,
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false
+    });
+});
+
+</script>
+
+{% endblock javascripts %}
+
+
+
+  
+
+
