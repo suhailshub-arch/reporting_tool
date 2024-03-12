@@ -6,10 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    
-    <!-- Popperjs -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    
+    {% block stylesheets %}
     <!-- Tempus Dominus JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.9.4/dist/js/tempus-dominus.min.js" crossorigin="anonymous"></script>
 
@@ -25,57 +22,183 @@
     <!-- ADMINLTE -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
+    <!-- Martor -->
+    <link href="/static/martor/plugins/css/ace.min.css" type="text/css" media="all" rel="stylesheet" />
+    <link href="/static/martor/plugins/css/resizable.min.css" type="text/css" media="all" rel="stylesheet" />
+    <link href="/static/martor/css/martor.bootstrap.min.css" type="text/css" media="all" rel="stylesheet" />
+
+    <!-- BOOTSTRAP 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.css" rel="stylesheet">
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
+    {% if user_font_size or user_background_color %}
+    <style>
+        body{
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .martor-field { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .form-control { 
+            {% if user_font_size %}
+                font-size: {{ user_font_size }}px;
+                height: auto;
+            {% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .col-form-label{
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .card-header { /* #martor-description */
+            {% if user_background_color %}
+            background-color: {{ user_background_color }};
+            filter: brightness(80%);
+            {% endif %}
+        }
+
+        .card-title { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+        }
+
+        .card-body { /* #martor-description */
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+        }
+
+        .info-box{ /* #martor-description */
+            {% if user_background_color %}
+            background-color: {{ user_background_color }};
+            filter: brightness(95%);
+            {% endif %}
+        }
+
+        .info-box-number{
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+        }   
+        
+        .info-box-text{
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+        }
+
+        .btn { /* #martor-description */
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+        }
+    </style>
+    {% endif %}
+
+
+    {% endblock stylesheets %}
+
     {% block title %}<title>Penetration Testing Tool</title>{% endblock %}
 </head>
-<body>
-    {% block navbar %}
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-            </li>
+<div id='content'>
+    <body>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Report</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/report/list/">All Reports</a></li>
-                  <li><a class="dropdown-item" href="/report/add/">Add Report</a></li>
-                </ul>
-            </li>
+        {% block navbar %}
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Report</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/report/list/">All Reports</a></li>
+                        <li><a class="dropdown-item" href="/report/add/">Add Report</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Findings</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/findings/findings_open_list">Open Findings</a></li>
+                        <li><a class="dropdown-item" href="/findings/findings_closed_list">Closed Findings</a></li>
+                        <li><a class="dropdown-item" href="/template/list/">Findings Templates</a></li>
+                        <li><a class="dropdown-item" href="/template/add/">Add Findings Template</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">OWASP</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/owasp/list">OWASP List</a></li>
+                        <li><a class="dropdown-item" href="/owasp/add">Add OWASP</a></li>
+                    </ul>
+                </li>
+    
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Customer</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/customer/list">All Customers</a></li>
+                        <li><a class="dropdown-item" href="/customer/add">Add Customer</a></li>
+                    </ul>
+                </li>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Findings</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/findings/findings_open_list">Open Findings</a></li>
-                  <li><a class="dropdown-item" href="/findings/findings_closed_list">Closed Findings</a></li>
-                </ul>
-            </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Account</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_view' %}">View Profile</a></li>
+                        <li><a class="dropdown-item" href="/accounts/password_change/">Change Password</a></li>
+                    </ul>
+                </li>
+                
+            </ul>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">OWASP</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/owasp/list">OWASP List</a></li>
-                  <li><a class="dropdown-item" href="/owasp/add">Add OWASP</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Customer</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/customer/list">All Customers</a></li>
-                  <li><a class="dropdown-item" href="/customer/add">Add Customer</a></li>
-                </ul>
-            </li>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="magnifier">Toggle Magnifier <i class="fas fa-search-plus"></i></button>
+            </div>
             
-        </ul>
-    </nav>
-    {% endblock %}
 
-    <div>
-        {% block content %}
-          <!-- {{ content }} -->
-        {% endblock content %}
-    </div>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="toggle-tts">Activate Text-to-Speech Mode <i class="fas fa-search-plus"></i></button>
+            </div>
+            
+
+        </nav>
+    
+        {% endblock %}
+    
+        <div>
+            <!-- Speech synthesis control buttons -->
+            <div id="tts-controls" style="display:none;" class="content-header container text-center">
+                <button type="button" onclick="pauseSpeech()" class="btn btn-warning btn-lg">Pause</button>
+                <button type="button" onclick="resumeSpeech()" class="btn btn-success btn-lg">Resume</button>
+                <button type="button" onclick="stopSpeech()" class="btn btn-danger btn-lg">Stop</button>
+            </div>
+
+            {% block content %}
+              <!-- {{ content }} -->
+            {% endblock content %}
+        </div>
+</div>
+
 
     {% block javascripts %}
 
@@ -83,30 +206,38 @@
     <!-- JQUERY -->
     <script src="/static/jquery/dist/jquery.min.js"></script>
 
+    <!-- Popper -->
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+
     <!-- JQUERY KNOB -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js" integrity="sha512-NhRZzPdzMOMf005Xmd4JonwPftz4Pe99mRVcFeRDcdCtfjv46zPIi/7ZKScbpHD/V0HB1Eb+ZWigMqw94VUVaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- Bootstrp 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+    <!-- DataTables  & Plugins -->
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.js"></script>
+    
+    <!-- MARTOR -->
+    <!-- <script type="text/javascript" src="/static/martor/plugins/js/bootstrap.min.js"></script> -->
+    <script type="text/javascript" src="/static/martor/plugins/js/ace.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/mode-markdown.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/ext-language_tools.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/theme-github.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/typo.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/spellcheck.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/highlight.min.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/resizable.min.js"></script>
+    <script type="text/javascript" src="/static/martor/plugins/js/emojis.min.js"></script>
+    <script type="text/javascript" src="/static/martor/js/martor.bootstrap.js"></script>
 
     
-    <!-- DataTables  & Plugins -->
-    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.css" rel="stylesheet">
- 
-    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/b-2.4.2/r-2.5.0/datatables.min.js"></script>
-
-
-    <!-- <script src="/static/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/static/plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="/static/plugins/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="/static/plugins/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script src="/static/plugins/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/static/plugins/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="/static/plugins/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="/static/plugins/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="/static/plugins/datatables.net-buttons/js/buttons.colVis.min.js"></script> -->
-
+    <script>
+        $('.martor-preview pre').each(function(i, block){
+            hljs.highlightBlock(block);
+        });
+    </script>
 
     <!-- ADMIN LTE -->
     <script src="/static/dist/js/adminlte.min.js"></script>
@@ -116,6 +247,41 @@
             $(".dial").knob();
         });
     </script>
+
+    <!-- MAGNIFIER -->
+    <script type="text/javascript" src="/static/html-magnifier/html-magnifier.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const magnifier = new HTMLMagnifier({
+                zoom: 2,
+                shape: 'circle',
+                width: 200,
+                height: 200
+            });
+            magnifier.hide();
+            let toggleMagnifier = false;
+
+            const toggleMagnifierButton = document.getElementById('magnifier');
+
+            toggleMagnifierButton.addEventListener('click', () => {
+                if(toggleMagnifier == false)
+                {
+                    magnifier.show();
+                    toggleMagnifier = true;
+                }
+                else if(toggleMagnifier == true)
+                {
+                    magnifier.hide();
+                    toggleMagnifier = false;
+                }
+            });
+        });
+
+        
+    </script>
+
+    <script type="text/javascript" src="/static/plugins/js/text-to-speech.js"></script>
 
 {% endblock javascripts %}
 

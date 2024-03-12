@@ -1,6 +1,6 @@
 ---
 title: "{{DB_report_query.title}}"
-product: "{{DB_report_query.product.name}}"
+product: "{{DB_report_query.customer.name}}"
 author: ["{{md_author}}", "{{md_website}}"]
 date: "{{report_date}}"
 subject: "{{md_subject}}"
@@ -11,8 +11,6 @@ titlepage-color: "{{titlepagecolor}}"
 titlepage-text-color: "{{titlepagetextcolor}}"
 titlepage-rule-color: "{{titlerulecolor}}"
 titlepage-rule-height: "{{titlepageruleheight}}"
-titlepage-background: "{{title_background}}"
-page-background: "{{pages_background}}"
 book: false
 toc-own-page: true
 code-block-font-size: \scriptsize
@@ -43,3 +41,4 @@ pandoc-latex-environment:
     additional_notesblock: [additional_notesnote]
 
 ---
+

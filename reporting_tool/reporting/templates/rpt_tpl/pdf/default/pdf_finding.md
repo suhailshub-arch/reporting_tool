@@ -1,16 +1,11 @@
-
 ## {{finding.title|safe}}
 
-:::{{icon_finding}} 
-**Severity:** {{severity_color_finding}}
+::: {{icon_finding}} 
+**Severity**: {{severity_color_finding}}
 
-{% if finding.cvss_score != "0" %}
-**CVSS Score:** {{finding.cvss_score|safe}}
-{% endif %}
+{% if finding.cvss_score != "0" %} **CVSS Score**: {{finding.cvss_score|safe}} {% endif %}
 
-{% if finding.cvss_vector != "0" %}
-**CVSS Vector:** {{finding.cvss_vector|safe}}
-{% endif %}
+{% if finding.cvss_vector != "0" %} **CVSS Vector**: {{finding.cvss_vector|safe}} {% endif %} 
 :::
 
 {% if finding.cwe %}
@@ -59,5 +54,9 @@
 **References**
 
 {{finding.references|safe}}
+{% endif %}
+
+{% if template_appendix_in_finding %}
+{{template_appendix_in_finding|safe}}
 {% endif %}
 

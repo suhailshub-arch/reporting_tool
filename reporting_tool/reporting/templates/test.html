@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- --------------------------------------------------------------------------------------------------- -->
+
+<section class="content">
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <div class="card card-outline card-danger">
+
+                    <div class="card-header">
+                        <h3 class="card-title">Add Finding</h3>
+                    </div>
+                
+                    
+                    <form role="form" method="post" enctype="multipart/form-data"> 
+
+                        {%csrf_token%}
+
+                        <div class="card-body">
+                            
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">affected_url</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.affected_url }}
+                                </div>
+                            </div>
+                            
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">OWASP</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.owasp }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">Severity</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.severity }}
+                                </div>
+                                
+                            </div>
+                            
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">data_exposed</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.data_exposed }}
+                                </div>
+                              
+                                
+                            </div>
+                            
+                            
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">encryption_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                  {{ form.encryption_issue }}
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger">Save and finish</button>
+                            </div>
+
+                        </div>
+                    </form> 
+                    
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>  
+
+</section>
+
+
+{% endblock content %}

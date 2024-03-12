@@ -1,15 +1,22 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+  {{ block.super }}
+  
+<link rel="stylesheet" href="/static/daterangepicker/daterangepicker.css" />
+
+{% endblock stylesheets %}
+
 {% block content %}
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Report</h1>
+            <h1 class="speakable">Report</h1>
           </div>
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right speakable">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Report List</a></li>
               <li class="breadcrumb-item active">Add or Edit Report</li>
@@ -26,7 +33,7 @@
             <div class="col-md-12">
                 <div class="card card-outline card-primary">
 
-                    <div class="card-header">
+                    <div class="card-header speakable">
                         <h3 class="card-title">Add Report</h3>
                     </div>
                 
@@ -36,73 +43,85 @@
                         <div class="card-body">
                             
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Customer</label>
+                                <label class="col-sm-2 col-form-label speakable">Customer</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.customer }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report ID</label>
+                                <label class="col-sm-2 col-form-label speakable speakable">Report ID</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.report_id }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report Title</label>
+                                <label class="col-sm-2 col-form-label speakable">Report Title</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.title }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Report Date</label>
+                                <label class="col-sm-2 col-form-label speakable">Report Date</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.report_date }}
+                                    <div class="input-group log-event" id="report_date">
+                                      <span class="input-group-text">
+                                        <i class="fas fa-calendar"></i>
+                                      </span>
+                                      {{ form.report_date }}
+                                    </div>
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Executive summary</label>
+                                <label class="col-sm-2 col-form-label speakable">Executive summary</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.executive_summary }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Scope</label>
+                                <label class="col-sm-2 col-form-label speakable">Scope</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.scope }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Outofscope</label>
+                                <label class="col-sm-2 col-form-label speakable">Outofscope</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.outofscope }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Methodology</label>
+                                <label class="col-sm-2 col-form-label speakable">Methodology</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.methodology }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Recommendation</label>
+                                <label class="col-sm-2 col-form-label speakable">Recommendation</label>
                                   <div class="col-md-10 col-sm-10 col-xs-12">
                                     {{ form.recommendation }}
                                   </div>
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Audit</label>
-                                  <div class="col-md-10 col-sm-10 col-xs-12">
-                                    {{ form.audit }}
+                              <label class="col-sm-2 col-form-label speakable">Audit dates</label>
+                              <div class="col-md-10 col-sm-10 col-xs-12">
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                      <i class="far fa-calendar-alt"></i>
+                                    </span>
                                   </div>
+                                  {{ form.audit }}
+                                </div>
+                              </div>
                             </div>
 
                             <div class="card-footer">
@@ -120,3 +139,39 @@
 
 
 {% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <!-- Popperjs -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha256-BRqBN7dYgABqtY9Hd4ynE+1slnEw+roEPFzQ7TRRfcg=" crossorigin="anonymous"></script>
+
+
+<script src="/static/moment/moment.min.js"></script>
+<script src="/static/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/static/daterangepicker/daterangepicker.js"></script>
+
+
+<script>
+  $(function () {
+    //Date range picker
+    $('#audit').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD'
+      }
+    });
+
+    //Date picker
+    $('#reportdate').daterangepicker({
+      singleDatePicker: true,
+      locale: {
+        format: 'YYYY-MM-DD',
+      }
+    });
+
+  })
+</script>
+
+>
+
+{% endblock javascripts %}

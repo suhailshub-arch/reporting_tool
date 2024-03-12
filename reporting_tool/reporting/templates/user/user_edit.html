@@ -1,0 +1,71 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="speakable">Customer</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right speakable">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Edit Profile</li>
+          </ol>
+        </div>
+      </div>
+  </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+
+            <div class="card card-outline card-primary">
+              <div class="card-header speakable">
+                <h3 class="card-title">User Details</h3>
+              </div>
+              
+              <form role="form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-body">
+                  <div class="form-group row">
+                    <label class="col-sm-2 col-form-label speakable">First Name</label>
+                      <div class="col-md-10 col-sm-10 col-xs-12">
+                        {{ user_form.first_name }}
+                      </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label class="col-sm-2 col-form-label speakable">Last Name</label>
+                      <div class="col-md-10 col-sm-10 col-xs-12">
+                        {{ user_form.last_name }}
+                      </div>
+                  </div>
+                  
+                  <div class="form-group row">
+                    <label class="col-sm-2 col-form-label speakable">Email</label>
+                    <div class="col-md-10 col-sm-10 col-xs-12">
+                      {{ user_form.email }}
+                    </div>
+                  </div>
+   
+                </div>
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
+            </div>
+
+        </div>
+      </div>
+    </div>
+</section>
+
+
+{% endblock content %}

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "admin-lte": "3.2"
+    "admin-lte": "3.2",
+    "moment": "^2.30.1"
   }
 }

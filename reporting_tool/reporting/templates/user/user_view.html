@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+  {{ block.super }}
+
+  <link rel="stylesheet" type="text/css" href="/static/Coloris-0.22.0/dist/coloris.min.css"/>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<section class="content-header">
+    <div class="container-fluid">
+  
+          <div class="row">
+              <div class="col-sm-6 speakable">
+                  <h4>Profile Page</h4>
+              </div>
+  
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right speakable">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Profile</a></li>
+                </ol>                
+            </div>
+          </div>
+  
+          <br>
+  
+          <div class="btn-group">
+                <a href="{% url 'user_edit' %}"><button type="button" class="btn btn-primary"><i class="fa fa-edit"></i>Edit User</button></a>
+          </div>
+
+          <div class="btn-group">
+            <a href="{% url 'custom_password_change' %}"><button type="button" class="btn btn-danger"><i class="fas fa-exchange-alt"></i>Change Password</button></a>
+      </div>
+  
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-outline card-success">
+                    <div class="card-header speakable">
+                    <h3 class="card-title">
+                    <i class="far fa-chart-bar"></i>
+                    <b>Information</b>
+                    </h3>
+        
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+        
+                </div>
+
+                    <div class="card-body">
+
+                        <div class="form-group row speakable">
+                            <label class="col-sm-2">First Name</label>
+                            <div class="col-md-10 col-sm-11 col-xs-12">
+                                {{ user_profile.first_name }}
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group row speakable">
+                            <label class="col-sm-2">Last Name</label>
+                            <div class="col-md-10 col-sm-11 col-xs-12">
+                                {{ user_profile.last_name }}
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group row speakable">
+                            <label class="col-sm-2">Email</label>
+                            <div class="col-md-10 col-sm-11 col-xs-12">
+                                {{ user_profile.email }}
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+              <div class="card card-outline card-success">
+                <div class="card-header speakable">
+                  <h3 class="card-title">
+                  <i class="far fa-chart-bar"></i>
+                  <b>Preference</b>
+                  </h3>
+      
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                  </div>
+      
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group row align-items-center speakable">
+                        <label class="col-sm-2">Font Size</label>
+                        <div class="col-md-10  align-items-center">
+                            <button id="decreaseFont" class="btn btn-secondary">-</button>
+                            {% if user_font_size %}
+                            <span id="fontSizeDisplay">{{ user_font_size }}</span>px
+                        
+                            {% else %}
+                            <span id="fontSizeDisplay">16</span>px
+                            {% endif %}
+                        
+                            <button id="increaseFont" class="btn btn-secondary">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row align-items-center speakable">
+                        <label class="col-sm-2">Background Colour</label>
+                        <div class="col-md-10 d-flex align-items-center">
+                            {% if user_background_color %}
+                                <input type="text" value="{{ user_background_color }}" class="coloris form-control" id="backgroundColorPicker">
+                            {% else %}
+                                <input type="text" value="#ffffff" class="coloris form-control" id="backgroundColorPicker">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row align-items-center speakable">
+                        <label class="col-sm-2">Font Colour</label>
+                        <div class="col-md-10 d-flex align-items-center">
+                            {% if user_font_color %}
+                                <input type="text" value="{{ user_font_color }}" class="coloris form-control" id="fontColorPicker">
+                            {% else %}
+                                <input type="text" value="" class="coloris form-control" id="fontColorPicker">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row align-items-center speakable">
+                        <label class="col-sm-2">Font Type</label>
+                        <div class="col-md-10 d-flex align-items-center">
+                            <select id="fontTypeSelector" name="fontType" class="form-control">
+                                <option value="" {% if not user_font_type %}selected{% endif %}>Default</option>
+                                <option value="Arial" {% if user_font_type == "Arial" %}selected{% endif %}>Arial</option>
+                                <option value="Comic Sans" {% if user_font_type == "Comic Sans" %}selected{% endif %}>Comic Sans</option>
+                                <option value="Verdana" {% if user_font_type == "Verdana" %}selected{% endif %}>Verdana</option>
+                                <option value="Calibri" {% if user_font_type == "Calibri" %}selected{% endif %}>Calibri</option>
+                                <option value="Lexend" {% if user_font_type == "Lexend" %}selected{% endif %}>Lexend</option>
+                                <!-- Add more fonts as needed -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row align-items-center">
+                        <label class="col-sm-2 speakable">Character Spacing</label>
+                        <div class="col-md-10" >
+                            <button id="decreaseSpacing" class="btn btn-secondary">-</button>
+                            <button id="increaseSpacing" class="btn btn-secondary">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row align-items-center">
+                        <label class="col-sm-2 speakable">Line Height</label>
+                        <div class="col-md-10" >
+                            <button id="decreaseLineHeight" class="btn btn-secondary">-</button>
+                            <button id="increaseLineHeight" class="btn btn-secondary">+</button>
+                        </div>
+                    </div>
+
+                    <button id="savePreference" class="btn btn-primary">Save Preference</button>
+                    <button id="setDefault" class="btn btn-info">Default</button> 
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+  <script type="text/javascript" src="/static/Coloris-0.22.0/dist/coloris.min.js"></script>
+  
+
+  <script>
+    Coloris({
+      el: '.coloris',
+      theme: 'pill',
+      closeButton: true,
+      clearButton: true,
+    });
+  </script>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const decreaseFontButton = document.getElementById('decreaseFont');
+        const increaseFontButton = document.getElementById('increaseFont');        
+        const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+
+        const backgroundColorPicker = document.getElementById('backgroundColorPicker');
+
+        const fontColorPicker = document.getElementById('fontColorPicker');
+
+        const fontTypeSelector = document.getElementById('fontTypeSelector');
+
+        const decreaseSpacingButton = document.getElementById('decreaseSpacing');
+        const increaseSpacingButton = document.getElementById('increaseSpacing');
+
+        const decreaseLineHeightButton = document.getElementById('decreaseLineHeight');
+        const increaseLineHeightButton = document.getElementById('increaseLineHeight');
+
+        const savePreferenceButton = document.getElementById('savePreference');
+        const setDefaultButton = document.getElementById('setDefault');
+
+        const initialLetterSpacing = '{{ user_character_spacing|default:"0" }}';
+        const initialLineHeight = '{{ user_line_height|default:"1.5" }}';
+        
+        let fontSize; 
+        let backgroundColour;
+        let fontColour;
+        let fontType;
+        let letterSpacing;
+        let lineHeight;
+
+        letterSpacing = parseFloat(initialLetterSpacing, 10);
+        lineHeight = parseFloat(initialLineHeight, 10);
+        backgroundColour = backgroundColorPicker.value;
+        fontColour = fontColorPicker.value;
+        fontType = fontTypeSelector;
+        
+        // ---------------------------- FONT SIZE --------------------------------------
+        if (fontSizeDisplay.textContent == ''){
+            fontSize = 16;
+        } else {
+            fontSize = parseInt(fontSizeDisplay.textContent, 10);
+        }
+
+        const updateDisplayFontSize = (newSize) => {
+            document.body.style.fontSize = `${newSize}px`;
+            document.getElementById('fontSizeDisplay').textContent = newSize;
+        };
+
+        const updateFontSizeOnServer = (fontSize) => {
+            const csrftoken = getCookie('csrftoken'); // Ensure getCookie function is defined (see below)
+            fetch('/update_font_size/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+                },
+                body: `fontSize=${fontSize}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Font size preference saved.');
+                } else {
+                    console.error('Failed to save font size preference.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        decreaseFontButton.addEventListener('click', () => {
+            if (fontSize > 10) {
+                fontSize--;
+                updateDisplayFontSize(fontSize);
+            }
+        });
+
+        increaseFontButton.addEventListener('click', () => {
+            if (fontSize < 30) {
+                fontSize++;
+                updateDisplayFontSize(fontSize);
+            }
+        });
+
+        const revertToDefaultFontSize = () => {
+            document.body.style.fontSize = ''; // Remove inline style
+            fontSizeDisplay.textContent = '16'; // Indicate default value
+            fontSize = 16
+        };
+
+        // ---------------------- BACKGROUND COLOUR --------------------------------------
+        backgroundColorPicker.addEventListener('input', function() {
+            if (this.value == ""){
+            this.value = "#ffffff"
+            }
+            backgroundColour = this.value
+            document.body.style.backgroundColor = this.value;
+        });
+
+        const updateBackgroundColourOnServer = (backgroundColour) => {
+            const csrftoken = getCookie('csrftoken'); 
+            fetch('/update_background_color/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+                },
+                body: `backgroundColour=${backgroundColour}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Background colour preference saved.');
+                } else {
+                    console.error('Failed to save background colour preference.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        const revertToDefaultBackgroundColour = () => {
+            document.body.style.backgroundColor = ''; // Remove inline style
+            backgroundColour = "#ffffff";
+            backgroundColorPicker.value = "";
+        };
+
+        // --------------------- FONT COLOUR ------------------------------------
+        fontColorPicker.addEventListener('input', function() {
+            fontColour = this.value
+            document.body.style.color = this.value;
+        });
+        
+        const updateFontColourOnServer = (fontColour) => {
+            const csrftoken = getCookie('csrftoken'); 
+            fetch('/update_font_color/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+                },
+                body: `&fontColour=${fontColour}&`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('font colour preference saved.');
+                } else {
+                    console.error('Failed to save font colour preference.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        const revertToDefaultFontColour = () => {
+            document.body.style.color = ''; // Remove inline style
+            fontColour = "";
+            fontColorPicker.value = '';
+        };
+
+        // ------------------------------ FONT TYPE -------------------------------------------
+        fontTypeSelector.addEventListener('change', function() {
+            document.body.style.fontFamily = this.value;
+        });
+
+        const updateFontTypeOnServer = (fontType) => {
+            const csrftoken = getCookie('csrftoken'); 
+            fetch('/update_font_type/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+                },
+                body: `&fontType=${fontType}&`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Font type preference saved.');
+                } else {
+                    console.error('Failed to save font type preference.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+
+        const revertToDefaultFontType = () => {
+            document.body.style.fontFamily = ''; // Remove inline style
+            fontType = "";
+            fontTypeSelector.value = '';
+        };
+
+        // -------------------------------- CHARACTER SPACING --------------------------------------
+        decreaseSpacingButton.addEventListener('click', function() {
+            letterSpacing = Math.max(0, letterSpacing - 0.25); // Prevent negative spacing
+            document.body.style.letterSpacing = `${letterSpacing}px`;
+            // console.log(letterSpacing);
+        });
+
+        increaseSpacingButton.addEventListener('click', function() {
+            letterSpacing += 0.25;
+            document.body.style.letterSpacing = `${letterSpacing}px`;
+            // console.log(letterSpacing);
+        });
+
+        const revertToDefaultCharacterSpacing = () => {
+            letterSpacing = 0;
+            document.body.style.letterSpacing = `${letterSpacing}px`;
+        };
+
+        // ------------------------------- LINE HEIGHT --------------------------------------------
+        decreaseLineHeightButton.addEventListener('click', function() {
+            lineHeight = Math.max(0, lineHeight - 0.25); // Prevent negative spacing
+            document.body.style.lineHeight = `${lineHeight}`;
+            console.log(lineHeight);
+        });
+
+        increaseLineHeightButton.addEventListener('click', function() {
+            lineHeight += 0.25;
+            document.body.style.lineHeight = `${lineHeight}`;
+            console.log(lineHeight);
+        });
+
+        const revertToDefaultLineHeight = () => {
+            lineHeight = 1.5;
+            document.body.style.lineHeight = `${lineHeight}`;
+        };
+
+        // ------------------------ UPDATE MODEL --------------------------------------------------
+        function updatePreferenceOnServer(fontSize, fontType, fontColour, backgroundColour, characterSpacing, lineHeight) {
+            const csrftoken = getCookie('csrftoken'); // Ensure you have this function to get CSRF token
+            fetch('/update_preference/', {  // Make sure you have the URL setup for this endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest', // Make sure to include this header
+                },
+                body: `fontSize=${fontSize}&fontType=${fontType}&fontColour=${fontColour}&backgroundColour=${backgroundColour}&characterSpacing=${characterSpacing}&lineHeight=${lineHeight}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Preference saved.');
+                } else {
+                    console.error('Failed to save Preference.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // BUTTONS
+        savePreferenceButton.addEventListener('click', () => {
+            updatePreferenceOnServer(fontSize, fontTypeSelector.value, fontColour, backgroundColour, letterSpacing, lineHeight);
+        });
+
+        setDefaultButton.addEventListener('click', () => {
+            revertToDefaultFontSize();
+            revertToDefaultBackgroundColour();
+            revertToDefaultFontColour();
+            revertToDefaultFontType();
+            revertToDefaultCharacterSpacing();
+            revertToDefaultLineHeight();
+            updatePreferenceOnServer("", "", "", "", 0, 1.5);
+        });
+
+    });
+</script>
+
+
+{% endblock javascripts%}
+

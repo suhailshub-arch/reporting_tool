@@ -1,0 +1,34 @@
+{
+  "author": {
+    "name": "Jager Mesh"
+  },
+  "bugs": {
+    "url": "https://github.com/jagermesh/html-magnifier/issues"
+  },
+  "deprecated": false,
+  "description": "Content Magnifier",
+  "homepage": "https://github.com/jagermesh/html-magnifier#readme",
+  "keywords": [
+    "magnifier",
+    "content magnifier",
+    "html magnifier"
+  ],
+  "license": "MIT",
+  "main": "magnifier.js",
+  "name": "html-magnifier",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jagermesh/html-magnifier.git"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-eslint": "^6.0.0",
+    "eslint": "^8.7.0"
+  },
+  "scripts": {
+    "build": "npm install && gulp build",
+    "update": "npm update && gulp build",
+    "test": "echo \"OK\""
+  },
+  "version": "2.0.3"
+}

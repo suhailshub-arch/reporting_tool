@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Finding Details</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- --------------------------------------------------------------------------------------------------- -->
+
+<section class="content">
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <div class="card card-outline card-danger">
+
+                    <div class="card-header">
+                        <h3 class="card-title">Finding General Informtion</h3>
+                    </div>
+
+                    <form role="form" method="post" enctype="multipart/form-data"> 
+
+                        {% csrf_token %}
+
+                        <div class="card-body">
+
+                            <div class="form-group row" id="select2OWASP"> 
+                                <label class="col-sm-2 col-form-label">OWASP</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                    {{ form.owasp }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Affected URL</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12"  id="test">
+                                    {{ form.affected_url }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                
+                                <label class="col-sm-2 col-form-label">Severity</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.severity }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Broken Access Control -->
+                            <div class="form-group row dynamic_field broken_access">
+                                
+                                <label class="col-sm-2 col-form-label">unauthorized_actions</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.unauthorized_actions }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field broken_access">
+                                
+                                <label class="col-sm-2 col-form-label">access_control_flaw</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.access_control_flaw }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Cryptographic -->
+                            <div class="form-group row dynamic_field cryptographic_failure">
+                                
+                                <label class="col-sm-2 col-form-label">data_exposed</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.data_exposed }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field cryptographic_failure">
+                                
+                                <label class="col-sm-2 col-form-label">encryption_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.encryption_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Injection -->
+                            <div class="form-group row dynamic_field injection">
+                                
+                                <label class="col-sm-2 col-form-label">injection_type</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.injection_type }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field injection">
+                                
+                                <label class="col-sm-2 col-form-label">injection_input</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.injection_input }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Insecure Design -->
+                            <div class="form-group row dynamic_field insecure_design">
+                                
+                                <label class="col-sm-2 col-form-label">design_flaw</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.design_flaw }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field insecure_design">
+                                
+                                <label class="col-sm-2 col-form-label">affected_component</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.affected_component }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Security Misconfiguration -->
+                            <div class="form-group row dynamic_field sec_misconfig">
+                                
+                                <label class="col-sm-2 col-form-label">misconfigured_element</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.misconfigured_element }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field sec_misconfig">
+                                
+                                <label class="col-sm-2 col-form-label">configuration_flaw</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.configuration_flaw }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Vulnerable and Outdated Components -->
+                            <div class="form-group row dynamic_field vuln_component">
+                                
+                                <label class="col-sm-2 col-form-label">component_name</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.component_name }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field vuln_component">
+                                
+                                <label class="col-sm-2 col-form-label">component_version</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.component_version }}
+                                </div>
+                                
+                            </div>
+
+                            <!--  Identification and Authentication Failures -->
+                            <div class="form-group row dynamic_field auth_failure">
+                                
+                                <label class="col-sm-2 col-form-label">authentication_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.authentication_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field auth_failure">
+                                
+                                <label class="col-sm-2 col-form-label">impact_of_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.impact_of_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Software and Data Integrity Failures -->
+                            <div class="form-group row dynamic_field integrity_failure">
+                                
+                                <label class="col-sm-2 col-form-label">integrity_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.integrity_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field integrity_failure">
+                                
+                                <label class="col-sm-2 col-form-label">source_of_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.source_of_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <!--  Security Logging and Monitoring Failures -->
+                            <div class="form-group row dynamic_field log_failure">
+                                
+                                <label class="col-sm-2 col-form-label">logging_flaw</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.logging_flaw }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field log_failure">
+                                
+                                <label class="col-sm-2 col-form-label">detection_issue</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.detection_issue }}
+                                </div>
+                                
+                            </div>
+
+                            <!-- Server-Side Request Forgery (SSRF) -->
+                            <div class="form-group row dynamic_field ssrf">
+                                
+                                <label class="col-sm-2 col-form-label">trigger_point</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.trigger_point }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="form-group row dynamic_field ssrf">
+                                
+                                <label class="col-sm-2 col-form-label">ssrf_impact</label>
+                                <div class="col-md-10 col-sm-10 col-xs-12">
+                                {{ form.ssrf_impact }}
+                                </div>
+                                
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger">Generate Finding Data</button>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const owaspSelect = document.querySelector('.select2OWASP');
+
+        owaspSelect.addEventListener('change', function() {
+            toggleFields(this.value);
+        });
+
+        document.querySelectorAll('.dynamic_field').forEach(field => {
+            field.style.display = 'none';
+        });
+
+        function toggleFields(owaspValue) {
+            // Hide all dynamic fields first
+            document.querySelectorAll('.dynamic_field').forEach(field => {
+                field.style.display = 'none';
+            });
+
+            // Determine which class to show based on OWASP value
+            let classToShow = '';
+            if (owaspValue === "2") {
+                classToShow = 'form-group row dynamic_field broken_access';
+            }
+            else if (owaspValue === "3") {
+                classToShow = 'form-group row dynamic_field cryptographic_failure';
+            } 
+            else if (owaspValue === "4") {
+                classToShow = 'form-group row dynamic_field injection';
+            }
+            else if (owaspValue === "5") {
+                classToShow = 'form-group row dynamic_field insecure_design';
+            }
+            else if (owaspValue === "6") {
+                classToShow = 'form-group row dynamic_field sec_misconfig';
+            }
+            else if (owaspValue === "7") {
+                classToShow = 'form-group row dynamic_field vuln_component';
+            }
+            else if (owaspValue === "8") {
+                classToShow = 'form-group row dynamic_field auth_failure';
+            }
+            else if (owaspValue === "9") {
+                classToShow = 'form-group row dynamic_field integrity_failure';
+            }
+            else if (owaspValue === "10") {
+                classToShow = 'form-group row dynamic_field log_failure';
+            }
+            else if (owaspValue === "11") {
+                classToShow = 'form-group row dynamic_field ssrf';
+            }
+
+            // Show fields with the determined class
+            if (classToShow) {
+                Array.from(document.getElementsByClassName(classToShow)).forEach(field => {
+                    field.style.display = '';
+                });
+            }
+        }
+
+        // Initial call to ensure correct state on page load
+        if (owaspSelect.value) toggleFields(owaspSelect.value);
+    });
+
+    </script>
+
+    <!-- <script>
+
+        const owaspSelect = document.querySelector('.select2OWASP');
+
+        owaspSelect.addEventListener('change', function() {
+        test();
+        });
+
+        function test(){
+            var element = document.getElementById('id_affected_url');
+            var text = element.value;
+            console.log(text);
+        }
+        
+
+    </script> -->
+
+{% endblock content %}

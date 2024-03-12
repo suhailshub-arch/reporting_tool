@@ -1,6 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
+{% block stylesheets %}
+{{ block.super }}
+
+<link rel="stylesheet" href="/static/cvss-v4-calculator-test/styles.css?v=6">
+<link rel="stylesheet" href="/static/cvss-v4-calculator-test/spectre.css">
+<link rel="stylesheet" href="/static/jquery-ui/jquery-ui.min.css">
+
+{% endblock stylesheets %}
 
 {% block content %}
+
+<script>
+    var initialCvssVector = "{{ form.cvss_vector.value }}";
+    // initialCvssVector = initialCvssVector.replace("vector value: ", " ")
+</script>
 
 <section class="content-header">
     <div class="container-fluid">
@@ -42,7 +56,7 @@
                         {%csrf_token%}
 
                         <div class="card-body">
-                            
+                            <div id="appCVSS">
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Title</label>
                                 <div class="col-md-10 col-sm-10 col-xs-12">
@@ -64,34 +78,177 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                
-                                <label class="col-sm-2 col-form-label">Severity</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
+                            <!-- CVSS CALCULATOR -->
+                        <!--
+                        Copyright (c) 2023 FIRST.ORG, Inc., Red Hat, and contributors
+
+                        Redistribution and use in source and binary forms, with or without
+                        modification, are permitted provided that the following conditions are met:
+
+                        1. Redistributions of source code must retain the above copyright notice, this
+                        list of conditions and the following disclaimer.
+
+                        2. Redistributions in binary form must reproduce the above copyright notice,
+                        this list of conditions and the following disclaimer in the documentation
+                        and/or other materials provided with the distribution.
+
+                        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                        IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+                        DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+                        FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+                        DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+                        SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+                        CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+                        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+                        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+                        -->
+
+
+                        {% verbatim %}
+                          
+
+                        <div class="form-group row">
+                            {% endverbatim %}
+                            <label class="col-sm-2 col-form-label">Severity</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
                                 {{ form.severity }}
-                                </div>
-                                
                             </div>
-                            
-                            <div class="form-group row">
-                                
-                                <label class="col-sm-2 col-form-label">CVSS Vector</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
+                            {% verbatim %}
+                        </div>
+
+                        <div class="form-group row">
+                            {% endverbatim %}
+                            <label class="col-sm-2 col-form-label">CVSS Vector</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
                                 {{ form.cvss_vector }}
-                                </div>
-                              
-                                
                             </div>
-                            
-                            
-                            <div class="form-group row">
-                                
-                                <label class="col-sm-2 col-form-label">CVSS Score</label>
-                                <div class="col-md-10 col-sm-10 col-xs-12">
-                                  {{ form.cvss_score }}
-                                </div>
-                                
+                        
+                            {% verbatim %}
+                        </div>
+
+
+                        <div class="form-group row">
+                            {% endverbatim %}
+                            <label class="col-sm-2 col-form-label">CVSS Score</label>
+                            <div class="col-md-10 col-sm-10 col-xs-12">
+                            {{ form.cvss_score }}
                             </div>
+                            {% verbatim %}
+                        </div>
+
+                        
+                        <!-- needed to update the values -->
+                        <p style="color: transparent;">{{ vector }} {{ score }} {{ qualScore }} {{ macroVector }}</p>
+                        
+                        <div class="form-group row">
+                            {% endverbatim %}
+                            <label class="col-sm-2 col-form-label">CVSS v4.0 Calculator</label>
+                            {% verbatim %}
+                            
+                            <div class="col-md-10 col-sm-10 col-xs-12" :style="{'margin-top': header_height + 10 + 'px'}">
+                                <div class="column col-12 col-xl-12">
+                                    <div class="metric-type" v-for="(metricTypeData, metricType) in cvssConfigData">
+                                        <h4 class="text-center">
+                                            {{ metricType }}
+                                            </span>
+                                        </h4>
+
+                                        
+                                        <div class="metric-group" v-for="(metricGroupData, metricGroup) in metricTypeData.metric_groups">
+                                            <h5 class="text-center">{{ metricGroup }}</h5>
+                                            <div>
+
+                                                <div class="" v-for="(metricData, metric) in metricGroupData">
+
+                                                    <!-- Multiple ways of rendering metrics based on screen size -->
+                                                    <div class="columns hide-xl mb-2">
+                                                        <div class="col-3 text-right pr-2" v-if="metricData.tooltip"><abbr :title="metricData.tooltip">{{ metric }}</abbr>:</div>
+                                                        <div class="col-3 text-right pr-2" v-else>{{metric}}:</div>
+
+                                                        <div class="col-9 columns">
+                                                            <div class="col-2 pl-2" v-for="(optionData, option) in metricData.options">
+                                                                <span :class="buttonClass(cvssSelected[metricData.short] == optionData.value)" v-if="option"
+                                                                        @click="onButton(metricData.short, optionData.value)">
+                                                                    <abbr v-if="optionData.tooltip" :title="optionData.tooltip">{{ option }}</abbr>
+                                                                    <span v-else>{{ option }}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="show-xl hide-lg">
+                                                        <div class="mb-1" v-if="metricData.tooltip"><abbr :title="metricData.tooltip">{{ metric }}</abbr>:</div>
+                                                        <div class="mb-1" v-else>{{metric}}:</div>
+
+                                                        <div class="columns">
+                                                            <div class="col-2 pl-2" v-for="(optionData, option) in metricData.options">
+                                                                <span :class="buttonClass(cvssSelected[metricData.short] == optionData.value)" v-if="option"
+                                                                        @click="onButton(metricData.short, optionData.value)">
+                                                                    <abbr v-if="optionData.tooltip" :title="optionData.tooltip">{{ option }}</abbr>
+                                                                    <span v-else>{{ option }}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="show-lg hide-md">
+                                                        <div class="mb-1" v-if="metricData.tooltip"><abbr :title="metricData.tooltip">{{ metric }}</abbr>:</div>
+                                                        <div class="mb-1" v-else>{{metric}}:</div>
+
+                                                        <div class="columns pl-2">
+                                                            <div class="col-4 pb-2 pr-2" v-for="(optionData, option) in metricData.options">
+                                                                <span :class="buttonClass(cvssSelected[metricData.short] == optionData.value)" v-if="option"
+                                                                        @click="onButton(metricData.short, optionData.value)">
+                                                                    <abbr v-if="optionData.tooltip" :title="optionData.tooltip">{{ option }}</abbr>
+                                                                    <span v-else>{{ option }}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="show-md hide-sm">
+                                                        <div class="mb-1" v-if="metricData.tooltip"><abbr :title="metricData.tooltip">{{ metric }}</abbr>:</div>
+                                                        <div class="mb-1" v-else>{{metric}}:</div>
+
+                                                        <div class="columns pl-2">
+                                                            <div class="col-6 pb-2 pr-2" v-for="(optionData, option) in metricData.options">
+                                                                <span :class="buttonClass(cvssSelected[metricData.short] == optionData.value)" v-if="option"
+                                                                        @click="onButton(metricData.short, optionData.value)">
+                                                                    <abbr v-if="optionData.tooltip" :title="optionData.tooltip">{{ option }}</abbr>
+                                                                    <span v-else>{{ option }}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="show-sm">
+                                                        <div class="mb-1" v-if="metricData.tooltip"><abbr :title="metricData.tooltip">{{ metric }}</abbr>:</div>
+                                                        <div class="mb-1" v-else>{{metric}}:</div>
+
+                                                        <div class="columns pl-2">
+                                                            <div class="col-12 pb-2 pr-2" v-for="(optionData, option) in metricData.options">
+                                                                <span :class="buttonClass(cvssSelected[metricData.short] == optionData.value, true)" v-if="option"
+                                                                        @click="onButton(metricData.short, optionData.value)">
+                                                                    <abbr v-if="optionData.tooltip" :title="optionData.tooltip">{{ option }}</abbr>
+                                                                    <span v-else>{{ option }}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        {% endverbatim %}
+
 
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Description</label>
@@ -154,3 +311,52 @@
 
 
 {% endblock content %}
+
+{% block javascripts %}
+  {{ block.super}}
+
+
+<script src="/static/cvss-v4-calculator-test/vue.global.prod.js"></script>
+<!-- <script src="https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js"></script> -->
+<script src="/static/cvss-v4-calculator-test/cvss_config.js?v=2"></script>
+<script src="/static/cvss-v4-calculator-test/cvss_details.js?v=1"></script>
+<script src="/static/cvss-v4-calculator-test/cvss_lookup.js?v=5"></script>
+<script src="/static/cvss-v4-calculator-test/max_composed.js?v=1"></script>
+<script src="/static/cvss-v4-calculator-test/max_severity.js?v=1"></script>
+<script src="/static/cvss-v4-calculator-test/metrics.js?v=1"></script>
+<script src="/static/cvss-v4-calculator-test/app.js?v=7"></script>
+
+<script src="/static/jquery-ui/jquery-ui.min.js"></script>
+
+<script>
+    $( function() {
+        var editor_description = ace.edit('martor-description');
+        var editor_impact = ace.edit('martor-impact');
+        var editor_recommendation = ace.edit('martor-recommendation');
+        var editor_references = ace.edit('martor-references');
+    $( "#id_title" ).autocomplete({
+        source: '/template-findings-autocomplete/',  // URL to the view that returns JSON
+        select: function(event, ui) {
+            $("#id_owasp").val(ui.item.owasp);
+            $("#id_severity").val(ui.item.severity);
+            $("#id_cvss_vector").val(ui.item.cvss_vector);
+            $("#id_cvss_score").val(ui.item.cvss_score);
+
+            $("#id_description").val(ui.item.description);
+            editor_description.setValue($("#id_description").val(), -1)
+
+            $("#id_impact").val(ui.item.impact);
+            editor_impact.setValue($("#id_impact").val(), -1)
+
+            $("#id_recommendation").val(ui.item.recommendation);
+            editor_recommendation.setValue($("#id_recommendation").val(), -1)
+
+            $("#id_references").val(ui.item.references);
+            editor_references.setValue($("#id_references").val(), -1)
+
+        }
+    });
+});
+</script>
+
+{% endblock javascripts %}
