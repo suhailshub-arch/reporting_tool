@@ -204,7 +204,6 @@ def add_finding_from_gpt(request,pk):
     else:
         # Handle the case where report_data is not in the session
         report_data_dict = {}
-    # print(report_data)
     Report_query = get_object_or_404(Report, pk=pk)
 
     if request.method == 'POST':
