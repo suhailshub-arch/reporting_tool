@@ -11,10 +11,10 @@ cvss_regex = re.compile('.+ \((CVSS:.+)\)$')
 # -------------------------- USERS ----------------------------------------
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    font_size = models.CharField(max_length=10, default="")
-    background_color = models.CharField(max_length=9, default="")
-    font_color = models.CharField(max_length=9, default="")
-    font_type = models.CharField(max_length=50, default="")
+    font_size = models.CharField(max_length=10, default="", blank=True)
+    background_color = models.CharField(max_length=9, default="", blank=True)
+    font_color = models.CharField(max_length=9, default="", blank=True)
+    font_type = models.CharField(max_length=50, default="", blank=True)
     character_spacing = models.FloatField(default=0)
     line_height = models.FloatField(default=1.5)
 

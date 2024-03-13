@@ -141,26 +141,26 @@
 {% block javascripts %}
   {{ block.super }}
 
-<script>
-    $(document).ready(function() {
-    $("#findingReportList").DataTable({
-        "paging": true,
-        "searching": true,
-        "responsive": true,
-        "lengthChange": false,
-        "autoWidth": false
+    <script>
+        $(document).ready(function() {
+        $("#findingReportList").DataTable({
+            "paging": true,
+            "searching": true,
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false
+        });
     });
-});
 
-</script>
+    </script>
 
-{% if success %}
-<script>
-  $(document).ready(function(){
-    $('#successModal').modal('show');
-  });
-</script>
-{% endif %}
+    {% if success %}
+    <script>
+    $(document).ready(function(){
+        $('#successModal').modal('show');
+    });
+    </script>
+    {% endif %}
 
 
 {% endblock javascripts %}
