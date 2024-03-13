@@ -364,7 +364,7 @@ Ignore all HTML Tags. Output in JSON Format with each Section header, eg Descrip
             report_data_json = json.dumps(report_data)
             
             request.session['report_data'] = report_data_json
-            redirect_url = f'/findings/add/{pk}'
+            redirect_url = f'/findings/add_gpt/{pk}'
             
         return redirect(redirect_url)
         
@@ -509,7 +509,7 @@ def templateaddreport(request,pk,reportpk):
 
     finding_to_DB.save()
 
-    return redirect('report_view', pk=reportpk)
+    return redirect('report_finding', pk=reportpk)
 
 
 @login_required
@@ -706,7 +706,7 @@ def report_add(request):
             report.audit_start = split_audit_dates[0]
             report.audit_end = split_audit_dates[1]
             report.save()           
-            return redirect('report/view', pk=report.pk)
+            return redirect(reverse('report_view', kwargs={'pk' : report.pk}))
     else:
         form = AddReport()
         form.fields['report_id'].initial = report_id_format
@@ -732,7 +732,7 @@ def report_edit(request,pk):
             report.audit_end = split_audit_dates[1]
             report.save()
             # CHANGE THIS WHEN VIEW IS DONE
-            # return redirect('report/view', pk=report.pk)
+            # return redirect(reverse('report_view', kwargs={'pk' : report.pk}))
             return redirect('/report/list')
     else:
         form = AddReport(instance=report)
@@ -924,6 +924,8 @@ def reportdownloadpdf(request,pk):
     
     # Appendix
     for finding in DB_finding_query:
+        if finding.severity == "None":
+            continue
         if finding.appendix_finding.all():
             template_appendix = ('# Additional Notes') + "\n\n"
     

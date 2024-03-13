@@ -1,10 +1,46 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
+
+{% block navbar %}
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+  <div class="btn-group" role="group">
+      <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="magnifier">Toggle Magnifier <i class="fas fa-search-plus"></i></button>
+  </div>
+  
+
+  <div class="btn-group" role="group">
+      <button class="btn btn-outline-success" data-bs-toggle="button" type="button" id="toggle-tts">Activate Text-to-Speech Mode <i class="fas fa-search-plus"></i></button>
+  </div>
+  
+
+</nav>
+
+{% endblock navbar %}
 
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-{% endblock %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <h5 class="card-header speakable">Login</h5>
+                <div class="card-body">
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="id_username" class="speakable">Username</label>
+                            <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="id_password" class="speakable">Password</label>
+                            <input type="password" class="form-control" id="id_password" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <input type="hidden" name="next" value="{{ next }}">  <!-- Redirects to next page after login -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
