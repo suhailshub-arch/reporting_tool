@@ -16,13 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+
+from reporting.views import markdown_uploader
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('martor/', include('martor.urls')),
+    path('api/uploader/', markdown_uploader, name='markdown_uploader'),
     path('summernote/', include('django_summernote.urls')),
     path('', include('reporting.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

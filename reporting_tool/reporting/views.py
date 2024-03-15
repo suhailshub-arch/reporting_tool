@@ -1,16 +1,18 @@
+from django.conf import settings
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, JsonResponse
 from django.template import loader
 from django.template.loader import render_to_string
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeDoneView
 from django.contrib import messages
 from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix
-
+from martor.utils import LazyEncoder
 
 from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm, UploadNmapForm, UploadOpenVASForm, AppendixForm
 
@@ -32,6 +34,63 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# ----------------------------------------------------------------------
+# https://github.com/agusmakmun/django-markdown-editor/wiki
+# ----------------------------------------------------------------------
+
+@login_required
+def markdown_uploader(request):
+    """
+    Makdown image upload for locale storage
+    and represent as json to markdown editor.
+    """
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if 'markdown-image-upload' in request.FILES:
+            image = request.FILES['markdown-image-upload']
+            image_types = [
+                'image/png', 'image/jpg',
+                'image/jpeg', 'image/pjpeg', 'image/gif'
+            ]
+            if image.content_type not in image_types:
+                data = json.dumps({
+                    'status': 405,
+                    'error': ('Bad image format.')
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+
+            if image.size > settings.MAX_IMAGE_UPLOAD_SIZE:
+                to_MB = settings.MAX_IMAGE_UPLOAD_SIZE / (1024 * 1024)
+                data = json.dumps({
+                    'status': 405,
+                    'error': ('Maximum image file is %(size)s MB.') % {'size': to_MB}
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+            
+            image_content_base64 = base64.b64encode(image.read()).decode('utf-8')
+             
+            image_content_base64_final = 'data:' + image.content_type +';base64,' + image_content_base64
+
+            data = json.dumps({
+                'status': 200,
+                'link': image_content_base64_final,
+                'name': image.name
+                })
+
+            # img_uuid = "{0}-{1}".format(uuid.uuid4().hex[:10], image.name.replace(' ', '-'))
+            # tmp_file = os.path.join(settings.MARTOR_UPLOAD_PATH, img_uuid)
+            # def_path = default_storage.save(tmp_file, ContentFile(image.read()))
+            # img_url = os.path.join(settings.MEDIA_URL, def_path)
+
+            # data = json.dumps({
+            #     'status': 200,
+            #     'link': img_url,
+            #     'name': image.name
+            # })
+            return HttpResponse(data, content_type='application/json')
+        return HttpResponse(('Invalid request!'))
+    return HttpResponse(('Invalid request!'))
 #---------------------------------------------------
 #                   CHATGPT
 # --------------------------------------------------
@@ -241,6 +300,7 @@ def add_finding_from_gpt(request,pk):
 def edit_finding(request, pk):
     
     finding = get_object_or_404(Finding, pk=pk)
+    print(finding.severity)
     Report_query = get_object_or_404(Report, pk=finding.report.id)
     
     if request.method == 'POST':
@@ -323,8 +383,7 @@ def initial_add_finding(request, pk):
 You are a professional penetration tester. You have performed a penetration test on a particular company. You will be provided details on a particular vulnerability that was found during the penetration test. 
 Please provide content for a detailed finding report based on the information that will be given. The report will be included as part of the complete penetration testing report.
 There are 6 sections to be included. 
-- Description
-- Impact
+- Description (explain how it works and add the impact of the vulnerability in here)
 - Recommendation (in bullet point form)
 - CVSS Score Number (assign a CVSS score based on your understanding of the vulnerability. Only include the number without any other explanation)
 - Criticality (critical, high, medium, low, info only)

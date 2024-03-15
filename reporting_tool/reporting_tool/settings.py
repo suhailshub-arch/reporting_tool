@@ -50,12 +50,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'reporting_tool.urls'
@@ -124,20 +124,23 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-print(os.getcwd())
+
+MAIN_PROJECT = os.path.dirname(__file__)
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = (
-  os.path.join(os.path.dirname(__file__), 'static'),
+   os.path.join(MAIN_PROJECT, 'static/'),
 )
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# STATIC_ROOT = os.path.join(tempfile.gettempdir(), 'static')
 
 CSRF_COOKIE_HTTPONLY = False
 
@@ -172,8 +175,21 @@ MARTOR_TOOLBAR_BUTTONS = [
 MARTOR_ENABLE_LABEL = False
 
 # Imgur API Keys
-MARTOR_IMGUR_CLIENT_ID = config("IMGUR_CLIENT_ID", default=None)
-MARTOR_IMGUR_API_KEY   = config("IMGUR_API_KEY", default=None)
+# MARTOR_IMGUR_CLIENT_ID = config("IMGUR_CLIENT_ID", default=None)
+# MARTOR_IMGUR_API_KEY   = config("IMGUR_API_KEY", default=None)
+
+
+# Maximum Upload Image
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+MAX_IMAGE_UPLOAD_SIZE = 5242880  # 5MB
+
 # Markdownify
 MARTOR_MARKDOWNIFY_FUNCTION = 'martor.utils.markdownify' # default
 MARTOR_MARKDOWNIFY_URL = '/martor/markdownify/' # default
@@ -203,9 +219,11 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 MARTOR_MARKDOWN_EXTENSION_CONFIGS = {}
 
 # Markdown urls
-MARTOR_UPLOAD_URL = '' # Completely disable the endpoint
-# or:
-MARTOR_UPLOAD_URL = '/martor/uploader/' # default
+# MARTOR_UPLOAD_URL = '' # Completely disable the endpoint
+# # or:
+# MARTOR_UPLOAD_URL = '/martor/uploader/' # default
+MARTOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'images/uploads')
+MARTOR_UPLOAD_URL = '/api/uploader/'  # change to local uploader
 
 MARTOR_SEARCH_USERS_URL = '' # Completely disables the endpoint
 # or:
@@ -227,10 +245,8 @@ MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "jquery/dist/jquery.min.js"        # default
 # Always Show Widget by Default
 # MARTOR_TOOLBAR_ALWAYS_VISIBLE = True
 
-# URL schemes that are allowed within links
 ALLOWED_URL_SCHEMES = [
-    "file", "ftp", "ftps", "http", "https", "irc", "mailto",
-    "sftp", "ssh", "tel", "telnet", "tftp", "vnc", "xmpp",
+    "file", "http", "https", "data"
 ]
 
 # https://gist.github.com/mrmrs/7650266
@@ -244,10 +260,43 @@ ALLOWED_HTML_TAGS = [
 
 # https://github.com/decal/werdlists/blob/master/html-words/html-attributes-list.txt
 ALLOWED_HTML_ATTRIBUTES = [
-    "alt", "class", "color", "colspan", "datetime",  # "data",
+    "alt", "class", "color", "colspan", "datetime",  "data",
     "height", "href", "id", "name", "reversed", "rowspan",
     "scope", "src", "style", "title", "type", "width"
 ]
+
+
+# BLEACH
+
+# Which HTML tags are allowed
+BLEACH_ALLOWED_TAGS = ['svg', 'g', 'polygon', 'path', 'text', 'title', 'img', 'p', 'b',
+                    'i', 'u', 'em', 'strong', 'a', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'pre',
+                    'code', 'blockquote', 'ul', 'ol', 'li', 'figcaption', 'table', 'td', 'tr',
+                    'th', 'thead', 'br']
+
+# Which HTML attributes are allowed
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'style', 'alt', 'src', 'width', 'height',
+                            'viewBox', 'id', 'class', 'transform', 'fill', 'stroke', 'points',
+                            'd', 'text-anchor', 'x', 'y', 'font-size', 'font-family', 'font-weight',
+                            'text-decoration', 'font-variant']
+
+# Which CSS properties are allowed in 'style' attributes (assuming
+# style is an allowed attribute)
+BLEACH_ALLOWED_STYLES = [
+    'font-family', 'font-weight', 'text-decoration', 'font-variant']
+
+# Which protocols (and pseudo-protocols) are allowed in 'src' attributes
+# (assuming src is an allowed attribute)
+BLEACH_ALLOWED_PROTOCOLS = [
+    'http', 'https', 'data'
+]
+
+# Strip unknown tags if True, replace with HTML escaped characters if
+# False
+BLEACH_STRIP_TAGS = True
+
+# Strip comments, or leave them in.
+BLEACH_STRIP_COMMENTS = False
 
 DATE_INPUT_FORMATS = [
     

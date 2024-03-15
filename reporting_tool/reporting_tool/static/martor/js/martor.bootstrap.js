@@ -1,7 +1,7 @@
 /**
- * Name         : Martor v1.6.28
+ * Name         : Martor v1.6.26
  * Created by   : Agus Makmun (Summon Agus)
- * Release date : 20-Jul-2023
+ * Release date : 20-Mar-2023
  * License      : GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  * Repository   : https://github.com/agusmakmun/django-markdown-editor
 **/
@@ -47,7 +47,6 @@
             editor.renderer.setScrollMargin(10, 10); // set padding
             editor.setAutoScrollEditorIntoView(true);
             editor.setShowPrintMargin(false);
-            editor.setHighlightActiveLine(false); // SETS LINE HIGHLIGHTING
             editor.setOptions({
                 enableBasicAutocompletion: true,
                 enableSnippets: true,
@@ -780,57 +779,6 @@
             var martorField = $('.martor-field-' + field_name);
             var btnToggleMaximize = $('.markdown-toggle-maximize[data-field-name=' + field_name + ']');
 
-            // // Function to toggle maximize
-            // var handleToggleMaximize = function (selector) {
-            //     selector.attr({ 'title': 'Minimize' });
-            //     selector.find('svg.bi-arrows-angle-expand').hide();
-            //     selector.find('svg.bi-arrows-angle-contract').show();
-            //     mainMartor.addClass('main-martor-fullscreen');
-
-            //     var clientHeight = document.body.clientHeight - 90;
-            //     martorField.attr({ 'style': 'height:' + clientHeight + 'px' });
-
-            //     var preview = $('.main-martor-fullscreen').find('.martor-preview');
-            //     preview.attr({ 'style': 'overflow-y: auto;height:' + clientHeight + 'px' });
-
-            //     editor.resize();
-            //     selector.one('click', handleToggleMinimize);
-            //     $(document.body).addClass('overflow');
-            // };
-
-            // // Function to toggle minimize
-            // var handleToggleMinimize = function () {
-            //     $(document.body).removeClass('overflow');
-            //     $(this).attr({ 'title': 'Full Screen' });
-            //     $(this).find('svg.bi-arrows-angle-expand').show();
-            //     $(this).find('svg.bi-arrows-angle-contract').hide();
-            //     $('.main-martor-fullscreen').find('.martor-preview').removeAttr('style');
-            //     mainMartor.removeClass('main-martor-fullscreen');
-            //     martorField.removeAttr('style');
-            //     editor.resize();
-            // };
-
-            // // Trigger maximize when the page loads
-            // $(document).ready(function () {
-            //     handleToggleMaximize(btnToggleMaximize);
-            // });
-
-            // // Event handler for the toggle button
-            // btnToggleMaximize.on('click', function () {
-            //     if (mainMartor.hasClass('main-martor-fullscreen')) {
-            //         handleToggleMinimize();
-            //     } else {
-            //         handleToggleMaximize($(this));
-            //     }
-            // });
-
-            // // Exit full screen when `ESC` is pressed
-            // $(document).keyup(function (e) {
-            //     if (e.keyCode == 27 && mainMartor.hasClass('main-martor-fullscreen')) {
-            //         handleToggleMinimize();
-            //     }
-            // });
-
             // Toggle maximize and minimize
             var handleToggleMinimize = function () {
                 $(document.body).removeClass('overflow');
@@ -868,7 +816,6 @@
                     btnToggleMaximize.trigger('click');
                 }
             });
-
 
             // markdown insert emoji from the modal
             $('.markdown-emoji[data-field-name=' + field_name + ']').click(function () {
