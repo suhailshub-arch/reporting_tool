@@ -961,7 +961,9 @@ def uploadsummaryfindings(request, pk):
 
 @login_required
 def reportdownloadpdf(request,pk):
-    template_pdf_dir=r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default'
+    template_dir = os.path.join(settings.TEMPLATES_ROOT, 'pdf')
+    template_pdf_dir = os.path.join(template_dir, 'default')
+    
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
 
@@ -1028,7 +1030,7 @@ def reportdownloadpdf(request,pk):
                 severity_color = 'debugcolor'
                 severity_box = 'infobox'
 
-            pdf_finding_summary += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding_summary.md'),{'finding': finding,'counter_finding': counter_finding, 'severity_box': severity_box})
+            pdf_finding_summary += render_to_string(os.path.join(template_pdf_dir, 'pdf_finding_summary.md'),{'finding': finding,'counter_finding': counter_finding, 'severity_box': severity_box})
             severity_color_finding = "\\textcolor{" + f"{severity_color}" +"}{" + f"{finding.severity}" + "}"
 
             # appendix
@@ -1050,31 +1052,30 @@ def reportdownloadpdf(request,pk):
                 template_appendix_in_finding += ''.join("\\pagebreak")
             
             # finding
-            pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding, 'template_appendix_in_finding': template_appendix_in_finding })
+            pdf_finding = render_to_string(os.path.join(template_pdf_dir, 'pdf_finding.md'), {'finding': finding, 'icon_finding': icon_finding, 'severity_color': severity_color, 'severity_color_finding': severity_color_finding, 'template_appendix_in_finding': template_appendix_in_finding })
             template_findings += ''.join(pdf_finding)
 
     if DB_report_query.nmap_scan != "":    
         nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
     else:
         nmap_data = ""
-    pdf_markdown_report = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
-    pdf_markdown_report += render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data, 'template_appendix': template_appendix})
+    pdf_markdown_report = render_to_string(os.path.join(template_pdf_dir, 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
+    pdf_markdown_report += render_to_string(os.path.join(template_pdf_dir, 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data, 'template_appendix': template_appendix})
 
     final_markdown = textwrap.dedent(pdf_markdown_report)
 
-    # ------------------------------------------------------------------------------------------------------------------------------------------------------
-   
-    # pdf_finding = render_to_string(os.path.join(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default', 'pdf_finding.md'), {'finding': DB_finding_query[0], 'icon_finding': 'highblock', 'severity_color': 'criticalcolor', 'severity_color_finding': "\\textcolor{criticalcolor}{Critical}"})
-    # pdf_finding = pdf_finding.encode(encoding="utf-8", errors="ignore").decode()
-    # final_markdown = textwrap.dedent(pdf_markdown_report)
-    header = render_to_string(r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.yaml')
+    header = render_to_string(os.path.join(template_pdf_dir, 'pdf_header.yaml'))
     final_markdown = header + final_markdown 
     
+    PDF_HEADER_FILE = os.path.join(template_pdf_dir, 'pdf_header.tex')
+
+    REPORTING_LATEX_FILE = os.path.join(template_pdf_dir,'report_default.tex')
+    
     pypandoc.convert_text(final_markdown, to='pdf', outputfile="test.pdf", format='md',extra_args=[
-                                        '-H', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\pdf_header.tex',
+                                        '-H', PDF_HEADER_FILE,
                                         '--filter', 'pandoc-latex-environment',
                                         '--from', 'markdown+yaml_metadata_block+raw_html',
-                                        '--template', r'C:\Users\USER\Third Year Project\reporting_tool\reporting\templates\rpt_tpl\pdf\default\report_default.tex',
+                                        '--template', REPORTING_LATEX_FILE,
                                         '--pdf-engine', 'pdflatex',])
     with open('test.pdf', 'rb') as fh:
         response = HttpResponse(fh.read(), content_type="application/pdf")
