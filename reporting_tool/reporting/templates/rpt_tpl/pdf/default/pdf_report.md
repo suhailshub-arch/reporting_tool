@@ -34,9 +34,11 @@
 # Findings and Risk Analysis
 {{template_findings}}
 
+{% if nmap_data != "" %}
 \pagebreak
 # NMap Scan Data
 {{nmap_data}}
+{% endif %}
 
 \pagebreak
 {{template_appendix}}

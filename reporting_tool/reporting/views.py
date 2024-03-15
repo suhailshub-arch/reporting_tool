@@ -238,7 +238,7 @@ def add_finding(request,pk):
     else:
         form = Add_findings()
         form.fields['description'].initial = "TBC"
-        form.fields['impact'].initial = "TBC"
+        # form.fields['impact'].initial = "TBC"
         form.fields['recommendation'].initial = "TBC"
         form.fields['references'].initial = "TBC"
         form.fields['location'].initial = "TBC"
@@ -279,7 +279,7 @@ def add_finding_from_gpt(request,pk):
     else:
         form = Add_findings()
         form.fields['description'].initial = report_data_dict['Description']
-        form.fields['impact'].initial = report_data_dict['Impact']
+        # form.fields['impact'].initial = report_data_dict['Impact']
         form.fields['recommendation'].initial = report_data_dict['Recommendation']
         form.fields['references'].initial = report_data_dict['References']
         form.fields['owasp'].initial = report_data_dict['owasp']
@@ -346,7 +346,7 @@ def findingtotemplate(request,pk,reportpk):
     template_cvss_vector = finding.cvss_vector
     template_cvss_score = finding.cvss_score
     template_description = finding.description
-    template_impact = finding.impact
+    # template_impact = finding.impact
     template_recommendation = finding.recommendation
     template_references = finding.references
     template_owasp = finding.owasp
@@ -357,7 +357,7 @@ def findingtotemplate(request,pk,reportpk):
         cvss_vector = template_cvss_vector,
         cvss_score = template_cvss_score,
         description = template_description,
-        impact = template_impact,
+        # impact = template_impact,
         recommendation = template_recommendation,
         references = template_references,
         owasp = template_owasp,
@@ -389,7 +389,7 @@ There are 6 sections to be included.
 - Criticality (critical, high, medium, low, info only)
 - References (this should include full links for reference materials.). 
 
-Ignore all HTML Tags. Output in JSON Format with each Section header, eg Description, Impact as keys. Do not include any newline characters in the response.
+Ignore all HTML Tags. Output in JSON Format with each Section header, eg Description, Recommendation as keys. Do not include any newline characters in the response.
             """
             str_info = ""
             for response in form:
@@ -455,7 +455,7 @@ def template_add(request):
     else:
         form = NewFindingTemplateForm()
         form.fields['description'].initial = "TBC"
-        form.fields['impact'].initial = "TBC"
+        # form.fields['impact'].initial = "TBC"
         form.fields['recommendation'].initial = "TBC"
         form.fields['references'].initial = "TBC"
         form.fields['owasp'].initial = '1'
@@ -511,7 +511,7 @@ def template_duplicate(request,pk):
         form.fields['cvss_score'].initial = template_query.cvss_score
         form.fields['cvss_vector'].initial = template_query.cvss_vector
         form.fields['description'].initial = template_query.description
-        form.fields['impact'].initial = template_query.impact
+        # form.fields['impact'].initial = template_query.impact
         form.fields['recommendation'].initial = template_query.recommendation
         form.fields['references'].initial = template_query.references
         form.fields['owasp'].initial = template_query.owasp
@@ -563,7 +563,7 @@ def templateaddreport(request,pk,reportpk):
     # save template in DB
     finding_uuid = uuid.uuid4()
     finding_status = "Open"
-    finding_to_DB = Finding(report=DB_report_query, finding_id=finding_uuid, title=DB_finding_template_query.title, severity=DB_finding_template_query.severity, cvss_vector=DB_finding_template_query.cvss_vector, cvss_score=DB_finding_template_query.cvss_score, description=DB_finding_template_query.description, status=finding_status, impact=DB_finding_template_query.impact, recommendation=DB_finding_template_query.recommendation, references=DB_finding_template_query.references, owasp=DB_finding_template_query.owasp)
+    finding_to_DB = Finding(report=DB_report_query, finding_id=finding_uuid, title=DB_finding_template_query.title, severity=DB_finding_template_query.severity, cvss_vector=DB_finding_template_query.cvss_vector, cvss_score=DB_finding_template_query.cvss_score, description=DB_finding_template_query.description, status=finding_status, recommendation=DB_finding_template_query.recommendation, references=DB_finding_template_query.references, owasp=DB_finding_template_query.owasp)
 
     finding_to_DB.save()
 
@@ -581,7 +581,7 @@ def template_findings_autocomplete(request):
             'cvss_vector': finding.cvss_vector,
             'cvss_score': finding.cvss_score,
             'description': finding.description,
-            'impact': finding.impact,
+            # 'impact': finding.impact,
             'recommendation': finding.recommendation,
             'references': finding.references,
             'owasp': finding.owasp.owasp_id,
@@ -1171,8 +1171,8 @@ def parse_openvas_xml(xml_string):
         finding = {
             'id': result_id,
             'name': result.find('.//name').text if result.find('.//name') is not None else "N/A",
-            'description': tags_dict.get('summary', "N/A").strip(),
-            'impact': tags_dict.get('impact', "N/A").strip(),
+            'description': tags_dict.get('summary', "N/A").strip() + "\n" + tags_dict.get('impact', "N/A").strip(),
+            # 'impact': tags_dict.get('impact', "N/A").strip(),
             'solution': result.find('.//solution').text if result.find('.//solution') is not None else "N/A",
             'host': result.find('.//host').text if result.find('.//host') is not None else "N/A",
             'references': [ref.attrib['id'] for ref in result.findall('.//refs/ref')] if result.findall('.//refs/ref') is not None else [],
@@ -1211,7 +1211,7 @@ def upload_and_parse_openvas(request,pk):
                         new_finding_title = vulnerability['name']
                         new_finding_description = vulnerability['description'].replace("\n", "")
                         new_finding_location = vulnerability['host']
-                        new_finding_impact = vulnerability['impact']
+                        # new_finding_impact = vulnerability['impact']
                         new_finding_recommendation = vulnerability['solution']
                         formatted_urls = ["- " + url + "\n" for url in vulnerability['references']]
                         new_finding_references = "".join(formatted_urls)
@@ -1226,7 +1226,7 @@ def upload_and_parse_openvas(request,pk):
                             title = new_finding_title,
                             description = new_finding_description,
                             location = new_finding_location,
-                            impact = new_finding_impact,
+                            # impact = new_finding_impact,
                             recommendation = new_finding_recommendation,
                             references = new_finding_references,
                             poc = new_finding_poc,

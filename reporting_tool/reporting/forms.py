@@ -55,7 +55,7 @@ class Add_findings(forms.ModelForm):
 
     class Meta:
         model = Finding
-        fields = ('title', 'status', 'severity', 'cvss_score', 'cvss_vector', 'description', 'location', 'poc', 'impact', 'recommendation', 'references', 'owasp')
+        fields = ('title', 'status', 'severity', 'cvss_score', 'cvss_vector', 'description', 'location', 'poc', 'recommendation', 'references', 'owasp')
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Finding title")}),
@@ -64,7 +64,7 @@ class Add_findings(forms.ModelForm):
             'description': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'location': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'poc': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
-            'impact': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
+            # 'impact': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'recommendation': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
             'references': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required"}),
            }
@@ -87,7 +87,7 @@ class NewFindingTemplateForm(forms.ModelForm):
 
     class Meta:
         model = Finding_Template
-        fields = ('title', 'severity', 'cvss_score', 'cvss_vector', 'description', 'impact', 'recommendation', 'references', 'owasp')
+        fields = ('title', 'severity', 'cvss_score', 'cvss_vector', 'description', 'recommendation', 'references', 'owasp')
 
         widgets = {
             'title': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("Finding title")}),

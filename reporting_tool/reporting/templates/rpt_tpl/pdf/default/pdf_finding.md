@@ -32,12 +32,6 @@
 {{finding.location|safe}}
 {% endif %}
 
-{% if finding.impact %}
-**Impact**
-
-{{finding.impact|safe}}
-{% endif %}
-
 {% if finding.poc %}
 **Proof of Concept**
 
