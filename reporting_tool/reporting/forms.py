@@ -1,8 +1,6 @@
 from django import forms
 from django.forms import Textarea, TextInput, DateInput, ModelChoiceField, EmailField, BooleanField, FileInput
 from django.contrib.auth.models import User
-from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
-from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
 from .models import DB_CWE, DB_OWASP, Customer, Report, Finding, Finding_Template, UserProfile, Appendix
 from martor.fields import MartorFormField
 from martor.widgets import MartorWidget
@@ -95,9 +93,7 @@ class NewFindingTemplateForm(forms.ModelForm):
             'cvss_score': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("CVSS Score"),}),
            }
         
-class AddOWASP(forms.ModelForm):
-    
-    owasp_description = SummernoteTextField()
+class AddOWASP(forms.ModelForm):    
     
     class Meta:
         model = DB_OWASP
@@ -107,7 +103,7 @@ class AddOWASP(forms.ModelForm):
             'owasp_id': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': "OWASP ID"}),
             'owasp_year': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("OWASP Year")}),
             'owasp_name': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("OWASP Name")}),
-            'owasp_description': SummernoteWidget(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("OWASP Description")}),
+            'owasp_description': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("OWASP Description")}),
             'owasp_url': TextInput(attrs={'class': 'form-control', 'type': "text", 'required': "required", 'placeholder': ("OWASP URL")}),
         }
         

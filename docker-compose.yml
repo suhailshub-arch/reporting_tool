@@ -1,0 +1,25 @@
+services:
+
+  web:
+    build:
+      context: ./reporting_tool/
+    command: gunicorn reporting_tool.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./reporting_tool/:/usr/src/reporting_tool/
+      - static:/usr/src/reporting_tool/reporting_tool/static
+    expose:
+      - 8000
+    env_file:
+      - ./reporting_tool/.env
+
+  nginx:
+    build:
+      context: ./nginx/
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - static:/home/reporting_tool/static
+
+volumes:
+  static:

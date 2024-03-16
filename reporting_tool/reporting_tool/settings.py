@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'reporting',
     'martor',
-    'django_summernote',
     'adminlte3',
 ]
 

@@ -28,7 +28,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('martor/', include('martor.urls')),
     path('api/uploader/', markdown_uploader, name='markdown_uploader'),
-    path('summernote/', include('django_summernote.urls')),
     path('', include('reporting.urls')),
 ]
 
