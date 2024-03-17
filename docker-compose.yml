@@ -1,9 +1,17 @@
 services:
 
-  web:
+  reporting_tool:
     build:
-      context: ./reporting_tool/
-    command: gunicorn reporting_tool.wsgi:application --bind 0.0.0.0:8000
+      context: .
+    working_dir: /usr/src/reporting_tool
+    command: >
+      bash -c "rm -f db.sqlite3 &&
+      pipenv run python manage.py migrate &&
+      pipenv run python manage.py create_default_superuser &&
+      pipenv run python manage.py loaddata ./reporting/config/cwe-list.json &&
+      pipenv run python manage.py loaddata ./reporting/config/owasp-list.json &&
+      pipenv run gunicorn reporting_tool.wsgi:application --bind 0.0.0.0:8000"
+
     volumes:
       - ./reporting_tool/:/usr/src/reporting_tool/
       - static:/usr/src/reporting_tool/reporting_tool/static
@@ -11,6 +19,7 @@ services:
       - 8000
     env_file:
       - ./reporting_tool/.env
+    restart: unless-stopped
 
   nginx:
     build:
