@@ -3,3 +3,4 @@ node_modules
 __pychache__/
 *.pyc
 project/
+db.sqlite3
