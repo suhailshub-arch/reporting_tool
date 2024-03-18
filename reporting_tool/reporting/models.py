@@ -141,14 +141,15 @@ class Finding(models.Model):
 class Finding_Template(models.Model):
     title = models.CharField(blank=False, max_length=200)
     severity = models.CharField(blank=True, max_length=200)
-    cvss_vector = models.CharField(blank=True, max_length=200)
+    cvss_vector = models.CharField(blank=True, max_length=200, default="")
     cvss_score = models.DecimalField(max_digits=3, decimal_places=1, default=0)
     description = MartorField(blank=True)
     # impact = MartorField(blank=True)
     recommendation = MartorField(blank=True)
     references = MartorField(blank=True)
-    owasp = models.ForeignKey(DB_OWASP, on_delete=models.CASCADE, null=True, blank=True)
-    
+    owasp = models.ForeignKey(DB_OWASP, on_delete=models.CASCADE, null=True, blank=True, default=1)
+    cwe =  models.ForeignKey(DB_CWE, on_delete=models.CASCADE, null=True, blank=True, default=0)
+
     def __str__(self):
         return self.title
 
