@@ -28,7 +28,7 @@ services:
       - 80:80
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - static:/home/reporting_tool/static
+      - ./reporting_tool/reporting_tool/static:/home/reporting_tool/static
 
 volumes:
   static:
