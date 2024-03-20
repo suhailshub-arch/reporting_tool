@@ -34,12 +34,12 @@ martor = "==1.6.26"
 openai = "==1.10.0"
 openpyxl = "==3.1.2"
 packaging = "==24.0"
-pandoc = "==2.3"
+
 pandoc-latex-environment = "==1.1.6.2"
-panflute = "==2.3.0"
+
 paramiko = "==3.4.0"
-plumbum = "==1.8.2"
-ply = "==3.11"
+
+
 pycparser = "==2.21"
 pydantic = "==2.6.0"
 pydantic-core = "==2.16.1"
@@ -61,7 +61,6 @@ urllib3 = "==2.1.0"
 webencodings = "==0.5.1"
 websocket-client = "==0.59.0"
 zipp = "==3.17.0"
-
 [dev-packages]
 
 [requires]

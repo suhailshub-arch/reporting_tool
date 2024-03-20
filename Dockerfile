@@ -46,6 +46,8 @@ RUN python3 --version
 
 COPY Pipfile ../
 RUN pipenv install --deploy --ignore-pipfile --python 3.11
+# RUN pipenv install --skip-lock --verbose
+# RUN pipenv graph
 
 RUN apt -y clean
 RUN apt -y autoremove
