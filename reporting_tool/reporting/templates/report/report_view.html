@@ -43,7 +43,10 @@
       </div>
       <div class="col-md-5 text-right">
         <div class="btn-group">
-          <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Generate PDF</button>
+          <button type="button" class="btn btn-primary" onclick="SaveSummaryImage()"><i class="fa fa-download"></i>Download PDF</button>
+        </div>
+        <div class="btn-group">
+          <a href="{% url 'reportdownloadexcel' DB_report_query.id %}"><button type="button" class="btn btn-success"><i class="fa fa-download"></i>Download Excel</button></a>
         </div>
       </div>
       

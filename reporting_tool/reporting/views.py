@@ -32,6 +32,11 @@ import textwrap
 import uuid
 import logging
 
+import openpyxl
+from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.styles import PatternFill
+from openpyxl.formatting.rule import CellIsRule
+
 logger = logging.getLogger(__name__)
 
 # ----------------------------------------------------------------------
@@ -1081,6 +1086,62 @@ def reportdownloadpdf(request,pk):
         response = HttpResponse(fh.read(), content_type="application/pdf")
         response['Content-Disposition'] = 'attachment; filename=' + file_name  # or 'attachment; filename=' 'inline; filename='
         return response
+
+@login_required
+def reportdownloadexcel(request, pk):
+    template_dir = os.path.join(settings.TEMPLATES_ROOT, 'excel')
+    
+    DB_report_query = get_object_or_404(Report, pk=pk)
+    DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
+    
+    wb = openpyxl.load_workbook(os.path.join(template_dir, 'Finding_Remediation_Checklist.xlsx'))
+    ws = wb["Checklist"]
+    
+    status_validation = DataValidation(type="list", formula1='"Open,In-Progress,Closed"', showDropDown=False)
+    ws.add_data_validation(status_validation)
+    
+    severity_styles = {
+        'Critical': PatternFill(start_color='CC0000', end_color='CC0000', fill_type='solid'),  
+        'High': PatternFill(start_color='F20000', end_color='F20000', fill_type='solid'),  
+        'Medium': PatternFill(start_color='FC7F03', end_color='FC7F03', fill_type='solid'),  
+        'Low': PatternFill(start_color='05B04F', end_color='05B04F', fill_type='solid'),
+        'Info': PatternFill(start_color='45A7F7', end_color='45A7F7', fill_type='solid'),
+    }
+    
+    status_styles = {
+        'Open': PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid'),  
+        'In-Progress': PatternFill(start_color='FFA500', end_color='FFA500', fill_type='solid'),  
+        'Closed': PatternFill(start_color='00FF00', end_color='00FF00', fill_type='solid'),  
+    }
+    
+    row_num = 4
+    
+    for finding in DB_finding_query:
+        if finding.severity == "None":
+            continue
+        else:
+            finding_cell = ws.cell(row=row_num, column=2, value=finding.title)
+            severity_cell = ws.cell(row=row_num, column=3, value=finding.severity)
+            status_cell = ws.cell(row=row_num, column=5, value=finding.status)
+            
+            status_validation.add(status_cell)
+            
+            if finding.severity in severity_styles:
+                severity_cell.fill = severity_styles[finding.severity]
+                
+            ws.conditional_formatting.add(f"E{row_num}", CellIsRule(operator='equal', formula=['"Open"'], fill=status_styles["Open"]))
+            ws.conditional_formatting.add(f"E{row_num}", CellIsRule(operator='equal', formula=['"In-Progress"'], fill=status_styles["In-Progress"]))
+            ws.conditional_formatting.add(f"E{row_num}", CellIsRule(operator='equal', formula=['"Closed"'], fill=status_styles["Closed"]))
+                
+            status_validation.add(status_cell)
+            
+            row_num += 1
+            
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{DB_report_query.report_id}_Remediation.xlsx"'
+    wb.save(response)
+
+    return response
 
 #---------------------------------------------------
 #                   NMAP
