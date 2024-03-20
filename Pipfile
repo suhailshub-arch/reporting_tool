@@ -60,6 +60,14 @@ urllib3 = "==2.1.0"
 webencodings = "==0.5.1"
 websocket-client = "==0.59.0"
 zipp = "==3.17.0"
+django-summernote = "==0.8.20.0"
+docker = "==7.0.0"
+docker-compose = "==1.29.2"
+dockerpty = "==0.4.1"
+et-xmlfile = "==1.1.0"
+openpyxl = "==3.1.2"
+pywin32 = "==306"
+pyyaml = "==5.4.1"
 
 [dev-packages]
 
