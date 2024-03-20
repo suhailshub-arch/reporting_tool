@@ -66,7 +66,7 @@ zipp = "==3.17.0"
 django-summernote = "==0.8.20.0"
 dockerpty = "==0.4.1"
 pipdeptree = "==2.16.1"
-pywin32 = {version = "'==306'", os_name = "== 'windows'"}
+pywin32 = {version = "==306", os_name = "== 'windows'"}
 
 [dev-packages]
 
