@@ -11,7 +11,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeDoneView
 from django.contrib import messages
-from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix
+from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix, Deliverable
 from martor.utils import LazyEncoder
 
 from .forms import Add_findings, AddOWASP, AddCustomer, AddReport, OWASP_Questions, NewFindingTemplateForm, UserForm, UploadNmapForm, UploadOpenVASForm, AppendixForm
@@ -842,6 +842,8 @@ def report_view(request,pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('-cvss_score')
     count_finding_query = DB_finding_query.count()
+    
+    DB_deliverable_query = Deliverable.objects.filter(report=pk).order_by('pk')
 
     if DB_report_query.nmap_scan != "":
         nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
@@ -916,7 +918,7 @@ def report_view(request,pk):
         owasp_categories.append(dict_owasp)
 
 
-    return render(request, 'report/report_view.html', {'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'owasp_categories': owasp_categories, 'count_open_findings': count_open_findings, 'count_closed_findings': count_closed_findings, 'nmap_data': nmap_data})
+    return render(request, 'report/report_view.html', {'DB_report_query': DB_report_query, 'DB_finding_query': DB_finding_query, 'DB_deliverable_query': DB_deliverable_query, 'count_finding_query': count_finding_query, 'count_findings_critical': count_findings_critical, 'count_findings_high': count_findings_high, 'count_findings_medium': count_findings_medium, 'count_findings_low': count_findings_low, 'count_findings_info': count_findings_info, 'count_findings_none': count_findings_none, 'cwe_categories': cwe_categories, 'owasp_categories': owasp_categories, 'count_open_findings': count_open_findings, 'count_closed_findings': count_closed_findings, 'nmap_data': nmap_data})
 
 
 @login_required
@@ -1072,27 +1074,37 @@ def reportdownloadpdf(request,pk):
     header = render_to_string(os.path.join(template_pdf_dir, 'pdf_header.yaml'))
     final_markdown = header + final_markdown 
     
+    pdf_file_output = os.path.join(settings.REPORTS_MEDIA_ROOT, 'pdf', file_name)
+    
     PDF_HEADER_FILE = os.path.join(template_pdf_dir, 'pdf_header.tex')
 
     REPORTING_LATEX_FILE = os.path.join(template_pdf_dir,'report_default.tex')
     
-    pypandoc.convert_text(final_markdown, to='pdf', outputfile="test.pdf", format='md',extra_args=[
+    pypandoc.convert_text(final_markdown, to='pdf', outputfile=pdf_file_output, format='md',extra_args=[
                                         '-H', PDF_HEADER_FILE,
                                         '--filter', 'pandoc-latex-environment',
                                         '--from', 'markdown+yaml_metadata_block+raw_html',
                                         '--template', REPORTING_LATEX_FILE,
                                         '--pdf-engine', 'pdflatex',])
-    with open('test.pdf', 'rb') as fh:
+    
+    deliverable = Deliverable(report=DB_report_query, filename=file_name, generation_date=now, filetype='pdf')
+    deliverable.save()
+        
+    with open(pdf_file_output, 'rb') as fh:
         response = HttpResponse(fh.read(), content_type="application/pdf")
-        response['Content-Disposition'] = 'attachment; filename=' + file_name  # or 'attachment; filename=' 'inline; filename='
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_name)  # or 'attachment; filename=' 'inline; filename='
         return response
 
 @login_required
 def reportdownloadexcel(request, pk):
     template_dir = os.path.join(settings.TEMPLATES_ROOT, 'excel')
     
+    now = datetime.datetime.utcnow()
+    
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
+    
+    file_name = 'PEN_EXCEL' + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.xlsx'
     
     wb = openpyxl.load_workbook(os.path.join(template_dir, 'Finding_Remediation_Checklist.xlsx'))
     ws = wb["Checklist"]
@@ -1137,11 +1149,60 @@ def reportdownloadexcel(request, pk):
             
             row_num += 1
             
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = f'attachment; filename="{DB_report_query.report_id}_Remediation.xlsx"'
-    wb.save(response)
+    excel_file_output = os.path.join(settings.REPORTS_MEDIA_ROOT, 'excel', file_name)
+    
+    deliverable = Deliverable(report=DB_report_query, filename=file_name, generation_date=now, filetype='excel')
+    deliverable.save()
+    
+    wb.save(excel_file_output)
+    
+    with open(excel_file_output, 'rb') as fh:
+        response = HttpResponse(fh.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_name)
+        
+        return response
+    
+# ----------------------------------------------------------------------
+#                           Deliverables
+# ----------------------------------------------------------------------
 
-    return response
+@login_required
+def deliverable_list(request):
+    DB_deliverable_query = Deliverable.objects.order_by('pk').all()
+    return render(request, 'deliverable/deliverable_list.html', {'DB_deliverable_query': DB_deliverable_query})
+
+@login_required
+def deliverable_download(request, pk):
+    deliverable = get_object_or_404(Deliverable, pk=pk)
+    file_path = os.path.join(settings.REPORTS_MEDIA_ROOT, deliverable.filetype, deliverable.filename )
+
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            if deliverable.filetype == 'pdf':
+                content_type="application/pdf"
+            elif deliverable.filetype == 'excel':
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            else:
+                content_type="application/octet-stream"
+            response = HttpResponse(fh.read(), content_type=content_type)
+            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+            return response
+
+    raise Http404
+
+@login_required
+def deliverable_delete(request, pk):
+    deliverable = Deliverable.objects.filter(pk=pk)
+    file_path = os.path.join(settings.REPORTS_MEDIA_ROOT, deliverable.filetype, deliverable.filename )
+    
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        next_url = request.GET.get('next', '/')
+        deliverable.delete()
+        return redirect(next_url)
+    
+    raise Http404    
+
 
 #---------------------------------------------------
 #                   NMAP

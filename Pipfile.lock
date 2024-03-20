@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0f9569db21f79bbf13aa471ce652deca772b0a1b786ab0048e5429af0cb156d5"
+            "sha256": "10aa411a5676a31a5d9c746ce2914b9bcc98241467b823e94d1abfc13c70f9c8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -356,6 +356,20 @@
             "markers": "python_version >= '3.8'",
             "version": "==3.1.0"
         },
+        "django-summernote": {
+            "hashes": [
+                "sha256:52e9b12438ed9eac0d77729f758f2aae06e468b5cbce133e24100d58ae4e43a8"
+            ],
+            "index": "pypi",
+            "version": "==0.8.20.0"
+        },
+        "dockerpty": {
+            "hashes": [
+                "sha256:69a9d69d573a0daa31bcd1c0774eeed5c15c295fe719c61aca550ed1393156ce"
+            ],
+            "index": "pypi",
+            "version": "==0.4.1"
+        },
         "docopt": {
             "hashes": [
                 "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
@@ -519,6 +533,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.6'",
             "version": "==3.4.0"
+        },
+        "pipdeptree": {
+            "hashes": [
+                "sha256:7131023df30220678b6a42c7372ce07453b39e0b3df935b129e832f0acf96b8a",
+                "sha256:f1ca64ce4aff9373613711048b9c4e8106ad955dea0dd962b7974fa168d7650a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==2.16.1"
         },
         "plumbum": {
             "hashes": [
@@ -739,7 +762,7 @@
                 "sha256:e65028133d15b64d2ed8f06dd9fbc268352478d4f9289e69c190ecd6818b6407",
                 "sha256:e8ac1ae3601bee6ca9f7cb4b5363bf1c0badb935ef243c4733ff9a393b1690c0"
             ],
-            "markers": "platform_system == 'Windows' and platform_python_implementation != 'PyPy'",
+            "index": "pypi",
             "version": "==306"
         },
         "pyyaml": {

@@ -67,6 +67,11 @@ urlpatterns = [
     path('appendix/delete/<int:pk>', views.appendix_delete, name='appendix_delete'),
     path('appendix/view/<int:pk>', views.appendix_view, name='appendix_view'),
     
+    #--------------------------- DELIVERABLE --------------------------------------------------------
+    path('deliverable/download/<int:pk>', views.deliverable_download, name='deliverable_download'),
+    path('deliverable/delete/<int:pk>', views.deliverable_delete, name='deliverable_delete'),
+    path('deliverable/list/', views.deliverable_list, name='deliverable_list'),
+    
     # ----------------------- SETTINGS -------------------------------------------
     path('update_preference/', views.update_preference, name='update_preference'),
 

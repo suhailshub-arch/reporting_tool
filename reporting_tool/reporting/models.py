@@ -174,3 +174,17 @@ class Appendix(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+class Deliverable(models.Model):
+	report = models.ForeignKey(Report, on_delete=models.CASCADE)
+	filename = models.CharField(max_length=2048, blank=False, unique=False)
+	generation_date = models.DateTimeField(blank=False)
+	filetype = models.CharField(max_length=32, blank=False, unique=False)
+
+	def get_label (self):
+		return self.filename
+	def __str__(self):
+		return self.filename
+	class Meta:
+		verbose_name_plural = "Deliverables"

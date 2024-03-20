@@ -117,6 +117,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 TEMPLATES_ROOT = os.path.join(BASE_DIR, 'reporting/templates/rpt_tpl')
 
+REPORTS_MEDIA_ROOT = os.path.join(BASE_DIR, 'report_storage')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 

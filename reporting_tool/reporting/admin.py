@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix
+from .models import Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix, Deliverable
 
 
-models = [Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix]
+models = [Finding, DB_CWE, DB_OWASP, Customer, Report, Finding_Template, UserProfile, Appendix, Deliverable]
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
