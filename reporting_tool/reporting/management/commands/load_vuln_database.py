@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 import json
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 VULNDB_DIR = os.path.join(CONFIG_DIR, "vulndb") 
 

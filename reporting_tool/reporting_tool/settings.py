@@ -1,15 +1,17 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from decouple import config
+from config.configs import DJANGO_CONFIG
 import os
 
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = int(os.getenv("DEBUG", default=0))
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
+SECRET_KEY = DJANGO_CONFIG['secret_key']
+DEBUG = DJANGO_CONFIG['debug']
+ALLOWED_HOSTS = DJANGO_CONFIG['allowed_hosts']
+CSRF_TRUSTED_ORIGINS =  DJANGO_CONFIG['csrf_trusted_origins']
 
 
 # Application definition
@@ -94,7 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+DJANGO_CONFIG['time_zone']
 
 USE_I18N = True
 

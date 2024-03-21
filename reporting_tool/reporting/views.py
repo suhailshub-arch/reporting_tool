@@ -37,6 +37,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import PatternFill
 from openpyxl.formatting.rule import CellIsRule
 
+from config.configs import USER_CONFIG, DJANGO_CONFIG, DELIVERABLES_CONFIG
+
 logger = logging.getLogger(__name__)
 
 # ----------------------------------------------------------------------
@@ -981,13 +983,13 @@ def reportdownloadpdf(request,pk):
     report_date = DB_report_query.report_date.strftime('%d-%m-%Y')
 
     # PDF filename
-    file_name = 'PEN_PDF' + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.pdf'
+    file_name = DELIVERABLES_CONFIG['report_pdf_name'] + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.pdf'
 
     # INIT
     template_findings = template_appendix = pdf_finding_summary = ''
-    md_author = 'Shub'
-    md_subject = 'PDF REPORT'
-    md_website = 'https//:www.shub_pentest.com'
+    md_author = DELIVERABLES_CONFIG['md_author']
+    md_subject = DELIVERABLES_CONFIG['md_subject']
+    md_website = DELIVERABLES_CONFIG['md_website']
     
     # Appendix
     for finding in DB_finding_query:
@@ -1066,7 +1068,7 @@ def reportdownloadpdf(request,pk):
         nmap_data = generate_nmap_markdown(json.loads(DB_report_query.nmap_scan))
     else:
         nmap_data = ""
-    pdf_markdown_report = render_to_string(os.path.join(template_pdf_dir, 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': 'e6e2e2', 'titlepagetextcolor': "000000", 'titlerulecolor': "cc0000", 'titlepageruleheight': 2 })
+    pdf_markdown_report = render_to_string(os.path.join(template_pdf_dir, 'pdf_header.yaml'), {'DB_report_query': DB_report_query, 'md_author': md_author, 'report_date': report_date, 'md_subject': md_subject, 'md_website': md_website, 'report_pdf_language': 'en', 'titlepagecolor': DELIVERABLES_CONFIG['titlepage-color'], 'titlepagetextcolor': DELIVERABLES_CONFIG['titlepage-text-color'], 'titlerulecolor': DELIVERABLES_CONFIG['titlepage-rule-color'], 'titlepageruleheight': DELIVERABLES_CONFIG['titlepage-rule-height'] })
     pdf_markdown_report += render_to_string(os.path.join(template_pdf_dir, 'pdf_report.md'), {'DB_report_query': DB_report_query, 'template_findings': template_findings, 'report_executive_summary_image': report_executive_summary_image, 'report_owasp_categories_image': report_owasp_categories_image, 'pdf_finding_summary': pdf_finding_summary, 'nmap_data' : nmap_data, 'template_appendix': template_appendix})
 
     final_markdown = textwrap.dedent(pdf_markdown_report)
@@ -1085,7 +1087,7 @@ def reportdownloadpdf(request,pk):
                                         '--filter', 'pandoc-latex-environment',
                                         '--from', 'markdown+yaml_metadata_block+raw_html',
                                         '--template', REPORTING_LATEX_FILE,
-                                        '--pdf-engine', 'pdflatex',])
+                                        '--pdf-engine', DELIVERABLES_CONFIG['pdf_engine'],])
     
     deliverable = Deliverable(report=DB_report_query, filename=file_name, generation_date=now, filetype='pdf')
     deliverable.save()
@@ -1104,7 +1106,7 @@ def reportdownloadexcel(request, pk):
     DB_report_query = get_object_or_404(Report, pk=pk)
     DB_finding_query = Finding.objects.filter(report=DB_report_query).order_by('cvss_score').reverse()
     
-    file_name = 'PEN_EXCEL' + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.xlsx'
+    file_name = DELIVERABLES_CONFIG['report_excel_name'] + '_' + DB_report_query.title + '_' +  str(datetime.datetime.utcnow().strftime('%Y%m%d%H%M')).replace('/', '') + '.xlsx'
     
     wb = openpyxl.load_workbook(os.path.join(template_dir, 'Finding_Remediation_Checklist.xlsx'))
     ws = wb["Checklist"]
@@ -1192,7 +1194,7 @@ def deliverable_download(request, pk):
 
 @login_required
 def deliverable_delete(request, pk):
-    deliverable = Deliverable.objects.filter(pk=pk)
+    deliverable = get_object_or_404(Deliverable, pk=pk)
     file_path = os.path.join(settings.REPORTS_MEDIA_ROOT, deliverable.filetype, deliverable.filename )
     
     if os.path.exists(file_path):
