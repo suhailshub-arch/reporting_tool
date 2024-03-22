@@ -10,7 +10,7 @@ services:
       pipenv run python manage.py loaddata ./config/cwe-list.json &&
       pipenv run python manage.py loaddata ./config/owasp-list.json &&
       pipenv run python manage.py load_vuln_database &&
-      pipenv run gunicorn reporting_tool.wsgi:application --bind 0.0.0.0:8000"
+      pipenv run gunicorn reporting_tool.wsgi:application --bind 0.0.0.0:8000 --timeout 120 --graceful-timeout 120"
 
     volumes:
       - ./reporting_tool/:/usr/src/reporting_tool/
