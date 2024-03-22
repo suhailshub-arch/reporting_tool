@@ -150,8 +150,34 @@ class CustomPasswordChangeDoneView(PasswordChangeDoneView):
 # --------------------------------------------------
 @login_required
 def home(request):
+    DB_customer_query = Customer.objects.order_by('name')
+    DB_deliverables_query = Deliverable.objects.all()
+    DB_Report_query = Report.objects.all()
+    DB_finding_query = Finding.objects.all().order_by('cvss_score').reverse()
+
+    total_reports = DB_Report_query.count()
+    total_customers = DB_customer_query.count()
+    total_deliverables = DB_deliverables_query.count()
+    count_findings_total = DB_finding_query.count()
+    count_findings_critical_high = 0
+    
+    for finding in DB_finding_query:
+        if finding.severity == 'Critical':
+            count_findings_critical_high += 1
+
+    context = {
+        'DB_customer_query': DB_customer_query,
+        'DB_deliverables_query': DB_deliverables_query,
+        'DB_Report_query': DB_Report_query,
+        'total_reports': total_reports,
+        'total_customers': total_customers,
+        'total_deliverables': total_deliverables,
+        'count_findings_total': count_findings_total,
+        'count_findings_critical_high': count_findings_critical_high,
+    }
+    
     template = loader.get_template('index.html')
-    return HttpResponse(template.render())
+    return render(request, 'index.html', context)
 
 #---------------------------------------------------
 #                   USER
@@ -1515,8 +1541,4 @@ def appendix_view(request,pk):
 
     return render(request, 'appendix/appendix_view.html', {'finding_query': finding_query, 'appendix_query': appendix})
 
-
-# ------------------------------------------------
-#                     TEST
-# ------------------------------------------------
 

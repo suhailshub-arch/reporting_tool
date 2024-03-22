@@ -69,37 +69,76 @@
             {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }
 
-        .card-header { /* #martor-description */
+        .card-header { 
             {% if user_background_color %}
             background-color: {{ user_background_color }};
             filter: brightness(80%);
             {% endif %}
-        }
-
-        .card-title { /* #martor-description */
             {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }
 
-        .card-body { /* #martor-description */
+        .card {
+            {% if user_background_color %}background-color: {{ user_background_color }}!important;{% endif %}
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .card-title { 
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
             {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }
 
-        .info-box{ /* #martor-description */
+        .card-body { 
+            {% if user_background_color %}background-color: {{ user_background_color }}!important;{% endif %}
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
+        }
+
+        .info-box{ 
             {% if user_background_color %}
             background-color: {{ user_background_color }};
             filter: brightness(95%);
             {% endif %}
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }
 
         .info-box-number{
             {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }   
         
         .info-box-text{
             {% if user_font_color %}color: {{ user_font_color }}!important;{% endif %}
+            {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
+            {% if user_background_color %}background-color: {{ user_background_color }};{% endif %}
+            {% if user_font_type %}font-family: '{{ user_font_type }}';{% endif %}
+            {% if user_character_spacing %}letter-spacing: {{ user_character_spacing }}px;{% endif %}
+            {% if user_line_height %}line-height: {{ user_line_height }}!important;{% endif %}
         }
 
-        .btn { /* #martor-description */
+        .btn { 
             {% if user_font_size %}font-size: {{ user_font_size }}px;{% endif %}
         }
     </style>

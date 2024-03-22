@@ -30,6 +30,7 @@ urlpatterns = [
     path('template/view/<int:pk>', views.template_view, name='template_view'),
     path('template/add/finding/<int:pk>', views.templateaddfinding, name='templateaddfinding'),
     path('template/add/report/<int:pk>/<int:reportpk>', views.templateaddreport, name='templateaddreport'),
+    path('template-findings-autocomplete/', views.template_findings_autocomplete, name='template-findings-autocomplete'),
     
     #--------------------------- OWASP -------------------------    
     path('owasp/list/', views.owasp_list, name='owasp_list'),
@@ -78,9 +79,7 @@ urlpatterns = [
     
     #----------------------- HOME ------------------------
     path('', views.home, name='home'),
+        
     
-    # ----------------TESTINGGG PLS DELETE ---------------------
-    
-    path('template-findings-autocomplete/', views.template_findings_autocomplete, name='template-findings-autocomplete'),
     
 ]

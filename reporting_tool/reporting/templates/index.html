@@ -2,36 +2,318 @@
 
 {% block content %}
 
-<div id="main" style="width: 600px;height:400px;"></div>
-    <script type="text/javascript">
-      // Initialize the echarts instance based on the prepared dom
-      var myChart = echarts.init(document.getElementById('main'));
+<br>
 
-      // Specify the configuration items and data for the chart
-      option = {
-  series: [
-    {
-      type: 'pie',
-      data: [
-        {
-          value: 335,
-          name: 'Direct Visit'
-        },
-        {
-          value: 234,
-          name: 'Union Ad'
-        },
-        {
-          value: 1548,
-          name: 'Search Engine'
-        }
-      ]
-    }
-  ]
-};
+<section class="content">
 
-      // Display the chart using the configuration items and data just specified.
-      myChart.setOption(option);
-    </script>
+    <div class="container-fluid">
 
-{% endblock %}
+      <div class="row centered">
+
+        <div class="col">
+
+          <div class="small-box bg-yellow speakable">
+              <div class="inner">
+                  <h3>{{total_customers}}</h3>
+                  <p>Customer{{ total_customers|pluralize:"es" }}</p>
+              </div>
+              <div class="icon">
+                  <i class="fas fa-user-circle"></i>
+              </div>
+          </div>
+
+      </div>
+
+        <div class="col">
+
+            <div class="small-box bg-info speakable">
+                <div class="inner">
+                    <h3>{{total_reports}}</h3> 
+                    <p>Report{{ total_reports|pluralize:"s" }}</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-file-code"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col">
+
+          <div class="small-box bg-blue speakable">
+              <div class="inner">
+                  <h3>{{total_deliverables}}</h3>
+                  <p>Deliverable{{ total_deliverables|pluralize:"s" }}</p>
+              </div>
+              <div class="icon">
+                  <i class="fa fa-file"></i>
+              </div>
+          </div>
+
+      </div>
+
+        <div class="col">
+
+            <div class="small-box bg-green speakable">
+                <div class="inner">
+                    <h3>{{count_findings_total}}</h3>
+                    <p>Finding{{ count_findings_total|pluralize:"s" }}</p>            
+                </div>
+                <div class="icon">
+                    <i class="fa fa-bug"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col">
+
+            <div class="small-box bg-red speakable">
+                <div class="inner">
+                    <h3>{{count_findings_critical_high}}</h3>
+                    <p>Critical/High Severity Finding{{ count_findings_critical_high|pluralize:"es" }}</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-radiation-alt"></i>
+                </div>
+            </div>
+
+        </div>
+
+        
+
+    </div>
+        <div id="Report_List" class="card card-outline card-primary">
+
+            <div class="card-header speakable">
+                <h3 class="card-title"><b>Report List</b></h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i id='iconReport_List' class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+        
+            <div class="card-body">
+                <table id="reportList" class="table table-bordered table-hover">
+        
+                    <thead>
+                        <tr>
+                            <th style="width: 15%" class="text-center speakable">ID</th>
+                            <th style="width: 25%" class="text-center speakable">Report</th>
+                            <th style="width: 15%" class="text-center speakable">Customer</th>
+                            <th style="width: 5%" class="text-center speakable">Findings</th>
+                        </tr>
+                    </thead>
+        
+                    <tbody>
+        
+                        {% for report in DB_Report_query %}
+                        
+                            <tr>
+                                <td class="speakable">
+                                    <span class="pull-right badge bg-blue"></span><a href="{% url 'report_view' report.id %}">{{ report.report_id }}</a>
+                                </td>
+        
+                                <td class="speakable">
+                                    <span class="pull-right badge bg-blue"></span>{{ report.title }}
+                                </td>
+        
+                                <td class="speakable">
+                                    <span class="pull-right badge bg-blue"></span>{{ report.customer.name }}
+                                </td>
+        
+                                <td class="speakable">
+                                    <span class="pull-right badge bg-blue"></span>{{ report.finding_set.count }}
+                                </td>
+        
+                            </tr>
+                        {% endfor %}
+        
+                    </tbody>
+        
+                </table>
+            </div>
+        </div>
+
+        <div id="Deliverable_List" class="card card-outline card-primary">
+
+          <div class="card-header speakable">
+              <h3 class="card-title"><b>Deliverable List</b></h3>
+
+              <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                      <i id='iconDeliverable_List' class="fas fa-minus"></i>
+                  </button>
+              </div>
+          </div>
+      
+          <div class="card-body">
+              <table id="deliverableList" class="table table-bordered table-hover">
+      
+                  <thead>
+                      <tr>
+                          <th style="width: 10%" class="text-center speakable">Generated date</th>
+                          <th style="width: 25%" class="text-center speakable">File</th>
+                          <th style="width: 5%" class="text-center speakable">Type</th>
+                          <th style="width: 15%" class="text-center speakable">Report</th>
+                          <th style="width: 15%" class="text-center speakable">Customer</th>
+                      </tr>
+                  </thead>
+      
+                  <tbody>
+      
+                      {% for deliverable in DB_deliverables_query %}
+                      
+                          <tr>
+                              <td class="text-center speakable">
+                                  {{ deliverable.generation_date|date:"Y-m-d" }}
+                              </td>
+      
+                              <td class="speakable">
+                                  <a href="{% url 'deliverable_download' deliverable.pk %}">{{ deliverable.filename }}</a>
+                              </td>
+      
+                              <td class="text-center speakable">
+                                  {{ deliverable.filetype }}
+                              </td>
+      
+                              <td class="text-center speakable">
+                                  <a href="{% url 'report_view' deliverable.report.pk %}">{{ deliverable.report.title }}</a>
+                              </td>
+
+                              <td class="text-center speakable">
+                                  <a href="{% url 'customer_view' deliverable.report.customer.pk %}">{{ deliverable.report.customer.name }}</a>
+                              </td>
+      
+                          </tr>
+                      {% endfor %}
+      
+                  </tbody>
+      
+              </table>
+          </div>
+      </div>
+
+      <div id="Customer_List" class="card card-outline card-primary">
+
+        <div class="card-header speakable">
+            <h3 class="card-title"><b>Customer List</b></h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i id='iconCustomer_List' class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+    
+        <div class="card-body">
+            <table id="customerList" class="table table-bordered table-hover">
+    
+                <thead class="text-center">
+                    <tr>
+                        <th style="width: 35%" class="text-center speakable">Customer</th>
+                        <th style="width: 25%" class="text-center speakable">Contact</th>
+                        <th style="width: 10%" class="text-center speakable">Reports</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+    
+                    {% for customer in DB_customer_query %}
+                    
+                        <tr>
+                            <td class="speakable">
+                                <span class="pull-right badge bg-blue"></span><a href="{% url 'customer_view' customer.id %}">{{ customer.name }}</a>
+                            </td>
+    
+                            <td class="speakable">
+                                <span class="pull-right badge bg-blue"></span>{{ customer.contact }}
+                            </td>
+    
+                            <td class="speakable">
+                                <span class="pull-right badge bg-blue"></span>{{ customer.report_set.count }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+    
+                </tbody>
+    
+            </table>
+        </div>
+    </div>
+
+    </div>
+</section>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+
+<script>
+    $(document).ready(function() {
+    $("#reportList").DataTable({
+        "paging": true,
+        "searching": false,
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false
+    });
+});
+
+</script>
+
+<script>
+  $(document).ready(function() {
+  $("#deliverableList").DataTable({
+      "paging": true,
+      "searching": false,
+      "responsive": true,
+      "lengthChange": false,
+      "autoWidth": false
+  });
+});
+
+</script>
+
+<script>
+  $(document).ready(function() {
+  $("#customerList").DataTable({
+      "paging": true,
+      "searching": false,
+      "responsive": true,
+      "lengthChange": false,
+      "autoWidth": false
+  });
+});
+
+</script>
+
+<script>
+  $( function() {
+      document.getElementById("Customer_List").classList.add("collapsed-card");
+      document.getElementById("Deliverable_List").classList.add("collapsed-card");
+      document.getElementById("Report_List").classList.add("collapsed-card");
+
+      document.getElementById("iconReport_List").classList.remove("fa-minus");
+      document.getElementById("iconReport_List").classList.add("fa-plus");
+
+      document.getElementById("iconDeliverable_List").classList.remove("fa-minus");
+      document.getElementById("iconDeliverable_List").classList.add("fa-plus");
+
+      document.getElementById("iconCustomer_List").classList.remove("fa-minus");
+      document.getElementById("iconCustomer_List").classList.add("fa-plus");
+
+
+    });
+</script>
+
+{% endblock javascripts %}
+
+
+
+
+

@@ -450,8 +450,8 @@
 
         // ------------------------ UPDATE MODEL --------------------------------------------------
         function updatePreferenceOnServer(fontSize, fontType, fontColour, backgroundColour, characterSpacing, lineHeight) {
-            const csrftoken = getCookie('csrftoken'); // Ensure you have this function to get CSRF token
-            fetch('/update_preference/', {  // Make sure you have the URL setup for this endpoint
+            const csrftoken = getCookie('csrftoken'); 
+            fetch('/update_preference/', {  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
